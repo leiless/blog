@@ -1,0 +1,392 @@
+<!doctype html><html lang><head><meta charset=utf-8><meta name=generator content="Hugo 0.83.1"><meta http-equiv=x-ua-compatible content="IE=edge"><meta name=viewport content="width=device-width,initial-scale=1,shrink-to-fit=no"><meta name=twitter:card content="summary"><meta name=twitter:title content="Useful C tricks - 一个程序员的辩白"><meta name=twitter:description content="C is undoubtedly one of my favorite programming language, as I wrote C code in recent years, I&amp;rsquo;ve collected several useful C tricks.
+Some of &amp;lsquo;em taken from popular open source code, you may already know, yet I still hope they can inspire you somehow.
+This is an incremental list from time to time, feel free to share with me if you got any.
+#1 Unused annotation 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16  /* * Space between __attribute__ and ( indicates it&amp;#39;s not a function call * * [sic] &amp;lt;sys/cdefs."><meta name=twitter:site content="https://leiless.me/"><meta name=twitter:creator content><meta name=twitter:image content="https://leiless.me/avatar.jpg"><meta property="og:locale" content><meta property="og:type" content="article"><meta property="og:title" content="Useful C tricks - 一个程序员的辩白"><meta property="og:description" content="C is undoubtedly one of my favorite programming language, as I wrote C code in recent years, I&amp;rsquo;ve collected several useful C tricks.
+Some of &amp;lsquo;em taken from popular open source code, you may already know, yet I still hope they can inspire you somehow.
+This is an incremental list from time to time, feel free to share with me if you got any.
+#1 Unused annotation 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16  /* * Space between __attribute__ and ( indicates it&amp;#39;s not a function call * * [sic] &amp;lt;sys/cdefs."><meta property="og:url" content="https://leiless.me/posts/c-tricks/"><meta property="og:site_name" content="一个程序员的辩白"><meta property="og:image" content="https://leiless.me/avatar.jpg"><title>Useful C tricks - 一个程序员的辩白</title><meta name=author content="Fishbone"><meta name=description content="C is undoubtedly one of my favorite programming language, as I wrote C code in recent years, I&amp;rsquo;ve collected several useful C tricks.
+Some of &amp;lsquo;em taken from popular open source code, you may already know, yet I still hope they can inspire you somehow.
+This is an incremental list from time to time, feel free to share with me if you got any.
+#1 Unused annotation 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16  /* * Space between __attribute__ and ( indicates it&amp;#39;s not a function call * * [sic] &amp;lt;sys/cdefs."><link rel=stylesheet href="https://fonts.googleapis.com/css?family=Source+Code+Pro|Arvo:400,700"><link rel=stylesheet href=https://leiless.me/css/theme.css><link rel=stylesheet href=https://leiless.me/css/chroma.dracula.css></head><body class="font-serif bg-gray-200 border-t-4 border-blue-500 antialiased"><div class="w-full p-6 md:w-2/3 md:px-0 md:mx-auto xl:w-2/5"><header class=mb-6><div class="mb-6 md:flex md:items-center"><div><a class="text-lg mb-8 inline-block" href=/>&larr; Back Home</a><h1 class="text-4xl font-bold">Useful C tricks</h1><time datetime="2019-02-17 00:00:00 UTC">17 Feb 2019</time></div></div></header><article class=mb-12><p><code>C</code> is undoubtedly one of my favorite programming language, as I wrote C code in recent years, I&rsquo;ve collected several useful C tricks.</p><p>Some of &lsquo;em taken from popular open source code, you may already know, yet I still hope they can inspire you somehow.</p><p>This is an incremental list from time to time, feel free to share with me if you got any.</p><h2 id=1-unused-annotation>#1 Unused annotation</h2><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-c data-lang=c><span class=cm>/*
+</span><span class=cm> * Space between __attribute__ and ( indicates it&#39;s not a function call
+</span><span class=cm> *
+</span><span class=cm> * [sic] &lt;sys/cdefs.h&gt; (from macOS kernel module header)
+</span><span class=cm> *  __unused denotes variables and functions that may not be used, preventing
+</span><span class=cm> *  the compiler from warning about it if not used.
+</span><span class=cm> */</span>
+<span class=cp>#define __unused 				__attribute__ ((unused))
+</span><span class=cp></span>
+<span class=cm>/**
+</span><span class=cm> * Example __unused usage
+</span><span class=cm> */</span>
+<span class=kt>void</span> <span class=nf>foobar</span><span class=p>(</span><span class=kt>int</span> <span class=n>v</span> <span class=n>__unused</span><span class=p>)</span>
+<span class=p>{</span>
+	<span class=p>...</span>
+<span class=p>}</span>
+</code></pre></td></tr></table></div></div><p>Yet not all C/C++ compiler support GCC-derived <code>__attribute__</code> keyword, in such case, you instead define a macro to suppress compiler unused warning:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-c data-lang=c><span class=cp>#define UNUSED(arg, ...)    (void) ((void) (arg), ##__VA_ARGS__)
+</span><span class=cp></span>
+<span class=cm>/**
+</span><span class=cm> * Example UNUSED usage
+</span><span class=cm> */</span>
+<span class=kt>void</span> <span class=nf>foobar</span><span class=p>(</span><span class=kt>int</span> <span class=n>v</span><span class=p>)</span>
+<span class=p>{</span>
+	<span class=n>UNUSED</span><span class=p>(</span><span class=n>v</span><span class=p>);</span>
+	<span class=p>...</span>
+<span class=p>}</span>
+</code></pre></td></tr></table></div></div><h2 id=2-compile-time-array-size>#2 Compile-time array size</h2><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-c data-lang=c><span class=cm>/**
+</span><span class=cm> * Use only for array type, NOT strict pointer type
+</span><span class=cm> * @a			The fixed size array
+</span><span class=cm> */</span>
+<span class=cp>#define ARRAY_SIZE(a)       (sizeof(a) / sizeof(*a))
+</span></code></pre></td></tr></table></div></div><p>This macro used widely in <a href=https://elixir.bootlin.com/linux/latest/source/include/linux/kernel.h#L72>Linux kernel</a> and <a href=https://elixir.bootlin.com/barebox/latest/source/include/linux/kernel.h#L41>barebox</a>, there&rsquo;re several known variants, listing above for simplicity.</p><h2 id=3-compile-time-strlen3>#3 Compile-time strlen(3)</h2><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-c data-lang=c><span class=cm>/**
+</span><span class=cm> * Should only used for `char[]&#39;  NOT `char *&#39;
+</span><span class=cm> * Assume ends with null byte(&#39;\0&#39;)
+</span><span class=cm> */</span>
+<span class=cp>#define STRLEN(s)          (ARRAY_SIZE(s) - 1)
+</span></code></pre></td></tr></table></div></div><p>This macro used for a <code>char</code> array, it acts as if it called <a href=http://man7.org/linux/man-pages/man3/strlen.3.html>strlen(3)</a>, note that it isn&rsquo;t applicable if the <code>char</code> array not ends with null byte, i.e. <code>'\0'</code>.</p><p>Since <code>sizeof(char)</code> always equals to 1, this macro can be further reduce into:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-c data-lang=c><span class=cm>/**
+</span><span class=cm> * Should only used for `char[]&#39;  NOT `char *&#39;
+</span><span class=cm> * Assume ends with null byte(&#39;\0&#39;)
+</span><span class=cm> */</span>
+<span class=cp>#define STRLEN(s)          (sizeof(s) - 1)
+</span></code></pre></td></tr></table></div></div><p>Still, there is a generic <code>STRLEN</code> to deal the case aforementioned, this macro used rarely since it&rsquo;s a bit of complicated.</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-c data-lang=c><span class=cm>/**
+</span><span class=cm> * Should only used for `char[]&#39;  NOT `char *&#39;
+</span><span class=cm> */</span>
+<span class=cp>#define STRLEN(s)          (sizeof(s) - !s[sizeof(s)-1])
+</span></code></pre></td></tr></table></div></div><h2 id=4-explicitly-annotate-ignore-the-return-value>#4 Explicitly annotate ignore the return value</h2><p>Case happens when a function return something, yet you don&rsquo;t care.</p><p>For example, you know <a href=http://man7.org/linux/man-pages/man2/signal.2.html>signal(2)</a> won&rsquo;t fail in such case:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span><span class=lnt>8
+</span><span class=lnt>9
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-c data-lang=c><span class=cp>#include</span> <span class=cpf>&lt;stdio.h&gt;</span><span class=cp>
+</span><span class=cp>#include</span> <span class=cpf>&lt;signal.h&gt;</span><span class=cp>
+</span><span class=cp></span>
+<span class=kt>int</span> <span class=nf>main</span><span class=p>(</span><span class=kt>void</span><span class=p>)</span>
+<span class=p>{</span>
+	<span class=n>signal</span><span class=p>(</span><span class=n>SIGPIPE</span><span class=p>,</span> <span class=n>SIG_IGN</span><span class=p>);</span> <span class=cm>/* I don&#39;t give it a shit of what signal(2) returns */</span>
+	<span class=p>...</span>
+	<span class=k>return</span> <span class=mi>0</span><span class=p>;</span>
+<span class=p>}</span>
+</code></pre></td></tr></table></div></div><p>Or, you want to implement a microsecond-level <a href=http://man7.org/linux/man-pages/man3/sleep.3.html>sleep(3)</a> function by <a href=http://man7.org/linux/man-pages/man2/select.2.html>select(2)</a>, and you don&rsquo;t care about what <a href=http://man7.org/linux/man-pages/man2/select.2.html>select(2)</a> pumps out:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span><span class=lnt>8
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-c data-lang=c><span class=cp>#include</span> <span class=cpf>&lt;sys/select.h&gt;</span><span class=cp>
+</span><span class=cp></span>
+<span class=kt>void</span> <span class=nf>usleep</span><span class=p>(</span><span class=kt>unsigned</span> <span class=kt>int</span> <span class=n>us</span><span class=p>)</span>
+<span class=p>{</span>
+	<span class=k>struct</span> <span class=n>timeval</span> <span class=n>tv</span> <span class=o>=</span> <span class=p>{</span><span class=n>us</span> <span class=o>/</span> <span class=mi>1000000</span><span class=p>,</span> <span class=n>us</span> <span class=o>%</span> <span class=mi>1000000</span><span class=p>};</span>
+	<span class=cm>/* I don&#39;t care what select(2) returns  although it may got interrupted */</span>
+	<span class=n>select</span><span class=p>(</span><span class=mi>0</span><span class=p>,</span> <span class=nb>NULL</span><span class=p>,</span> <span class=nb>NULL</span><span class=p>,</span> <span class=nb>NULL</span><span class=p>,</span> <span class=o>&amp;</span><span class=n>tv</span><span class=p>);</span>
+<span class=p>}</span>
+</code></pre></td></tr></table></div></div><p>Instead of write a comment tell people you don&rsquo;t care return value(In real life, don&rsquo;t expected people will do this nice job for you), you can prepend <code>(void)</code> before function call:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span><span class=lnt>8
+</span><span class=lnt>9
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-c data-lang=c><span class=cp>#include</span> <span class=cpf>&lt;stdio.h&gt;</span><span class=cp>
+</span><span class=cp>#include</span> <span class=cpf>&lt;signal.h&gt;</span><span class=cp>
+</span><span class=cp></span>
+<span class=kt>int</span> <span class=nf>main</span><span class=p>(</span><span class=kt>void</span><span class=p>)</span>
+<span class=p>{</span>
+	<span class=p>(</span><span class=kt>void</span><span class=p>)</span> <span class=n>signal</span><span class=p>(</span><span class=n>SIGPIPE</span><span class=p>,</span> <span class=n>SIG_IGN</span><span class=p>);</span>
+	<span class=p>...</span>
+	<span class=k>return</span> <span class=mi>0</span><span class=p>;</span>
+<span class=p>}</span>
+</code></pre></td></tr></table></div></div><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-c data-lang=c><span class=cp>#include</span> <span class=cpf>&lt;sys/select.h&gt;</span><span class=cp>
+</span><span class=cp></span>
+<span class=kt>void</span> <span class=nf>usleep</span><span class=p>(</span><span class=kt>unsigned</span> <span class=kt>int</span> <span class=n>us</span><span class=p>)</span>
+<span class=p>{</span>
+	<span class=p>(</span><span class=kt>void</span><span class=p>)</span> <span class=n>select</span><span class=p>(</span><span class=mi>0</span><span class=p>,</span> <span class=nb>NULL</span><span class=p>,</span> <span class=nb>NULL</span><span class=p>,</span> <span class=nb>NULL</span><span class=p>,</span> <span class=p>(</span><span class=k>struct</span> <span class=n>timeval</span><span class=p>[])</span> <span class=p>{{</span><span class=n>us</span> <span class=o>/</span> <span class=mi>1000000</span><span class=p>,</span> <span class=n>us</span> <span class=o>%</span> <span class=mi>1000000</span><span class=p>}});</span>
+<span class=p>}</span>
+</code></pre></td></tr></table></div></div><p>Note that its usage somewhat like <code>UNUSED</code> macro, yet it won&rsquo;t be optimized out, since it&rsquo;s a function call, in most case it&rsquo;ll have side-effect, compiler won&rsquo;t optimize function call out by default, unless your function marked as <a href=https://gcc.gnu.org/onlinedocs/gcc/Common-Function-Attributes.html><code>const</code> or <code>pure</code></a>.</p><p><code>(void) ...</code> used heavily in FreeBSD kernel, for example, <a href=http://fxr.watson.org/fxr/source/i386/i386/pmap.c>FreeBSD/i386/i386/pmap.c</a></p><h2 id=5-compile-time-condition-assurance>#5 Compile-time condition assurance</h2><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-c data-lang=c><span class=cm>/**
+</span><span class=cm> * Compile-time assurance  see: linux/arch/x86/boot/boot.h
+</span><span class=cm> */</span>
+<span class=cp>#define BUILD_BUG_ON(cond)      ((void) sizeof(char[-!(cond)]))
+</span></code></pre></td></tr></table></div></div><p>This macro originally taken from <a href=https://elixir.bootlin.com/linux/latest/source/arch/x86/boot/boot.h#L33>Linux source code</a>, yet I optimized it slightly because it&rsquo;s clumsy.</p><p>It mainly used for assuring some conditions, for example:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-c data-lang=c><span class=cm>/* Assure `long&#39; type is 64-bit long */</span>
+<span class=n>BUILD_BUG_ON</span><span class=p>(</span><span class=k>sizeof</span><span class=p>(</span><span class=kt>long</span><span class=p>)</span> <span class=o>==</span> <span class=mi>8</span><span class=p>);</span>
+</code></pre></td></tr></table></div></div><p>Any use of <code>BUILD_BUG_ON</code> macro will eventually be optimized out by the compiler, thus you don&rsquo;t need to worry about nop execution.</p><h2 id=6-branch-predictionsgcc-extension>#6 Branch predictions(GCC extension)</h2><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-c data-lang=c><span class=cm>/**
+</span><span class=cm> * Branch predictions
+</span><span class=cm> * see: linux/include/linux/compiler.h
+</span><span class=cm> */</span>
+<span class=cp>#define likely(x)       __builtin_expect(!(x), 0)
+</span><span class=cp>#define unlikely(x)     __builtin_expect(!(x), 1)
+</span></code></pre></td></tr></table></div></div><p>Used heavily in <a href=https://elixir.bootlin.com/linux/latest/source/include/linux/compiler.h#L76>Linux kernel</a>, macro above is slightly different from original form.</p><p>[<a href=https://stackoverflow.com/questions/109710/how-does-the-likely-unlikely-macros-in-the-linux-kernel-works-and-what-is-their>sic</a>] They are hint to the compiler to emit instructions that will cause branch prediction to favour the &ldquo;likely/unlikely&rdquo; side of a jump instruction.</p><p>Compiler will optimize the code according to branch prediction, for examplem, if you have <a href=https://godbolt.org/z/v6lk7v>something</a> like this:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span><span class=lnt>8
+</span><span class=lnt>9
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-c data-lang=c><span class=kt>char</span> <span class=o>*</span><span class=nf>istrdup</span><span class=p>(</span><span class=k>const</span> <span class=kt>char</span> <span class=o>*</span><span class=n>s</span><span class=p>)</span>
+<span class=p>{</span>
+	<span class=n>size_t</span> <span class=n>sz</span> <span class=o>=</span> <span class=n>strlen</span><span class=p>(</span><span class=n>s</span><span class=p>)</span> <span class=o>+</span> <span class=mi>1</span><span class=p>;</span>
+	<span class=kt>char</span> <span class=o>*</span><span class=n>p</span> <span class=o>=</span> <span class=p>(</span><span class=kt>char</span> <span class=o>*</span><span class=p>)</span> <span class=n>malloc</span><span class=p>(</span><span class=n>sz</span><span class=p>);</span>
+	<span class=k>if</span> <span class=p>(</span><span class=n>unlikely</span><span class=p>(</span><span class=n>p</span> <span class=o>==</span> <span class=nb>NULL</span><span class=p>))</span> <span class=k>goto</span> <span class=n>out_exit</span><span class=p>;</span>
+	<span class=p>(</span><span class=kt>void</span><span class=p>)</span> <span class=n>strcpy</span><span class=p>(</span><span class=n>p</span><span class=p>,</span> <span class=n>s</span><span class=p>);</span>
+<span class=nl>out_exit</span><span class=p>:</span>
+	<span class=k>return</span> <span class=n>p</span><span class=p>;</span>
+<span class=p>}</span>
+</code></pre></td></tr></table></div></div><p>The compiler may happen to optimize your code into <a href=https://godbolt.org/z/6gcjMz>the following form</a>, which its code path is more likely be a pipeline instead of a jumpline:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span><span class=lnt>8
+</span><span class=lnt>9
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-c data-lang=c><span class=kt>char</span> <span class=o>*</span><span class=nf>istrdup</span><span class=p>(</span><span class=k>const</span> <span class=kt>char</span> <span class=o>*</span><span class=n>s</span><span class=p>)</span>
+<span class=p>{</span>
+	<span class=n>size_t</span> <span class=n>sz</span> <span class=o>=</span> <span class=n>strlen</span><span class=p>(</span><span class=n>s</span><span class=p>)</span> <span class=o>+</span> <span class=mi>1</span><span class=p>;</span>
+	<span class=k>register</span> <span class=kt>char</span> <span class=o>*</span><span class=n>p</span> <span class=o>=</span> <span class=p>(</span><span class=kt>char</span> <span class=o>*</span><span class=p>)</span> <span class=n>malloc</span><span class=p>(</span><span class=n>sz</span><span class=p>);</span>
+	<span class=k>if</span> <span class=p>(</span><span class=n>likely</span><span class=p>(</span><span class=n>p</span> <span class=o>!=</span> <span class=nb>NULL</span><span class=p>))</span> <span class=p>{</span>
+		<span class=p>(</span><span class=kt>void</span><span class=p>)</span> <span class=n>strcpy</span><span class=p>(</span><span class=n>p</span><span class=p>,</span> <span class=n>s</span><span class=p>);</span>
+	<span class=p>}</span>
+	<span class=k>return</span> <span class=n>p</span><span class=p>;</span>
+<span class=p>}</span>
+</code></pre></td></tr></table></div></div><h2 id=7-side-effect-safe-min-max-abs-macrogcc-extension>#7 Side-effect-safe <code>MIN</code>, <code>MAX</code>, <code>ABS</code> macro(GCC extension)</h2><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-c data-lang=c><span class=cp>#define MIN(a, b) ({        \
+</span><span class=cp>    __typeof(a) _a = (a);   \
+</span><span class=cp>    __typeof(b) _b = (b);   \
+</span><span class=cp>    _a &lt; _b ? _a : _b;      \
+</span><span class=cp>})
+</span><span class=cp></span>
+<span class=cp>#define MAX(a, b) ({        \
+</span><span class=cp>    __typeof(a) _a = (a);   \
+</span><span class=cp>    __typeof(b) _b = (b);   \
+</span><span class=cp>    _a &gt; _b ? _a : _b;      \
+</span><span class=cp>})
+</span><span class=cp></span>
+<span class=cp>#define ABS(x) ({           \
+</span><span class=cp>    __typeof(x) _ = (x);    \
+</span><span class=cp>    _ &gt; 0 ? _ : -_;         \
+</span><span class=cp>})
+</span></code></pre></td></tr></table></div></div><p>Those three are common used math macros, which they&rsquo;re all type-agnostic, and eliminated possible side-effects, it uses GCC <a href=https://gcc.gnu.org/onlinedocs/gcc/Typeof.html>typeof</a> keyword.</p><h2 id=8-sizeof-a-structs-member>#8 Sizeof a struct&rsquo;s member</h2><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-c data-lang=c><span class=cp>#define STRUCT_MEMBER_SIZEOF(s, m)		sizeof((*((s[0]){})).m)
+</span></code></pre></td></tr></table></div></div><p>Used to get <code>sizeof</code> result inside a struct, without intervention of a struct variable, i.e. <code>struct_var.some_member</code>.</p><p>For example, if you want to <a href=http://man7.org/linux/man-pages/man2/bind.2.html>bind(2)</a> a socket with a name(path), you should check if given <code>path</code> length exceeds <code>struct sockaddr_un.sun_path</code>:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span><span class=lnt>26
+</span><span class=lnt>27
+</span><span class=lnt>28
+</span><span class=lnt>29
+</span><span class=lnt>30
+</span><span class=lnt>31
+</span><span class=lnt>32
+</span><span class=lnt>33
+</span><span class=lnt>34
+</span><span class=lnt>35
+</span><span class=lnt>36
+</span><span class=lnt>37
+</span><span class=lnt>38
+</span><span class=lnt>39
+</span><span class=lnt>40
+</span><span class=lnt>41
+</span><span class=lnt>42
+</span><span class=lnt>43
+</span><span class=lnt>44
+</span><span class=lnt>45
+</span><span class=lnt>46
+</span><span class=lnt>47
+</span><span class=lnt>48
+</span><span class=lnt>49
+</span><span class=lnt>50
+</span><span class=lnt>51
+</span><span class=lnt>52
+</span><span class=lnt>53
+</span><span class=lnt>54
+</span><span class=lnt>55
+</span><span class=lnt>56
+</span><span class=lnt>57
+</span><span class=lnt>58
+</span><span class=lnt>59
+</span><span class=lnt>60
+</span><span class=lnt>61
+</span><span class=lnt>62
+</span><span class=lnt>63
+</span><span class=lnt>64
+</span><span class=lnt>65
+</span><span class=lnt>66
+</span><span class=lnt>67
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-c data-lang=c><span class=cp>#include</span> <span class=cpf>&lt;stdio.h&gt;</span><span class=cp>
+</span><span class=cp>#include</span> <span class=cpf>&lt;string.h&gt;</span><span class=cp>
+</span><span class=cp>#include</span> <span class=cpf>&lt;stdlib.h&gt;</span><span class=cp>
+</span><span class=cp>#include</span> <span class=cpf>&lt;unistd.h&gt;</span><span class=cp>
+</span><span class=cp>#include</span> <span class=cpf>&lt;assert.h&gt;</span><span class=cp>
+</span><span class=cp>#include</span> <span class=cpf>&lt;sys/param.h&gt;</span><span class=cp>
+</span><span class=cp>#include</span> <span class=cpf>&lt;sys/errno.h&gt;</span><span class=cp>
+</span><span class=cp>#include</span> <span class=cpf>&lt;sys/socket.h&gt;</span><span class=cp>
+</span><span class=cp>#include</span> <span class=cpf>&lt;sys/un.h&gt;</span><span class=cp>
+</span><span class=cp></span>
+<span class=cp>#define STRUCT_MEMBER_SIZEOF(s, m)		sizeof((*((s[0]){})).m)
+</span><span class=cp></span>
+<span class=cm>/**
+</span><span class=cm> * Create a named socket(trivial implementation)
+</span><span class=cm> * @path        The socket name [XSI]
+</span><span class=cm> * @return      file descriptor returned if success
+</span><span class=cm> *              -1 if failed(errno will be set accordingly)
+</span><span class=cm> */</span>
+<span class=kt>int</span> <span class=nf>create_named_socket</span><span class=p>(</span><span class=k>const</span> <span class=kt>char</span> <span class=o>*</span><span class=n>path</span><span class=p>)</span>
+<span class=p>{</span>
+    <span class=cm>/* XXX: Use of STRUCT_MEMBER_SIZEOF macro */</span>
+    <span class=k>static</span> <span class=n>size_t</span> <span class=n>LIMIT</span> <span class=o>=</span> <span class=n>STRUCT_MEMBER_SIZEOF</span><span class=p>(</span><span class=k>struct</span> <span class=n>sockaddr_un</span><span class=p>,</span> <span class=n>sun_path</span><span class=p>);</span>
+    <span class=kt>int</span> <span class=n>fd</span> <span class=o>=</span> <span class=o>-</span><span class=mi>1</span><span class=p>;</span>
+    <span class=n>size_t</span> <span class=n>len</span><span class=p>;</span>
+    <span class=k>struct</span> <span class=n>sockaddr_un</span> <span class=n>sun</span><span class=p>;</span>
+
+    <span class=n>assert</span><span class=p>(</span><span class=n>path</span> <span class=o>!=</span> <span class=nb>NULL</span><span class=p>);</span>
+
+    <span class=n>len</span> <span class=o>=</span> <span class=n>strlen</span><span class=p>(</span><span class=n>path</span><span class=p>);</span>
+    <span class=cm>/* struct sockaddr_un.sun_path[10x] */</span>
+    <span class=k>if</span> <span class=p>(</span><span class=n>len</span> <span class=o>&gt;=</span> <span class=n>LIMIT</span><span class=p>)</span> <span class=p>{</span>
+        <span class=n>errno</span> <span class=o>=</span> <span class=n>ENAMETOOLONG</span><span class=p>;</span>
+        <span class=n>fprintf</span><span class=p>(</span><span class=n>stderr</span><span class=p>,</span> <span class=s>&#34;Path %s too long  %zu vs %zu</span><span class=se>\n</span><span class=s>&#34;</span><span class=p>,</span> <span class=n>path</span><span class=p>,</span> <span class=n>len</span><span class=p>,</span> <span class=n>LIMIT</span><span class=p>);</span>
+        <span class=k>goto</span> <span class=n>out_exit</span><span class=p>;</span>
+    <span class=p>}</span>
+
+    <span class=n>fd</span> <span class=o>=</span> <span class=n>socket</span><span class=p>(</span><span class=n>AF_UNIX</span><span class=p>,</span> <span class=n>SOCK_STREAM</span><span class=p>,</span> <span class=mi>0</span><span class=p>);</span>
+    <span class=k>if</span> <span class=p>(</span><span class=n>fd</span> <span class=o>&lt;</span> <span class=mi>0</span><span class=p>)</span> <span class=p>{</span>
+        <span class=n>fprintf</span><span class=p>(</span><span class=n>stderr</span><span class=p>,</span> <span class=s>&#34;socket(2) fail  errno: %d</span><span class=se>\n</span><span class=s>&#34;</span><span class=p>,</span> <span class=n>errno</span><span class=p>);</span>
+        <span class=k>goto</span> <span class=n>out_exit</span><span class=p>;</span>
+    <span class=p>}</span>
+
+    <span class=n>sun</span><span class=p>.</span><span class=n>sun_family</span> <span class=o>=</span> <span class=n>AF_UNIX</span><span class=p>;</span>
+    <span class=p>(</span><span class=kt>void</span><span class=p>)</span> <span class=n>strcpy</span><span class=p>(</span><span class=n>sun</span><span class=p>.</span><span class=n>sun_path</span><span class=p>,</span> <span class=n>path</span><span class=p>);</span>
+<span class=cp>#if defined(__APPLE__) || defined(BSD)
+</span><span class=cp></span>    <span class=n>sun</span><span class=p>.</span><span class=n>sun_len</span> <span class=o>=</span> <span class=p>(</span><span class=kt>unsigned</span> <span class=kt>char</span><span class=p>)</span> <span class=n>SUN_LEN</span><span class=p>(</span><span class=o>&amp;</span><span class=n>sun</span><span class=p>);</span>
+<span class=cp>#endif
+</span><span class=cp></span>
+    <span class=k>if</span> <span class=p>(</span><span class=n>bind</span><span class=p>(</span><span class=n>fd</span><span class=p>,</span> <span class=p>(</span><span class=k>struct</span> <span class=n>sockaddr</span> <span class=o>*</span><span class=p>)</span> <span class=o>&amp;</span><span class=n>sun</span><span class=p>,</span> <span class=k>sizeof</span><span class=p>(</span><span class=n>sun</span><span class=p>))</span> <span class=o>&lt;</span> <span class=mi>0</span><span class=p>)</span> <span class=p>{</span>
+        <span class=n>fprintf</span><span class=p>(</span><span class=n>stderr</span><span class=p>,</span> <span class=s>&#34;bind(2) fail  fd: %d path: %s errno: %d</span><span class=se>\n</span><span class=s>&#34;</span><span class=p>,</span> <span class=n>fd</span><span class=p>,</span> <span class=n>path</span><span class=p>,</span> <span class=n>errno</span><span class=p>);</span>
+        <span class=k>goto</span> <span class=n>out_fail</span><span class=p>;</span>
+    <span class=p>}</span>
+
+    <span class=k>if</span> <span class=p>(</span><span class=n>listen</span><span class=p>(</span><span class=n>fd</span><span class=p>,</span> <span class=n>SOMAXCONN</span><span class=p>)</span> <span class=o>&lt;</span> <span class=mi>0</span><span class=p>)</span> <span class=p>{</span>
+        <span class=n>fprintf</span><span class=p>(</span><span class=n>stderr</span><span class=p>,</span> <span class=s>&#34;listen(2) fail  fd: %d path: %s errno: %d</span><span class=se>\n</span><span class=s>&#34;</span><span class=p>,</span> <span class=n>fd</span><span class=p>,</span> <span class=n>path</span><span class=p>,</span> <span class=n>errno</span><span class=p>);</span>
+        <span class=k>goto</span> <span class=n>out_fail</span><span class=p>;</span>
+    <span class=p>}</span>
+
+    <span class=n>printf</span><span class=p>(</span><span class=s>&#34;socket created   fd: %d path: %s</span><span class=se>\n</span><span class=s>&#34;</span><span class=p>,</span> <span class=n>fd</span><span class=p>,</span> <span class=n>path</span><span class=p>);</span>
+
+<span class=nl>out_exit</span><span class=p>:</span>
+    <span class=k>return</span> <span class=n>fd</span><span class=p>;</span>
+<span class=nl>out_fail</span><span class=p>:</span>
+    <span class=p>(</span><span class=kt>void</span><span class=p>)</span> <span class=n>close</span><span class=p>(</span><span class=n>fd</span><span class=p>);</span>
+    <span class=n>fd</span> <span class=o>=</span> <span class=o>-</span><span class=mi>1</span><span class=p>;</span>
+    <span class=k>goto</span> <span class=n>out_exit</span><span class=p>;</span>
+<span class=p>}</span>
+</code></pre></td></tr></table></div></div><h2 id=references><em>References</em></h2><blockquote><p><a href=https://blog.noctua-software.com/c-tricks.html>10 C99 tricks</a></p><p><a href=http://zubplot.blogspot.com/2015/01/gcc-is-wonderful-better-arraysize-macro.html>GCC <em>is</em> wonderful: a better ARRAY_SIZE macro</a></p><p><a href=https://kernelnewbies.org/MagicMacros>MagicMacros - Linux Kernel Newbies</a></p><p><a href=https://stackoverflow.com/questions/29117836/attribute-const-vs-attribute-pure-in-gnu-c>__attribute__((const)) vs __attribute__((pure)) in GNU C</a></p><p><a href=https://www.techbeamers.com/top-c-programming-tips-and-tricks-for-you/>C Programming Tips and Tricks for Beginners – Top 15</a></p><p><a href=https://stackoverflow.com/questions/599365/what-is-your-favorite-c-programming-trick>What is your favorite C programming trick? [closed]</a></p></blockquote><script src=https://utteranc.es/client.js repo=leiless/blog issue-term=pathname label=comment theme=github-light crossorigin=anonymous async></script></article><footer><p><a href=https://leiless.me/>一个程序员的辩白</a> <span style=color:gray>&copy;</span> 2017 - 2021. Proudly made with <a href=https://gohugo.io/ target=_blank>Hugo</a> and <a href=https://tailwindcss.com/ target=_blank>TailwindCSS</a>.</p><p style=margin-top:-15px;font-size:10px>Released under <a href=https://creativecommons.org/licenses/by-nc-sa/4.0/>CC BY-NC-SA 4.0</a> license.</p></footer></div><script async src="https://www.googletagmanager.com/gtag/js?id=G-RMJ7KLHXH8"></script><script>var doNotTrack=!1;if(!doNotTrack){window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag('js',new Date),gtag('config','G-RMJ7KLHXH8',{anonymize_ip:!1})}</script><script>(function(a,c,d,e){if(typeof a.webpushr!='undefined')return;a.webpushr=a.webpushr||function(){(a.webpushr.q=a.webpushr.q||[]).push(arguments)};var b,f=c.getElementsByTagName(d)[0];b=c.createElement(d),b.id=e,b.async=1,b.src="https://cdn.webpushr.com/app.min.js",f.parentNode.appendChild(b)})(window,document,'script','webpushr-jssdk'),webpushr('setup',{key:'BJji5mvLAV3k-EncfEEH_CtK_CdcXWnXc-fvhs7uY1jfOG4xX_RsBmoWvTD0OTyq6TOEB5G5_uFE6Ylpxj5MKEQ'})</script></body></html>
