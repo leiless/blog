@@ -168,11 +168,11 @@ This is an incremental list from time to time, feel free to share with me if you
 </span></code></pre></td><td class=lntd><pre class=chroma><code class=language-c data-lang=c><span class=cm>/**
 </span><span class=cm> * Compile-time assurance  see: linux/arch/x86/boot/boot.h
 </span><span class=cm> */</span>
-<span class=cp>#define BUILD_BUG_ON(cond)      ((void) sizeof(char[-!(cond)]))
+<span class=cp>#define BUILD_BUG_ON(cond)      ((void) sizeof(char[1 - 2 * !!(cond)]))
 </span></code></pre></td></tr></table></div></div><p>This macro originally taken from <a href=https://elixir.bootlin.com/linux/latest/source/arch/x86/boot/boot.h#L33>Linux source code</a>, yet I optimized it slightly because it&rsquo;s clumsy.</p><p>It mainly used for assuring some conditions, for example:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
 </span><span class=lnt>2
 </span></code></pre></td><td class=lntd><pre class=chroma><code class=language-c data-lang=c><span class=cm>/* Assure `long&#39; type is 64-bit long */</span>
-<span class=n>BUILD_BUG_ON</span><span class=p>(</span><span class=k>sizeof</span><span class=p>(</span><span class=kt>long</span><span class=p>)</span> <span class=o>==</span> <span class=mi>8</span><span class=p>);</span>
+<span class=n>BUILD_BUG_ON</span><span class=p>(</span><span class=k>sizeof</span><span class=p>(</span><span class=kt>long</span><span class=p>)</span> <span class=o>!=</span> <span class=mi>8</span><span class=p>);</span>
 </code></pre></td></tr></table></div></div><p>Any use of <code>BUILD_BUG_ON</code> macro will eventually be optimized out by the compiler, thus you don&rsquo;t need to worry about nop execution.</p><h2 id=6-branch-predictionsgcc-extension>#6 Branch predictions(GCC extension)</h2><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
 </span><span class=lnt>2
 </span><span class=lnt>3
