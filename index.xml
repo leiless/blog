@@ -23,7 +23,11 @@ It turns out that the concept can be generalized for string hashing.
 Leading out a simple question: How you do check if a string inside a small set?
 Let&amp;rsquo;s concrete the question, consider we&amp;rsquo;re about to writing a C lexer.
 The first step is to parse each token, we need to issue an error if any token mismatch the finite-state machine.
-For example, like a variable name categorized into reserved keywords.</description></item><item><title>Compile shadowsocks-libev statically</title><link>https://leiless.me/posts/compile-ss-libev/</link><pubDate>Mon, 31 Jul 2017 00:00:00 +0000</pubDate><guid>https://leiless.me/posts/compile-ss-libev/</guid><description>(Update 2021-01-01: this article has been revised to adopt latest ss-libev)
+For example, like a variable name categorized into reserved keywords.</description></item><item><title>XNU kernel debugging via VMWare Fusion</title><link>https://leiless.me/posts/debug_xnu/</link><pubDate>Tue, 12 Sep 2017 00:00:00 +0000</pubDate><guid>https://leiless.me/posts/debug_xnu/</guid><description>Prelude Being able to debugging the XNU kernel is one of basic skill of my work.
+It&amp;rsquo;s not daunting, but a boring job anyway.
+So I decided to wrapup a post to summarize how to setup a debug environment for XNU kernel. Hopefully, it should be a canonical way to do that.
+Confess This article partly taken from Damien DeVille&amp;rsquo;s Kernel debugging with LLDB and VMware Fusion
+The very first thing when you want to debug XNU kernel is to setup a proper debugging environment, that is easy even it&amp;rsquo;s your first time get to know about them.</description></item><item><title>Compile shadowsocks-libev statically</title><link>https://leiless.me/posts/compile-ss-libev/</link><pubDate>Mon, 31 Jul 2017 00:00:00 +0000</pubDate><guid>https://leiless.me/posts/compile-ss-libev/</guid><description>(Update 2021-01-01: this article has been revised to adopt latest ss-libev)
 Previously I&amp;rsquo;ve discussed how to compile and run an user-mode Linux.
 In this post, I&amp;rsquo;ll talk about how to compile a statically-linked shadowsocks-libev.
  Preparation Before we do anything, we need to install basic build packages.
