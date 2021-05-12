@@ -1,4 +1,21 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>一个程序员的辩白</title><link>https://leiless.me/</link><description>Recent content on 一个程序员的辩白</description><generator>Hugo -- gohugo.io</generator><language>zh-CN</language><lastBuildDate>Fri, 01 Jan 2021 00:00:00 +0000</lastBuildDate><atom:link href="https://leiless.me/index.xml" rel="self" type="application/rss+xml"/><item><title>2020年终总结</title><link>https://leiless.me/posts/2020-retrospect/</link><pubDate>Fri, 01 Jan 2021 00:00:00 +0000</pubDate><guid>https://leiless.me/posts/2020-retrospect/</guid><description>咳咳，2020年的年终总结的主题是，忆苦思甜。
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>一个程序员的辩白</title><link>https://leiless.me/</link><description>Recent content on 一个程序员的辩白</description><generator>Hugo -- gohugo.io</generator><language>zh-CN</language><lastBuildDate>Sat, 16 Jan 2021 00:00:00 +0000</lastBuildDate><atom:link href="https://leiless.me/index.xml" rel="self" type="application/rss+xml"/><item><title>frp + trojan 组网提高网络质量</title><link>https://leiless.me/posts/frp-trojan/</link><pubDate>Sat, 16 Jan 2021 00:00:00 +0000</pubDate><guid>https://leiless.me/posts/frp-trojan/</guid><description>前段时间，家庭网络劣质化的厉害，可能是触碰到了土啬的逆鳞？
+当然针对这种情况解决方法无非下面的几种情况：
+光猫重新拨号，大概率获得一个新的NAT IP，也许可以满血复活。 换一个代理节点。 用IPLC线路/IPLC转发。 代理套CDN（需要代理软件的支持）。 以上除了最后一种方法其他我都试过。
+针对第三点需要特殊说明一下，由于资金的限制，我试过IPLC NAT和IPLC转发，不过感觉不是太稳定，很容易受到友商DDoS照顾，体验会比较差。
+针对第四点，最近百度云加速的关于严格控制使用WebSoket协议的通知也使得CDN使用门槛变高。
+另外，很多人使用Clouflare CDN来加速访问，其实是不符合其服务条款的。
+ 经过我一段时间的折腾，总结出了一个实际操作可行的解决方案。
+整个解决方案可以浓缩为下图：
+其中VPS端运行frps(frp server)，NAT device端运行frpc和代理软件，NAT device一般来说是家庭PC机、公司的VM等。
+这样VPS和NAT device组成了Peer。
+ 当然，上面这种方式并没有解决网络劣质化的问题，一种比较理想的方式是：
+VPS为国内的云服务器。
+NAT device为公司VM，并且是专线网络（不过土啬）。
+这样本质上是利用云服务器穿透到公司网络转发出去，也即利用公司的网络当跳板，规避流量审查。
+不过，第二点并不具备普遍性，可能只有部分互联网从业者有这种条件。
+针对没有专线网络的情况，可以考虑使用家庭带宽，在移动设备上的网络QoS可能会好一些。 当然，这种情况没有解决开头说到的问题。
+ 本文将演示fatedier/frp + trojan-gfw来实现图上描述的组网方式，其他代理软件原理上是类似的。
+Server side setup 1 2 3 4 5 6 7 8 9 # 下载最新版frp V1=$(curl -sL https://api.github.com/repos/fatedier/frp/releases/latest | grep &amp;#39;&amp;#34;tag_name&amp;#34;:&amp;#39; | cut -d&amp;#39;&amp;#34;&amp;#39; -f4) V2=$(echo $V1 | cut -c2-) OS=$(uname -s | tr &amp;#39;[:upper:]&amp;#39; &amp;#39;[:lower:]&amp;#39;) AR=$(uname -m | sed &amp;#39;s/^x86_64$/amd64/&amp;#39;) wget &amp;#34;https://github.</description></item><item><title>2020年终总结</title><link>https://leiless.me/posts/2020-retrospect/</link><pubDate>Fri, 01 Jan 2021 00:00:00 +0000</pubDate><guid>https://leiless.me/posts/2020-retrospect/</guid><description>咳咳，2020年的年终总结的主题是，忆苦思甜。
 几年前就有每年写一篇总结的想法，不过由于总总原因被推迟掉了。本质上还是因为太懒了，另外我觉得写博客是一件很费时间的事情。
 不过这几天陆续在Twitter上看到一些推友发了他们的年终总结，我停下来重新思考这个问题，逝者如斯，我们大概很难在将来的某个节点清楚地知道自己此刻的心境和想法，因此记录便有了其深层次意义。
 前序 在开始正文之前，我觉得有必要提一下我最近看到的 laike9m 发表于2019年的一篇博文 People Die, but Long Live GitHub，节选其中一段：
