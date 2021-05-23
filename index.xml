@@ -1,4 +1,12 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>一个程序员的辩白</title><link>https://leiless.me/</link><description>Recent content on 一个程序员的辩白</description><generator>Hugo -- gohugo.io</generator><language>zh-CN</language><lastBuildDate>Sat, 16 Jan 2021 00:00:00 +0000</lastBuildDate><atom:link href="https://leiless.me/index.xml" rel="self" type="application/rss+xml"/><item><title>frp + trojan 组网提高网络质量</title><link>https://leiless.me/posts/frp-trojan/</link><pubDate>Sat, 16 Jan 2021 00:00:00 +0000</pubDate><guid>https://leiless.me/posts/frp-trojan/</guid><description>前段时间，家庭网络劣质化的厉害，可能是触碰到了土啬的逆鳞？
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>一个程序员的辩白</title><link>https://leiless.me/</link><description>Recent content on 一个程序员的辩白</description><generator>Hugo -- gohugo.io</generator><language>zh-CN</language><lastBuildDate>Thu, 13 May 2021 22:38:59 +0800</lastBuildDate><atom:link href="https://leiless.me/index.xml" rel="self" type="application/rss+xml"/><item><title>Oh My Zsh git status 响应过慢的解决方案</title><link>https://leiless.me/posts/oh-my-zsh-git-status-slow/</link><pubDate>Thu, 13 May 2021 22:38:59 +0800</pubDate><guid>https://leiless.me/posts/oh-my-zsh-git-status-slow/</guid><description>ohmyzsh/ohmyzsh内置的众多主题中大部分都支持显示git相关的信息。
+比如默认的robbyrussell主题：
+你可以通过
+1 grep -IRl &amp;#39;$(git_prompt_info)&amp;#39; ~/.oh-my-zsh/themes | sort -u | xargs -I{} basename {} .zsh-theme 列出Oh My Zsh所有支持显示git status的主题。
+ 不过当你git clone一个有很多commit历史的Repository的时候，你就会发现Oh My Zsh在终端的体验极差，按一次回车可能需要得等好几秒。
+原因是git status这个命令占用了主要的耗时，git status需要找到索引文件和工作区目录之间的差别，这就需要扫描所有的索引文件，产生大量的磁盘IO（stat(2)）。
+The most resource-intensive part of the status command is finding the difference between index and workdir (git_diff_index_to_workdir in libgit2). Index is a list of all files in the git repository with their last modification times.
+https://github.com/romkatv/gitstatus#problem-statement
+ 以i9-9900T(8C16T), 16G RAM, 512G M.</description></item><item><title>frp + trojan 组网提高网络质量</title><link>https://leiless.me/posts/frp-trojan/</link><pubDate>Sat, 16 Jan 2021 00:00:00 +0000</pubDate><guid>https://leiless.me/posts/frp-trojan/</guid><description>前段时间，家庭网络劣质化的厉害，可能是触碰到了土啬的逆鳞？
 当然针对这种情况解决方法无非下面的几种情况：
 光猫重新拨号，大概率获得一个新的NAT IP，也许可以满血复活。 换一个代理节点。 用IPLC线路/IPLC转发。 代理套CDN（需要代理软件的支持）。 以上除了最后一种方法其他我都试过。
 针对第三点需要特殊说明一下，由于资金的限制，我试过IPLC NAT和IPLC转发，不过感觉不是太稳定，很容易受到友商DDoS照顾，体验会比较差。

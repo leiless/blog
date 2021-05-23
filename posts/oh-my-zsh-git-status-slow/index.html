@@ -1,0 +1,173 @@
+<!doctype html><html lang><head><meta charset=utf-8><meta name=generator content="Hugo 0.83.1"><meta http-equiv=x-ua-compatible content="IE=edge"><meta name=viewport content="width=device-width,initial-scale=1,shrink-to-fit=no"><meta name=twitter:card content="summary"><meta name=twitter:title content="Oh My Zsh git status 响应过慢的解决方案 - 一个程序员的辩白"><meta name=twitter:description content="ohmyzsh/ohmyzsh内置的众多主题中大部分都支持显示git相关的信息。
+比如默认的robbyrussell主题：
+你可以通过
+1  grep -IRl &amp;#39;$(git_prompt_info)&amp;#39; ~/.oh-my-zsh/themes | sort -u | xargs -I{} basename {} .zsh-theme   列出Oh My Zsh所有支持显示git status的主题。
+ 不过当你git clone一个有很多commit历史的Repository的时候，你就会发现Oh My Zsh在终端的体验极差，按一次回车可能需要得等好几秒。
+原因是git status这个命令占用了主要的耗时，git status需要找到索引文件和工作区目录之间的差别，这就需要扫描所有的索引文件，产生大量的磁盘IO（stat(2)）。
+ The most resource-intensive part of the status command is finding the difference between index and workdir (git_diff_index_to_workdir in libgit2). Index is a list of all files in the git repository with their last modification times.
+https://github.com/romkatv/gitstatus#problem-statement
+  以i9-9900T(8C16T), 16G RAM, 512G M."><meta name=twitter:site content="https://leiless.me/"><meta name=twitter:creator content><meta name=twitter:image content="https://leiless.me/avatar.jpg"><meta property="og:locale" content><meta property="og:type" content="article"><meta property="og:title" content="Oh My Zsh git status 响应过慢的解决方案 - 一个程序员的辩白"><meta property="og:description" content="ohmyzsh/ohmyzsh内置的众多主题中大部分都支持显示git相关的信息。
+比如默认的robbyrussell主题：
+你可以通过
+1  grep -IRl &amp;#39;$(git_prompt_info)&amp;#39; ~/.oh-my-zsh/themes | sort -u | xargs -I{} basename {} .zsh-theme   列出Oh My Zsh所有支持显示git status的主题。
+ 不过当你git clone一个有很多commit历史的Repository的时候，你就会发现Oh My Zsh在终端的体验极差，按一次回车可能需要得等好几秒。
+原因是git status这个命令占用了主要的耗时，git status需要找到索引文件和工作区目录之间的差别，这就需要扫描所有的索引文件，产生大量的磁盘IO（stat(2)）。
+ The most resource-intensive part of the status command is finding the difference between index and workdir (git_diff_index_to_workdir in libgit2). Index is a list of all files in the git repository with their last modification times.
+https://github.com/romkatv/gitstatus#problem-statement
+  以i9-9900T(8C16T), 16G RAM, 512G M."><meta property="og:url" content="https://leiless.me/posts/oh-my-zsh-git-status-slow/"><meta property="og:site_name" content="一个程序员的辩白"><meta property="og:image" content="https://leiless.me/avatar.jpg"><title>Oh My Zsh git status 响应过慢的解决方案 - 一个程序员的辩白</title><meta name=author content="Fishbone"><meta name=description content="ohmyzsh/ohmyzsh内置的众多主题中大部分都支持显示git相关的信息。
+比如默认的robbyrussell主题：
+你可以通过
+1  grep -IRl &amp;#39;$(git_prompt_info)&amp;#39; ~/.oh-my-zsh/themes | sort -u | xargs -I{} basename {} .zsh-theme   列出Oh My Zsh所有支持显示git status的主题。
+ 不过当你git clone一个有很多commit历史的Repository的时候，你就会发现Oh My Zsh在终端的体验极差，按一次回车可能需要得等好几秒。
+原因是git status这个命令占用了主要的耗时，git status需要找到索引文件和工作区目录之间的差别，这就需要扫描所有的索引文件，产生大量的磁盘IO（stat(2)）。
+ The most resource-intensive part of the status command is finding the difference between index and workdir (git_diff_index_to_workdir in libgit2). Index is a list of all files in the git repository with their last modification times.
+https://github.com/romkatv/gitstatus#problem-statement
+  以i9-9900T(8C16T), 16G RAM, 512G M."><link rel=stylesheet href="https://fonts.googleapis.com/css?family=Source+Code+Pro|Arvo:400,700"><link rel=stylesheet href=https://leiless.me/css/theme.css><link rel=stylesheet href=https://leiless.me/css/chroma.dracula.css></head><body class="font-serif bg-gray-200 border-t-4 border-blue-500 antialiased"><div class="w-full p-6 md:w-2/3 md:px-0 md:mx-auto xl:w-2/5"><header class=mb-6><div class="mb-6 md:flex md:items-center"><div><a class="text-lg mb-8 inline-block" href=/>&larr; Back Home</a><h1 class="text-4xl font-bold">Oh My Zsh git status 响应过慢的解决方案</h1><time datetime="2021-05-13 22:38:59 +0800">13 May 2021</time></div></div></header><article class=mb-12><p><a href=https://github.com/ohmyzsh/ohmyzsh>ohmyzsh/ohmyzsh</a>内置的<a href=https://github.com/ohmyzsh/ohmyzsh/wiki/Themes>众多主题</a>中大部分都支持显示<code>git</code>相关的信息。</p><p>比如默认的<a href=https://github.com/ohmyzsh/ohmyzsh/wiki/Themes#robbyrussell><code>robbyrussell</code></a>主题：</p><p><img src=https://user-images.githubusercontent.com/49100982/108254738-764b8700-716c-11eb-9a59-4deb8c8c6193.jpg alt></p><p>你可以通过</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-bash data-lang=bash>grep -IRl <span class=s1>&#39;$(git_prompt_info)&#39;</span> ~/.oh-my-zsh/themes <span class=p>|</span> sort -u <span class=p>|</span> xargs -I<span class=o>{}</span> basename <span class=o>{}</span> .zsh-theme
+</code></pre></td></tr></table></div></div><p>列出Oh My Zsh所有支持显示<code>git status</code>的主题。</p><p> </p><p>不过当你<code>git clone</code>一个有很多commit历史的Repository的时候，你就会发现Oh My Zsh在终端的体验极差，按一次回车可能需要得等好几秒。</p><p>原因是<code>git status</code>这个命令占用了主要的耗时，<code>git status</code>需要找到索引文件和工作区目录之间的差别，这就需要扫描所有的索引文件，产生大量的磁盘IO（<a href=https://man7.org/linux/man-pages/man2/stat.2.html><code>stat(2)</code></a>）。</p><blockquote><p>The most resource-intensive part of the <code>status</code> command is finding the difference between <em>index</em> and <em>workdir</em> (<code>git_diff_index_to_workdir</code> in libgit2). Index is a list of all files in the git repository with their last modification times.</p><p><a href=https://github.com/romkatv/gitstatus#problem-statement>https://github.com/romkatv/gitstatus#problem-statement</a></p></blockquote><p> </p><p>以<code>i9-9900T(8C16T), 16G RAM, 512G M.2 NVME SSD</code>和<a href=https://github.com/chromium/chromium><code>chromium/chromium</code></a>为例，单次<code>git status</code>耗时约800ms。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-bash data-lang=bash>$ <span class=nb>time</span> git status --porcelain
+git status --porcelain  0.65s user 0.66s system 166% cpu 0.785 total
+</code></pre></td></tr></table></div></div><p>以2015款MacBook Pro(<code>i5-5287U 2C4T, 16G 1867MHz DDR3, 512G SATA SSD</code>)为例，单次耗时约5s。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-bash data-lang=bash>$ <span class=nb>time</span> git status --porcelain
+git status --porcelain  1.53s user 8.15s system 180% cpu 5.374 total
+</code></pre></td></tr></table></div></div><p> </p><p>以<a href=https://github.com/ohmyzsh/ohmyzsh/blob/master/themes/ys.zsh-theme><code>ys</code></a>主题为例，其文件路径<code>~/.oh-my-zsh/themes/ys.zsh-theme</code>，代码片断：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span><span class=lnt>26
+</span><span class=lnt>27
+</span><span class=lnt>28
+</span><span class=lnt>29
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-bash data-lang=bash><span class=c1># ......</span>
+
+<span class=c1># Git info</span>
+<span class=nb>local</span> <span class=nv>git_info</span><span class=o>=</span><span class=s1>&#39;$(git_prompt_info)&#39;</span>
+
+<span class=c1># ......</span>
+
+<span class=c1># Prompt format:</span>
+<span class=c1>#</span>
+<span class=c1># PRIVILEGES USER @ MACHINE in DIRECTORY on git:BRANCH STATE [TIME] C:LAST_EXIT_CODE</span>
+<span class=c1># $ COMMAND</span>
+<span class=c1>#</span>
+<span class=c1># For example:</span>
+<span class=c1>#</span>
+<span class=c1># % ys @ ys-mbp in ~/.oh-my-zsh on git:master x [21:47:42] C:0</span>
+<span class=c1># $</span>
+<span class=nv>PROMPT</span><span class=o>=</span><span class=s2>&#34;
+</span><span class=s2>%{</span><span class=nv>$terminfo</span><span class=s2>[bold]</span><span class=nv>$fg</span><span class=s2>[blue]%}#%{</span><span class=nv>$reset_color</span><span class=s2>%} \
+</span><span class=s2>%(#,%{</span><span class=nv>$bg</span><span class=s2>[yellow]%}%{</span><span class=nv>$fg</span><span class=s2>[black]%}%n%{</span><span class=nv>$reset_color</span><span class=s2>%},%{</span><span class=nv>$fg</span><span class=s2>[cyan]%}%n) \
+</span><span class=s2>%{</span><span class=nv>$fg</span><span class=s2>[white]%}@ \
+</span><span class=s2>%{</span><span class=nv>$fg</span><span class=s2>[green]%}%m \
+</span><span class=s2>%{</span><span class=nv>$fg</span><span class=s2>[white]%}in \
+</span><span class=s2>%{</span><span class=nv>$terminfo</span><span class=s2>[bold]</span><span class=nv>$fg</span><span class=s2>[yellow]%}%~%{</span><span class=nv>$reset_color</span><span class=s2>%}\
+</span><span class=s2></span><span class=si>${</span><span class=nv>hg_info</span><span class=si>}</span><span class=s2>\
+</span><span class=s2></span><span class=si>${</span><span class=nv>git_info</span><span class=si>}</span><span class=s2>\
+</span><span class=s2></span><span class=si>${</span><span class=nv>venv_info</span><span class=si>}</span><span class=s2>\
+</span><span class=s2> \
+</span><span class=s2>%{</span><span class=nv>$fg</span><span class=s2>[white]%}[%*] </span><span class=nv>$exit_code</span><span class=s2>
+</span><span class=s2>%{</span><span class=nv>$terminfo</span><span class=s2>[bold]</span><span class=nv>$fg</span><span class=s2>[red]%}</span>$<span class=s2> %{</span><span class=nv>$reset_color</span><span class=s2>%}&#34;</span>
+</code></pre></td></tr></table></div></div><p>其<code>git</code>信息的显示是通过调用<code>$(git_prompt_info)</code>来实现。<a href=https://github.com/ohmyzsh/ohmyzsh/blob/master/lib/git.zsh><code>git_prompt_info</code></a>函数实现位于文件<code>~/.oh-my-zsh/lib/git.zsh</code>：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span><span class=lnt>26
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-bash data-lang=bash><span class=c1># ......</span>
+<span class=k>function</span> __git_prompt_git<span class=o>()</span> <span class=o>{</span>
+  <span class=nv>GIT_OPTIONAL_LOCKS</span><span class=o>=</span><span class=m>0</span> <span class=nb>command</span> git <span class=s2>&#34;</span><span class=nv>$@</span><span class=s2>&#34;</span>
+<span class=o>}</span>
+
+<span class=k>function</span> git_prompt_info<span class=o>()</span> <span class=o>{</span>
+  <span class=c1># ......</span>
+
+  <span class=nb>echo</span> <span class=s2>&#34;</span><span class=si>${</span><span class=nv>ZSH_THEME_GIT_PROMPT_PREFIX</span><span class=si>}${</span><span class=nv>ref</span><span class=si>}${</span><span class=nv>upstream</span><span class=si>}</span><span class=k>$(</span>parse_git_dirty<span class=k>)</span><span class=si>${</span><span class=nv>ZSH_THEME_GIT_PROMPT_SUFFIX</span><span class=si>}</span><span class=s2>&#34;</span>
+<span class=o>}</span>
+
+<span class=c1># Checks if working tree is dirty</span>
+<span class=k>function</span> parse_git_dirty<span class=o>()</span> <span class=o>{</span>
+  <span class=nb>local</span> STATUS
+  <span class=nb>local</span> -a FLAGS
+  <span class=nv>FLAGS</span><span class=o>=(</span><span class=s1>&#39;--porcelain&#39;</span><span class=o>)</span>
+  <span class=k>if</span> <span class=o>[[</span> <span class=s2>&#34;</span><span class=k>$(</span>__git_prompt_git config --get oh-my-zsh.hide-dirty<span class=k>)</span><span class=s2>&#34;</span> !<span class=o>=</span> <span class=s2>&#34;1&#34;</span> <span class=o>]]</span><span class=p>;</span> <span class=k>then</span>
+    <span class=c1># ......</span>
+    <span class=nv>STATUS</span><span class=o>=</span><span class=k>$(</span>__git_prompt_git status <span class=si>${</span><span class=nv>FLAGS</span><span class=si>}</span> 2&gt; /dev/null <span class=p>|</span> tail -1<span class=k>)</span>
+  <span class=k>fi</span>
+  <span class=k>if</span> <span class=o>[[</span> -n <span class=nv>$STATUS</span> <span class=o>]]</span><span class=p>;</span> <span class=k>then</span>
+    <span class=nb>echo</span> <span class=s2>&#34;</span><span class=nv>$ZSH_THEME_GIT_PROMPT_DIRTY</span><span class=s2>&#34;</span>
+  <span class=k>else</span>
+    <span class=nb>echo</span> <span class=s2>&#34;</span><span class=nv>$ZSH_THEME_GIT_PROMPT_CLEAN</span><span class=s2>&#34;</span>
+  <span class=k>fi</span>
+<span class=o>}</span>
+</code></pre></td></tr></table></div></div><p>可以看出，最终<code>git_prompt_info</code>会调用<code>git status --porcelain ...</code>来获取<code>git</code>相关的信息。</p><p> </p><p>最近找到一个解决Oh My Zsh <code>git status</code>过慢的方法：</p><p>利用<a href=https://github.com/romkatv/gitstatus>romkatv/gitstatus</a>作为<code>git status</code>的后端用于显示<code>git</code>当前目录的状态。</p><p>我们可以参考<a href=https://github.com/romkatv/gitstatus#using-from-zsh>Using from Zsh</a>一节的描述，利用<code>source ~/gitstatus/gitstatus.prompt.zsh</code>来达到目的。不过其默认的主题样式可能并不是你需要的。</p><p>也可以考虑<code>source ~/gitstatus/gitstatus.plugin.zsh</code>，自行定义提示信息。<code>gitstatus.plugin.zsh</code>相对与<code>gitstatus.prompt.zsh</code>而言更加地底层(low-level)。</p><p>一个比较好的方式是，<a href=https://github.com/romkatv/gitstatus>romkatv/gitstatus</a>组合我们现在正在使用的主题，这样可以做到改动最小，同时保留我们的使用习惯。</p><p>还是以<a href=https://github.com/ohmyzsh/ohmyzsh/blob/master/themes/ys.zsh-theme><code>ys</code></a>主题为例，我们可以这样修改<code>~/.oh-my-zsh/themes/ys.zsh-theme</code>：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-diff data-lang=diff><span class=gh>diff --git a/themes/ys.zsh-theme b/themes/ys.zsh-theme
+</span><span class=gh>index 303c898..2fb564c 100644
+</span><span class=gh></span><span class=gd>--- a/themes/ys.zsh-theme
+</span><span class=gd></span><span class=gi>+++ b/themes/ys.zsh-theme
+</span><span class=gi></span><span class=gu>@@ -13,7 +13,8 @@ YS_VCS_PROMPT_DIRTY=&#34; %{$fg[red]%}x&#34;
+</span><span class=gu></span> YS_VCS_PROMPT_CLEAN=&#34; %{$fg[green]%}o&#34;
+ 
+ # Git info
+<span class=gd>-local git_info=&#39;$(git_prompt_info)&#39;
+</span><span class=gd></span><span class=gi>+source ~/gitstatus/gitstatus.prompt.zsh
+</span><span class=gi>+local git_info=&#39; git:$GITSTATUS_PROMPT&#39;
+</span><span class=gi></span> ZSH_THEME_GIT_PROMPT_PREFIX=&#34;${YS_VCS_PROMPT_PREFIX1}git${YS_VCS_PROMPT_PREFIX2}&#34;
+ ZSH_THEME_GIT_PROMPT_SUFFIX=&#34;$YS_VCS_PROMPT_SUFFIX&#34;
+ ZSH_THEME_GIT_PROMPT_DIRTY=&#34;$YS_VCS_PROMPT_DIRTY&#34;
+</code></pre></td></tr></table></div></div><p>然后新开一个Terminal就可以看到效果了：</p><p><img src=../../images/ys-gitst-zsh-demo.jpg alt></p><p>注意，<code>~/.zshrc</code> 里面设置的<code>ZSH_THEME</code>需要是<code>ys</code>。</p><p> </p><p>当然，也可以考虑直接使用<a href=https://github.com/romkatv/gitstatus><code>gitstatus</code></a>作者的主题<a href=https://github.com/romkatv/powerlevel10k><code>romkatv/powerlevel10k</code></a>。</p><script src=https://utteranc.es/client.js repo=leiless/blog issue-term=pathname label=comment theme=github-light crossorigin=anonymous async></script></article><footer><p><a href=https://leiless.me/>一个程序员的辩白</a> <span style=color:gray>&copy;</span> 2017 - 2021. Proudly made with <a href=https://gohugo.io/ target=_blank>Hugo</a> and <a href=https://tailwindcss.com/ target=_blank>TailwindCSS</a>.</p><p style=margin-top:-15px;font-size:10px>Released under <a href=https://creativecommons.org/licenses/by-nc-sa/4.0/>CC BY-NC-SA 4.0</a> license.</p></footer></div><script async src="https://www.googletagmanager.com/gtag/js?id=G-RMJ7KLHXH8"></script><script>var doNotTrack=!1;if(!doNotTrack){window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag('js',new Date),gtag('config','G-RMJ7KLHXH8',{anonymize_ip:!1})}</script><script>(function(a,c,d,e){if(typeof a.webpushr!='undefined')return;a.webpushr=a.webpushr||function(){(a.webpushr.q=a.webpushr.q||[]).push(arguments)};var b,f=c.getElementsByTagName(d)[0];b=c.createElement(d),b.id=e,b.async=1,b.src="https://cdn.webpushr.com/app.min.js",f.parentNode.appendChild(b)})(window,document,'script','webpushr-jssdk'),webpushr('setup',{key:'BJji5mvLAV3k-EncfEEH_CtK_CdcXWnXc-fvhs7uY1jfOG4xX_RsBmoWvTD0OTyq6TOEB5G5_uFE6Ylpxj5MKEQ'})</script></body></html>
