@@ -14,7 +14,7 @@ https://github.com/romkatv/gitstatus#problem-statement
 原因是git status这个命令占用了主要的耗时，git status需要找到索引文件和工作区目录之间的差别，这就需要扫描所有的索引文件，产生大量的磁盘IO（stat(2)）。
  The most resource-intensive part of the status command is finding the difference between index and workdir (git_diff_index_to_workdir in libgit2). Index is a list of all files in the git repository with their last modification times.
 https://github.com/romkatv/gitstatus#problem-statement
-  以i9-9900T(8C16T), 16G RAM, 512G M."><meta property="og:url" content="https://leiless.me/posts/oh-my-zsh-git-status-slow/"><meta property="og:site_name" content="一个程序员的辩白"><meta property="og:image" content="https://leiless.me/avatar.jpg"><title>Oh My Zsh git status 响应过慢的解决方案 - 一个程序员的辩白</title><meta name=author content="Fishbone"><meta name=description content="ohmyzsh/ohmyzsh内置的众多主题中大部分都支持显示git相关的信息。
+  以i9-9900T(8C16T), 16G RAM, 512G M."><meta property="og:url" content="https://leiless.me/posts/oh-my-zsh-git-status-slow-solution/"><meta property="og:site_name" content="一个程序员的辩白"><meta property="og:image" content="https://leiless.me/avatar.jpg"><title>Oh My Zsh git status 响应过慢的解决方案 - 一个程序员的辩白</title><meta name=author content="Fishbone"><meta name=description content="ohmyzsh/ohmyzsh内置的众多主题中大部分都支持显示git相关的信息。
 比如默认的robbyrussell主题：
 你可以通过
 1  grep -IRl &amp;#39;$(git_prompt_info)&amp;#39; ~/.oh-my-zsh/themes | sort -u | xargs -I{} basename {} .zsh-theme   列出Oh My Zsh所有支持显示git status的主题。
