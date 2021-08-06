@@ -1,13 +1,161 @@
-<!doctype html><html lang><head><meta charset=utf-8><meta name=generator content="Hugo 0.83.1"><meta http-equiv=x-ua-compatible content="IE=edge"><meta name=viewport content="width=device-width,initial-scale=1,shrink-to-fit=no"><meta name=twitter:card content="summary"><meta name=twitter:title content="Endianness Matters - 一个程序员的辩白"><meta name=twitter:description content="Things happen rarely if you&amp;rsquo;re in an application-level development and want to write endian-independant code.
+<!doctype html><html lang>
+<head>
+<meta charset=utf-8>
+<meta name=generator content="Hugo 0.87.0">
+<meta http-equiv=x-ua-compatible content="IE=edge">
+<meta name=viewport content="width=device-width,initial-scale=1,shrink-to-fit=no">
+<meta name=twitter:card content="summary">
+<meta name=twitter:title content="Endianness Matters - 一个程序员的辩白">
+<meta name=twitter:description content="Things happen rarely if you&amp;rsquo;re in an application-level development and want to write endian-independant code.
 Occasionally, you need to consider about endian in low-level view, but that might confusing and even erroneous if you don&amp;rsquo;t fully understand it.
  Before we begin to talking about why endian matters, a brief introduction of endian is needed.
- Endian for short, is the physical organization schema of the sequential stream. Note that it&amp;rsquo;s not exclusive only to computer science field."><meta name=twitter:site content="https://leiless.me/"><meta name=twitter:creator content><meta name=twitter:image content="https://leiless.me/avatar.jpg"><meta property="og:locale" content><meta property="og:type" content="article"><meta property="og:title" content="Endianness Matters - 一个程序员的辩白"><meta property="og:description" content="Things happen rarely if you&amp;rsquo;re in an application-level development and want to write endian-independant code.
+ Endian for short, is the physical organization schema of the sequential stream. Note that it&amp;rsquo;s not exclusive only to computer science field.">
+<meta name=twitter:site content="https://leiless.me/">
+<meta name=twitter:creator content>
+<meta name=twitter:image content="https://leiless.me/avatar.jpg">
+<meta property="og:locale" content>
+<meta property="og:type" content="article">
+<meta property="og:title" content="Endianness Matters - 一个程序员的辩白">
+<meta property="og:description" content="Things happen rarely if you&amp;rsquo;re in an application-level development and want to write endian-independant code.
 Occasionally, you need to consider about endian in low-level view, but that might confusing and even erroneous if you don&amp;rsquo;t fully understand it.
  Before we begin to talking about why endian matters, a brief introduction of endian is needed.
- Endian for short, is the physical organization schema of the sequential stream. Note that it&amp;rsquo;s not exclusive only to computer science field."><meta property="og:url" content="https://leiless.me/posts/endianness-matters/"><meta property="og:site_name" content="一个程序员的辩白"><meta property="og:image" content="https://leiless.me/avatar.jpg"><title>Endianness Matters - 一个程序员的辩白</title><meta name=author content="Fishbone"><meta name=description content="Things happen rarely if you&amp;rsquo;re in an application-level development and want to write endian-independant code.
+ Endian for short, is the physical organization schema of the sequential stream. Note that it&amp;rsquo;s not exclusive only to computer science field.">
+<meta property="og:url" content="https://leiless.me/posts/endianness-matters/">
+<meta property="og:site_name" content="一个程序员的辩白">
+<meta property="og:image" content="https://leiless.me/avatar.jpg">
+<title>Endianness Matters - 一个程序员的辩白</title>
+<meta name=author content="Fishbone">
+<meta name=description content="Things happen rarely if you&amp;rsquo;re in an application-level development and want to write endian-independant code.
 Occasionally, you need to consider about endian in low-level view, but that might confusing and even erroneous if you don&amp;rsquo;t fully understand it.
  Before we begin to talking about why endian matters, a brief introduction of endian is needed.
- Endian for short, is the physical organization schema of the sequential stream. Note that it&amp;rsquo;s not exclusive only to computer science field."><link rel=stylesheet href="https://fonts.googleapis.com/css?family=Source+Code+Pro|Arvo:400,700"><link rel=stylesheet href=https://leiless.me/css/theme.css><link rel=stylesheet href=https://leiless.me/css/chroma.dracula.css></head><body class="font-serif bg-gray-200 border-t-4 border-blue-500 antialiased"><div class="w-full p-6 md:w-2/3 md:px-0 md:mx-auto xl:w-2/5"><header class=mb-6><div class="mb-6 md:flex md:items-center"><div><a class="text-lg mb-8 inline-block" href=/>&larr; Back Home</a><h1 class="text-4xl font-bold">Endianness Matters</h1><time datetime="2017-07-22 00:00:00 UTC">22 Jul 2017</time></div></div></header><article class=mb-12><p>Things happen rarely if you&rsquo;re in an application-level development and want to write endian-independant code.</p><p>Occasionally, you need to consider about endian in low-level view, but that might confusing and even erroneous if you don&rsquo;t fully understand it.</p><p> </p><p>Before we begin to talking about why endian matters, a brief introduction of endian is needed.</p><blockquote><p>Endian for short, is the physical organization schema of the sequential stream. Note that it&rsquo;s not exclusive only to computer science field.</p></blockquote><p>Historically reasons, now there&rsquo;re three endianness types mainly:</p><ul><li><p>Little endianness</p></li><li><p>Big endianness</p></li><li><p>Middle endianness(Mixed endianess, PDP endianness, rarely seen nowadays)</p></li></ul><p> </p><p>Now, assuming <code>x</code> is a 32-bit integer. Its value, say, <code>0x0a0b0c0d</code>. Memory layouts of those three endianness can be:</p><p>Little endianness:</p><table><thead><tr><th>Address</th><th><code>0x1000</code></th><th><code>0x1001</code></th><th><code>0x1002</code></th><th><code>0x1003</code></th></tr></thead><tbody><tr><td>Value</td><td><code>0x0d</code></td><td><code>0x0c</code></td><td><code>0x0b</code></td><td><code>0x0a</code></td></tr></tbody></table><p>Big endianness:</p><table><thead><tr><th>Address</th><th><code>0x1000</code></th><th><code>0x1001</code></th><th><code>0x1002</code></th><th><code>0x1003</code></th></tr></thead><tbody><tr><td>Value</td><td><code>0x0a</code></td><td><code>0x0b</code></td><td><code>0x0c</code></td><td><code>0x0d</code></td></tr></tbody></table><p>Middle endianness:</p><table><thead><tr><th>Address</th><th><code>0x1000</code></th><th><code>0x1001</code></th><th><code>0x1002</code></th><th><code>0x1003</code></th></tr></thead><tbody><tr><td>Value</td><td><code>0x0b</code></td><td><code>0x0a</code></td><td><code>0x0d</code></td><td><code>0x0c</code></td></tr></tbody></table><p> </p><p>Clearly, the big endianness follows the writing(reading) habit of right-handed people. Also the little endianness follows the habit of left-handed people.</p><p>As for middle endianness, it&rsquo;s rarely used. It first appeared in PDP-11 machine, you might come across in some embedded devices hardwares like ARM.</p><p>So what&rsquo;s the audience of endianness?</p><blockquote><p>Endianness only makes sense when you’re breaking up a multi-byte quantity and are trying to store the bytes at consecutive memory locations. However, if you have a 32-bit register storing a 32-bit value, it makes no sense to talk about endianness. The register is neither big-endian nor little-endian; it’s just a register holding a 32-bit value. The rightmost bit is the least significant bit, and the leftmost bit is the most significant bit.</p><p>Some people classify a <strong>register</strong> as a big-endian, because it stores its most significant byte at the lowest memory address.</p></blockquote><p>Quoted from <a href=https://developer.ibm.com/articles/au-endianc/#registers-and-endianness>Registers and endianness - Writing endian-independent code in C</a></p><p> </p><p>So there&rsquo;re serveral cases you need to consider about endianness:</p><ul><li><p>Reading/Writing integers from file between different platforms.</p></li><li><p>Sending/Receiving integers between different networks.</p></li></ul><p>Endianness doesn&rsquo;t apply to everything, bit operations doesn&rsquo;t depend on endianness.</p><p>The same time, C-style string also doesn&rsquo;t depend on endianness(It&rsquo;s byte-wise, so the results are same for different endianness)</p><p> </p><p>First I&rsquo;ll show you how position-dependent bit operations affects the result:</p><p>Now let&rsquo;s look how reading/writing integers affects the result:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt> 1
+ Endian for short, is the physical organization schema of the sequential stream. Note that it&amp;rsquo;s not exclusive only to computer science field.">
+<link rel=stylesheet href="https://fonts.googleapis.com/css?family=Source+Code+Pro|Arvo:400,700">
+<link rel=stylesheet href=https://leiless.me/css/theme.css>
+<link rel=stylesheet href=https://leiless.me/css/chroma.dracula.css>
+</head>
+<body class="font-serif bg-gray-200 border-t-4 border-blue-500 antialiased">
+<div class="w-full p-6 md:w-2/3 md:px-0 md:mx-auto xl:w-2/5">
+<header class=mb-6>
+<div class="mb-6 md:flex md:items-center">
+<div>
+<a class="text-lg mb-8 inline-block" href=/>&larr; Back Home</a>
+<h1 class="text-4xl font-bold">Endianness Matters</h1>
+<time datetime="2017-07-22 00:00:00 UTC">22 Jul 2017</time>
+</div>
+</div>
+</header>
+<article class=mb-12>
+<p>Things happen rarely if you&rsquo;re in an application-level development and want to write endian-independant code.</p>
+<p>Occasionally, you need to consider about endian in low-level view, but that might confusing and even erroneous if you don&rsquo;t fully understand it.</p>
+<p> </p>
+<p>Before we begin to talking about why endian matters, a brief introduction of endian is needed.</p>
+<blockquote>
+<p>Endian for short, is the physical organization schema of the sequential stream. Note that it&rsquo;s not exclusive only to computer science field.</p>
+</blockquote>
+<p>Historically reasons, now there&rsquo;re three endianness types mainly:</p>
+<ul>
+<li>
+<p>Little endianness</p>
+</li>
+<li>
+<p>Big endianness</p>
+</li>
+<li>
+<p>Middle endianness(Mixed endianess, PDP endianness, rarely seen nowadays)</p>
+</li>
+</ul>
+<p> </p>
+<p>Now, assuming <code>x</code> is a 32-bit integer. Its value, say, <code>0x0a0b0c0d</code>. Memory layouts of those three endianness can be:</p>
+<p>Little endianness:</p>
+<table>
+<thead>
+<tr>
+<th>Address</th>
+<th><code>0x1000</code></th>
+<th><code>0x1001</code></th>
+<th><code>0x1002</code></th>
+<th><code>0x1003</code></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Value</td>
+<td><code>0x0d</code></td>
+<td><code>0x0c</code></td>
+<td><code>0x0b</code></td>
+<td><code>0x0a</code></td>
+</tr>
+</tbody>
+</table>
+<p>Big endianness:</p>
+<table>
+<thead>
+<tr>
+<th>Address</th>
+<th><code>0x1000</code></th>
+<th><code>0x1001</code></th>
+<th><code>0x1002</code></th>
+<th><code>0x1003</code></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Value</td>
+<td><code>0x0a</code></td>
+<td><code>0x0b</code></td>
+<td><code>0x0c</code></td>
+<td><code>0x0d</code></td>
+</tr>
+</tbody>
+</table>
+<p>Middle endianness:</p>
+<table>
+<thead>
+<tr>
+<th>Address</th>
+<th><code>0x1000</code></th>
+<th><code>0x1001</code></th>
+<th><code>0x1002</code></th>
+<th><code>0x1003</code></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Value</td>
+<td><code>0x0b</code></td>
+<td><code>0x0a</code></td>
+<td><code>0x0d</code></td>
+<td><code>0x0c</code></td>
+</tr>
+</tbody>
+</table>
+<p> </p>
+<p>Clearly, the big endianness follows the writing(reading) habit of right-handed people. Also the little endianness follows the habit of left-handed people.</p>
+<p>As for middle endianness, it&rsquo;s rarely used. It first appeared in PDP-11 machine, you might come across in some embedded devices hardwares like ARM.</p>
+<p>So what&rsquo;s the audience of endianness?</p>
+<blockquote>
+<p>Endianness only makes sense when you’re breaking up a multi-byte quantity and are trying to store the bytes at consecutive memory locations. However, if you have a 32-bit register storing a 32-bit value, it makes no sense to talk about endianness. The register is neither big-endian nor little-endian; it’s just a register holding a 32-bit value. The rightmost bit is the least significant bit, and the leftmost bit is the most significant bit.</p>
+<p>Some people classify a <strong>register</strong> as a big-endian, because it stores its most significant byte at the lowest memory address.</p>
+</blockquote>
+<p>Quoted from <a href=https://developer.ibm.com/articles/au-endianc/#registers-and-endianness>Registers and endianness - Writing endian-independent code in C</a></p>
+<p> </p>
+<p>So there&rsquo;re serveral cases you need to consider about endianness:</p>
+<ul>
+<li>
+<p>Reading/Writing integers from file between different platforms.</p>
+</li>
+<li>
+<p>Sending/Receiving integers between different networks.</p>
+</li>
+</ul>
+<p>Endianness doesn&rsquo;t apply to everything, bit operations doesn&rsquo;t depend on endianness.</p>
+<p>The same time, C-style string also doesn&rsquo;t depend on endianness(It&rsquo;s byte-wise, so the results are same for different endianness)</p>
+<p> </p>
+<p>First I&rsquo;ll show you how position-dependent bit operations affects the result:</p>
+<p>Now let&rsquo;s look how reading/writing integers affects the result:</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
 </span><span class=lnt> 2
 </span><span class=lnt> 3
 </span><span class=lnt> 4
@@ -35,7 +183,9 @@ Occasionally, you need to consider about endian in low-level view, but that migh
 </span><span class=lnt>26
 </span><span class=lnt>27
 </span><span class=lnt>28
-</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-c data-lang=c><span class=cp>#include</span> <span class=cpf>&lt;stdio.h&gt;</span><span class=cp>
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-c data-lang=c><span class=cp>#include</span> <span class=cpf>&lt;stdio.h&gt;</span><span class=cp>
 </span><span class=cp>#include</span> <span class=cpf>&lt;string.h&gt;</span><span class=cp>
 </span><span class=cp></span> 
 <span class=kt>int</span> <span class=nf>main</span> <span class=p>(</span><span class=kt>void</span><span class=p>)</span>
@@ -63,27 +213,63 @@ Occasionally, you need to consider about endian in low-level view, but that migh
 
     <span class=k>return</span> <span class=mi>0</span><span class=p>;</span>
 <span class=p>}</span>
-</code></pre></td></tr></table></div></div><p>If you compile above code, contents of file <code>output</code> varies(Using <code>hexdump</code> utilities to show the result, with argument <code>-C</code>):</p><p>Little endianness:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
+</code></pre></td></tr></table>
+</div>
+</div><p>If you compile above code, contents of file <code>output</code> varies(Using <code>hexdump</code> utilities to show the result, with argument <code>-C</code>):</p>
+<p>Little endianness:</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
 </span><span class=lnt>2
-</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-fallback data-lang=fallback>00000000  66 6f 6f 00 0d 0c 0b 0a  62 61 72 00              |foo.....bar.|
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback>00000000  66 6f 6f 00 0d 0c 0b 0a  62 61 72 00              |foo.....bar.|
 0000000c
-</code></pre></td></tr></table></div></div><p>Big endianness:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
+</code></pre></td></tr></table>
+</div>
+</div><p>Big endianness:</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
 </span><span class=lnt>2
-</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-fallback data-lang=fallback>00000000  66 6f 6f 00 0a 0b 0c 0d  62 61 72 00              |foo.....bar.|
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback>00000000  66 6f 6f 00 0a 0b 0c 0d  62 61 72 00              |foo.....bar.|
 0000000c
-</code></pre></td></tr></table></div></div><p>Middle endianness:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
+</code></pre></td></tr></table>
+</div>
+</div><p>Middle endianness:</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
 </span><span class=lnt>2
-</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-fallback data-lang=fallback>00000000  66 6f 6f 00 0b 0a 0d 0c  62 61 72 00              |foo.....bar.|
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback>00000000  66 6f 6f 00 0b 0a 0d 0c  62 61 72 00              |foo.....bar.|
 0000000c
-</code></pre></td></tr></table></div></div><p>The byte between offset 4 to 7 varies in different architectures. If you want to read/write the <code>data.two</code> in a correct way, you may need to add an extra field to indicate the endianness when writing to the file <code>output</code>, like:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
+</code></pre></td></tr></table>
+</div>
+</div><p>The byte between offset 4 to 7 varies in different architectures. If you want to read/write the <code>data.two</code> in a correct way, you may need to add an extra field to indicate the endianness when writing to the file <code>output</code>, like:</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
 </span><span class=lnt>2
 </span><span class=lnt>3
 </span><span class=lnt>4
-</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-c data-lang=c><span class=k>struct</span> <span class=p>{</span>
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-c data-lang=c><span class=k>struct</span> <span class=p>{</span>
     <span class=kt>char</span> <span class=n>endian</span><span class=p>;</span>    <span class=cm>/* Indicate what&#39;s endianness when writing to this struct on your machine */</span>
     <span class=cm>/* (data fields) ... */</span>
 <span class=p>}</span> <span class=n>data</span><span class=p>;</span>
-</code></pre></td></tr></table></div></div><p>Or, alternatively, convert the numeric value into its corresponding string representation.</p><p> </p><p>You can see how <a href=https://github.com/vadmium/module-init-tools/blob/master/util.c#L200><code>module-init-tools/util.c:native_endianness()</code></a> implment endianness check:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt> 1
+</code></pre></td></tr></table>
+</div>
+</div><p>Or, alternatively, convert the numeric value into its corresponding string representation.</p>
+<p> </p>
+<p>You can see how <a href=https://github.com/vadmium/module-init-tools/blob/master/util.c#L200><code>module-init-tools/util.c:native_endianness()</code></a> implment endianness check:</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
 </span><span class=lnt> 2
 </span><span class=lnt> 3
 </span><span class=lnt> 4
@@ -93,7 +279,9 @@ Occasionally, you need to consider about endian in low-level view, but that migh
 </span><span class=lnt> 8
 </span><span class=lnt> 9
 </span><span class=lnt>10
-</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-c data-lang=c><span class=cm>/*
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-c data-lang=c><span class=cm>/*
 </span><span class=cm> * Get CPU endianness. 0 = unknown, 1 = ELFDATA2LSB = little, 2 = ELFDATA2MSB = big
 </span><span class=cm> */</span>
 <span class=kt>int</span> <span class=nf>__attribute__</span> <span class=p>((</span><span class=n>pure</span><span class=p>))</span> <span class=n>native_endianness</span><span class=p>()</span>
@@ -101,9 +289,42 @@ Occasionally, you need to consider about endian in low-level view, but that migh
     <span class=cm>/* Encoding the endianness enums in a string and then reading that
 </span><span class=cm>     * string as a 32-bit int, returns the correct endianness automagically.
 </span><span class=cm>     */</span>
-    <span class=k>return</span> <span class=p>(</span><span class=kt>char</span><span class=p>)</span> <span class=o>*</span><span class=p>((</span><span class=n>uint32_t</span><span class=o>*</span><span class=p>)(</span><span class=s>&#34;</span><span class=se>\1\0\0\2</span><span class=s>&#34;</span><span class=p>));</span>
+    <span class=k>return</span> <span class=p>(</span><span class=kt>char</span><span class=p>)</span> <span class=o>*</span><span class=p>((</span><span class=kt>uint32_t</span><span class=o>*</span><span class=p>)(</span><span class=s>&#34;</span><span class=se>\1\0\0\2</span><span class=s>&#34;</span><span class=p>));</span>
 <span class=p>}</span>
-</code></pre></td></tr></table></div></div><table><thead><tr><th>Endianness type</th><th>Memory representation</th><th>Last byte</th></tr></thead><tbody><tr><td>little</td><td><code>0x02000001</code></td><td><code>0x01</code></td></tr><tr><td>big</td><td><code>0x01000002</code></td><td><code>0x02</code></td></tr><tr><td>unknown</td><td><code>0x00010200</code></td><td><code>0x00</code></td></tr></tbody></table><p>It&rsquo;s a concise solution indeed, the idea behind this routine is simple, making <code>"\1\0\0\2"</code> to a <code>uint32_t *</code> pointer and fetch its least significant byte. the result is the type of endianness, revealed in above table.</p><p> </p><p>Also, <a href=https://fossies.org/linux/ffe/src/endian.c><code>ffe-0.3.7-1/src/endian.c:check_system_endianess()</code></a> implement the check in a novel way:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt> 1
+</code></pre></td></tr></table>
+</div>
+</div><table>
+<thead>
+<tr>
+<th>Endianness type</th>
+<th>Memory representation</th>
+<th>Last byte</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>little</td>
+<td><code>0x02000001</code></td>
+<td><code>0x01</code></td>
+</tr>
+<tr>
+<td>big</td>
+<td><code>0x01000002</code></td>
+<td><code>0x02</code></td>
+</tr>
+<tr>
+<td>unknown</td>
+<td><code>0x00010200</code></td>
+<td><code>0x00</code></td>
+</tr>
+</tbody>
+</table>
+<p>It&rsquo;s a concise solution indeed, the idea behind this routine is simple, making <code>"\1\0\0\2"</code> to a <code>uint32_t *</code> pointer and fetch its least significant byte. the result is the type of endianness, revealed in above table.</p>
+<p> </p>
+<p>Also, <a href=https://fossies.org/linux/ffe/src/endian.c><code>ffe-0.3.7-1/src/endian.c:check_system_endianess()</code></a> implement the check in a novel way:</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
 </span><span class=lnt> 2
 </span><span class=lnt> 3
 </span><span class=lnt> 4
@@ -131,23 +352,25 @@ Occasionally, you need to consider about endian in low-level view, but that migh
 </span><span class=lnt>26
 </span><span class=lnt>27
 </span><span class=lnt>28
-</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-c data-lang=c><span class=cp>#define F_UNKNOWN_ENDIAN 0
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-c data-lang=c><span class=cp>#define F_UNKNOWN_ENDIAN 0
 </span><span class=cp>#define F_BIG_ENDIAN 1
 </span><span class=cp>#define F_LITTLE_ENDIAN 3
 </span><span class=cp></span>
 <span class=cp>#define LONG_INT 0x0a0b0c0d
 </span><span class=cp></span>
-<span class=n>uint8_t</span> <span class=n>be</span><span class=p>[</span><span class=mi>4</span><span class=p>]</span><span class=o>=</span><span class=p>{</span><span class=mh>0x0a</span><span class=p>,</span><span class=mh>0x0b</span><span class=p>,</span><span class=mh>0x0c</span><span class=p>,</span><span class=mh>0x0d</span><span class=p>};</span>
-<span class=n>uint8_t</span> <span class=n>le</span><span class=p>[</span><span class=mi>4</span><span class=p>]</span><span class=o>=</span><span class=p>{</span><span class=mh>0x0d</span><span class=p>,</span><span class=mh>0x0c</span><span class=p>,</span><span class=mh>0x0b</span><span class=p>,</span><span class=mh>0x0a</span><span class=p>};</span>
-<span class=n>uint8_t</span> <span class=n>pe</span><span class=p>[</span><span class=mi>4</span><span class=p>]</span><span class=o>=</span><span class=p>{</span><span class=mh>0x0b</span><span class=p>,</span><span class=mh>0x0a</span><span class=p>,</span><span class=mh>0x0d</span><span class=p>,</span><span class=mh>0x0c</span><span class=p>};</span>
+<span class=kt>uint8_t</span> <span class=n>be</span><span class=p>[</span><span class=mi>4</span><span class=p>]</span><span class=o>=</span><span class=p>{</span><span class=mh>0x0a</span><span class=p>,</span><span class=mh>0x0b</span><span class=p>,</span><span class=mh>0x0c</span><span class=p>,</span><span class=mh>0x0d</span><span class=p>};</span>
+<span class=kt>uint8_t</span> <span class=n>le</span><span class=p>[</span><span class=mi>4</span><span class=p>]</span><span class=o>=</span><span class=p>{</span><span class=mh>0x0d</span><span class=p>,</span><span class=mh>0x0c</span><span class=p>,</span><span class=mh>0x0b</span><span class=p>,</span><span class=mh>0x0a</span><span class=p>};</span>
+<span class=kt>uint8_t</span> <span class=n>pe</span><span class=p>[</span><span class=mi>4</span><span class=p>]</span><span class=o>=</span><span class=p>{</span><span class=mh>0x0b</span><span class=p>,</span><span class=mh>0x0a</span><span class=p>,</span><span class=mh>0x0d</span><span class=p>,</span><span class=mh>0x0c</span><span class=p>};</span>
 
 <span class=n>size_t</span> <span class=n>target_size</span> <span class=o>=</span> <span class=mi>16</span><span class=p>;</span>
-<span class=n>uint8_t</span> <span class=o>*</span><span class=n>target</span> <span class=o>=</span> <span class=nb>NULL</span><span class=p>;</span>
+<span class=kt>uint8_t</span> <span class=o>*</span><span class=n>target</span> <span class=o>=</span> <span class=nb>NULL</span><span class=p>;</span>
 
 <span class=kt>int</span>
 <span class=nf>check_system_endianess</span><span class=p>()</span>
 <span class=p>{</span>
-    <span class=n>uint32_t</span> <span class=n>l</span> <span class=o>=</span> <span class=n>LONG_INT</span><span class=p>;</span>
+    <span class=kt>uint32_t</span> <span class=n>l</span> <span class=o>=</span> <span class=n>LONG_INT</span><span class=p>;</span>
 
     <span class=k>if</span><span class=p>(</span><span class=n>target</span> <span class=o>==</span> <span class=nb>NULL</span><span class=p>)</span> <span class=n>target</span> <span class=o>=</span> <span class=n>xmalloc</span><span class=p>(</span><span class=n>target_size</span><span class=p>);</span> <span class=c1>// conversion buffer is reserved with malloc in order to ensure proper aligment
 </span><span class=c1></span>
@@ -159,7 +382,13 @@ Occasionally, you need to consider about endian in low-level view, but that migh
     <span class=p>}</span>
     <span class=k>return</span> <span class=n>F_UNKNOWN_ENDIAN</span><span class=p>;</span>
 <span class=p>}</span>
-</code></pre></td></tr></table></div></div><p> </p><p>With above discussion, a more genetic check routine is given, it fixed the problem with <code>native_endianness()</code> and less tedious:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt> 1
+</code></pre></td></tr></table>
+</div>
+</div><p> </p>
+<p>With above discussion, a more genetic check routine is given, it fixed the problem with <code>native_endianness()</code> and less tedious:</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
 </span><span class=lnt> 2
 </span><span class=lnt> 3
 </span><span class=lnt> 4
@@ -188,7 +417,9 @@ Occasionally, you need to consider about endian in low-level view, but that migh
 </span><span class=lnt>27
 </span><span class=lnt>28
 </span><span class=lnt>29
-</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-c data-lang=c><span class=cm>/*
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-c data-lang=c><span class=cm>/*
 </span><span class=cm> * A more generic endianness check based on module-init-tools/util.c
 </span><span class=cm> * NOTE: Assuming `unsigned int *&#39; sized 32-bit
 </span><span class=cm> *
@@ -217,16 +448,74 @@ Occasionally, you need to consider about endian in low-level view, but that migh
 <span class=cp>#define _ENDIAN (*((char *) ((int []) {0x02080401})))
 </span><span class=cp>#define IS_LENDIAN (_ENDIAN &amp; 0x1)
 </span><span class=cp>#define IS_GENDIAN (_ENDIAN &amp; 0x2)
-</span></code></pre></td></tr></table></div></div><p> </p><p>Issues also happen in network layers when sending/receiving data between different machine architectures.</p><blockquote><p>All of the protocol layers in the Transmission Control Protocol and the Internet Protocol (TCP/IP) suite are defined to be big-endian. Any 16-bit or 32-bit value within the various layer headers (such as an IP address, a packet length, or a checksum) must be sent and received with its most significant byte first.</p></blockquote><p>Assuming <code>A</code> establish a TCP socket connection to <code>B</code> whose IP is <code>10.8.6.1</code>. IPv4 uses a unique 32-bit integer to indicate each network host. The dotted IP can be converted in to decimal in the following formula:</p><blockquote><p><em>a.b.c.d = a × 2563 + b × 2562 + c × 2561 + d</em></p></blockquote><p>So, <code>10.8.6.1</code> can be converted to decimal number <code>168297985</code>.</p><p><a href=http://168297985><code>http://168297985</code></a> is a valid url, <a href=http://0x0a080601><code>http://0x0a080601</code></a> is its hex form.</p><p> </p><p>Suppose an 80x86-based machine made a connection to a SPARC-based machine over the internet. 80x86-based machine will convert <code>10.8.6.1</code> into its little-endianness form <code>0x0106080a</code> and transmit byte-by-byte, e.g. <code>01</code>, <code>06</code>, <code>08</code>, <code>0a</code>.</p><p>The SPARC-based machine received the bytes in order of <code>01</code>, <code>06</code>, <code>08</code>, <code>0a</code>, construct it into a big-endianness integer <code>0x0106080a</code>, which misinterpret it as <code>1.6.8.10</code>.</p><p> </p><p>Situations also applied to those middle-endianness machines.</p><blockquote><p>If the stack runs on a little-endian processor, it has to reorder, at run time, the bytes of every multi-byte data field within the various headers of the layers. If the stack runs on a big-endian processor, there&rsquo;s nothing to worry about. For the stack to be portable (so it runs on processors of both types), it has to decide whether or not to do this reordering, typically at compile time.</p></blockquote><p>For other endianness types(like middle-endianness), the reorder also needed, we don&rsquo;t care now, just follow the similiar tacts.</p><p> </p><p>System(e.g. Linux, macOS, BSD, etc.), already provided those <a href=https://man7.org/linux/man-pages/man3/htonl.3.html>conversional functions</a>:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
+</span></code></pre></td></tr></table>
+</div>
+</div><p> </p>
+<p>Issues also happen in network layers when sending/receiving data between different machine architectures.</p>
+<blockquote>
+<p>All of the protocol layers in the Transmission Control Protocol and the Internet Protocol (TCP/IP) suite are defined to be big-endian. Any 16-bit or 32-bit value within the various layer headers (such as an IP address, a packet length, or a checksum) must be sent and received with its most significant byte first.</p>
+</blockquote>
+<p>Assuming <code>A</code> establish a TCP socket connection to <code>B</code> whose IP is <code>10.8.6.1</code>. IPv4 uses a unique 32-bit integer to indicate each network host. The dotted IP can be converted in to decimal in the following formula:</p>
+<blockquote>
+<p><em>a.b.c.d = a × 2563 + b × 2562 + c × 2561 + d</em></p>
+</blockquote>
+<p>So, <code>10.8.6.1</code> can be converted to decimal number <code>168297985</code>.</p>
+<p><a href=http://168297985><code>http://168297985</code></a> is a valid url, <a href=http://0x0a080601><code>http://0x0a080601</code></a> is its hex form.</p>
+<p> </p>
+<p>Suppose an 80x86-based machine made a connection to a SPARC-based machine over the internet. 80x86-based machine will convert <code>10.8.6.1</code> into its little-endianness form <code>0x0106080a</code> and transmit byte-by-byte, e.g. <code>01</code>, <code>06</code>, <code>08</code>, <code>0a</code>.</p>
+<p>The SPARC-based machine received the bytes in order of <code>01</code>, <code>06</code>, <code>08</code>, <code>0a</code>, construct it into a big-endianness integer <code>0x0106080a</code>, which misinterpret it as <code>1.6.8.10</code>.</p>
+<p> </p>
+<p>Situations also applied to those middle-endianness machines.</p>
+<blockquote>
+<p>If the stack runs on a little-endian processor, it has to reorder, at run time, the bytes of every multi-byte data field within the various headers of the layers. If the stack runs on a big-endian processor, there&rsquo;s nothing to worry about. For the stack to be portable (so it runs on processors of both types), it has to decide whether or not to do this reordering, typically at compile time.</p>
+</blockquote>
+<p>For other endianness types(like middle-endianness), the reorder also needed, we don&rsquo;t care now, just follow the similiar tacts.</p>
+<p> </p>
+<p>System(e.g. Linux, macOS, BSD, etc.), already provided those <a href=https://man7.org/linux/man-pages/man3/htonl.3.html>conversional functions</a>:</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
 </span><span class=lnt>2
 </span><span class=lnt>3
 </span><span class=lnt>4
 </span><span class=lnt>5
 </span><span class=lnt>6
-</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-c data-lang=c><span class=cp>#include</span> <span class=cpf>&lt;arpa/inet.h&gt;</span><span class=cp>
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-c data-lang=c><span class=cp>#include</span> <span class=cpf>&lt;arpa/inet.h&gt;</span><span class=cp>
 </span><span class=cp></span>
-<span class=n>uint32_t</span> <span class=nf>htonl</span><span class=p>(</span><span class=n>uint32_t</span> <span class=n>hostlong</span><span class=p>);</span>
-<span class=n>uint16_t</span> <span class=nf>htons</span><span class=p>(</span><span class=n>uint16_t</span> <span class=n>hostshort</span><span class=p>);</span>
-<span class=n>uint32_t</span> <span class=nf>ntohl</span><span class=p>(</span><span class=n>uint32_t</span> <span class=n>netlong</span><span class=p>);</span>
-<span class=n>uint16_t</span> <span class=nf>ntohs</span><span class=p>(</span><span class=n>uint16_t</span> <span class=n>netshort</span><span class=p>);</span>
-</code></pre></td></tr></table></div></div><p>For the real example, you can refer to the references at bottom.</p><p>Also, if you want to convert from host byte order to other byte orders, you should use the library functions.</p><p>The header file <a href=https://man7.org/linux/man-pages/man3/endian.3.html><code>endian.h</code></a> in Linux consist many byte order related functions you might use.</p><p> </p><p>The conclusion is that endianness issues do not affect sequences that combined with single bytes(e.g. C-string), because <code>byte</code> is considered an atomic unit from a storage point of view. On the other hand, sequences based on multi-byte are affected by endianness and you need to take care while coding.</p><p>Finally, I&rsquo;d like to confess that while writing this article, many sources quoted from <a href=https://developer.ibm.com/articles/au-endianc/>Writing endian-independent code in C</a>, further revision is needed.</p><p> </p><p>What I am talking now is just tip of the iceberg, if you get interested in those topics, you definitely should read 19-th chapter <strong>Protability</strong> of <a href=https://www.amazon.com/Linux-Kernel-Development-Robert-Love/dp/0672329468><em>Linux Kernel Development (3rd Edition)</em> by Robert Love</a>, it walk you through many architecture-related issues you may come across.</p><p> </p><h3 id=references>References</h3><blockquote><p><a href=https://developer.ibm.com/articles/au-endianc/>Writing endian-independent code in C</a></p><p><a href=https://en.wikipedia.org/wiki/Endianness>Endianness - Wikipedia</a></p><p><a href=https://www.chessprogramming.org/Endianness>Endianness - ChessProgramming Wiki</a></p></blockquote><script src=https://utteranc.es/client.js repo=leiless/blog issue-term=pathname label=comment theme=github-light crossorigin=anonymous async></script></article><footer><p><a href=https://leiless.me/>一个程序员的辩白</a> <span style=color:gray>&copy;</span> 2017 - 2021. Proudly made with <a href=https://gohugo.io/ target=_blank>Hugo</a> and <a href=https://tailwindcss.com/ target=_blank>TailwindCSS</a>.</p><p style=margin-top:-15px;font-size:10px>Released under <a href=https://creativecommons.org/licenses/by-nc-sa/4.0/>CC BY-NC-SA 4.0</a> license.</p></footer></div><script async src="https://www.googletagmanager.com/gtag/js?id=G-RMJ7KLHXH8"></script><script>var doNotTrack=!1;if(!doNotTrack){window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag('js',new Date),gtag('config','G-RMJ7KLHXH8',{anonymize_ip:!1})}</script><script>(function(a,c,d,e){if(typeof a.webpushr!='undefined')return;a.webpushr=a.webpushr||function(){(a.webpushr.q=a.webpushr.q||[]).push(arguments)};var b,f=c.getElementsByTagName(d)[0];b=c.createElement(d),b.id=e,b.async=1,b.src="https://cdn.webpushr.com/app.min.js",f.parentNode.appendChild(b)})(window,document,'script','webpushr-jssdk'),webpushr('setup',{key:'BJji5mvLAV3k-EncfEEH_CtK_CdcXWnXc-fvhs7uY1jfOG4xX_RsBmoWvTD0OTyq6TOEB5G5_uFE6Ylpxj5MKEQ'})</script></body></html>
+<span class=kt>uint32_t</span> <span class=nf>htonl</span><span class=p>(</span><span class=kt>uint32_t</span> <span class=n>hostlong</span><span class=p>);</span>
+<span class=kt>uint16_t</span> <span class=nf>htons</span><span class=p>(</span><span class=kt>uint16_t</span> <span class=n>hostshort</span><span class=p>);</span>
+<span class=kt>uint32_t</span> <span class=nf>ntohl</span><span class=p>(</span><span class=kt>uint32_t</span> <span class=n>netlong</span><span class=p>);</span>
+<span class=kt>uint16_t</span> <span class=nf>ntohs</span><span class=p>(</span><span class=kt>uint16_t</span> <span class=n>netshort</span><span class=p>);</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>For the real example, you can refer to the references at bottom.</p>
+<p>Also, if you want to convert from host byte order to other byte orders, you should use the library functions.</p>
+<p>The header file <a href=https://man7.org/linux/man-pages/man3/endian.3.html><code>endian.h</code></a> in Linux consist many byte order related functions you might use.</p>
+<p> </p>
+<p>The conclusion is that endianness issues do not affect sequences that combined with single bytes(e.g. C-string), because <code>byte</code> is considered an atomic unit from a storage point of view. On the other hand, sequences based on multi-byte are affected by endianness and you need to take care while coding.</p>
+<p>Finally, I&rsquo;d like to confess that while writing this article, many sources quoted from <a href=https://developer.ibm.com/articles/au-endianc/>Writing endian-independent code in C</a>, further revision is needed.</p>
+<p> </p>
+<p>What I am talking now is just tip of the iceberg, if you get interested in those topics, you definitely should read 19-th chapter <strong>Protability</strong> of <a href=https://www.amazon.com/Linux-Kernel-Development-Robert-Love/dp/0672329468><em>Linux Kernel Development (3rd Edition)</em> by Robert Love</a>, it walk you through many architecture-related issues you may come across.</p>
+<p> </p>
+<h3 id=references>References</h3>
+<blockquote>
+<p><a href=https://developer.ibm.com/articles/au-endianc/>Writing endian-independent code in C</a></p>
+<p><a href=https://en.wikipedia.org/wiki/Endianness>Endianness - Wikipedia</a></p>
+<p><a href=https://www.chessprogramming.org/Endianness>Endianness - ChessProgramming Wiki</a></p>
+</blockquote>
+<script src=https://utteranc.es/client.js repo=leiless/blog issue-term=pathname label=comment theme=github-light crossorigin=anonymous async></script>
+</article>
+<footer>
+<p>
+<a href=https://leiless.me/>一个程序员的辩白</a> <span style=color:gray>&copy;</span> 2017 - 2021. Proudly made with <a href=https://gohugo.io/ target=_blank>Hugo</a> and <a href=https://tailwindcss.com/ target=_blank>TailwindCSS</a>.
+</p>
+<p style=margin-top:-15px;font-size:10px>Released under <a href=https://creativecommons.org/licenses/by-nc-sa/4.0/>CC BY-NC-SA 4.0</a> license.</p>
+</footer>
+</div>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-RMJ7KLHXH8"></script>
+<script>var doNotTrack=!1;if(!doNotTrack){window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag('js',new Date),gtag('config','G-RMJ7KLHXH8',{anonymize_ip:!1})}</script>
+<script>(function(a,c,d,e){if(typeof a.webpushr!='undefined')return;a.webpushr=a.webpushr||function(){(a.webpushr.q=a.webpushr.q||[]).push(arguments)};var b,f=c.getElementsByTagName(d)[0];b=c.createElement(d),b.id=e,b.async=1,b.src="https://cdn.webpushr.com/app.min.js",f.parentNode.appendChild(b)})(window,document,'script','webpushr-jssdk'),webpushr('setup',{key:'BJji5mvLAV3k-EncfEEH_CtK_CdcXWnXc-fvhs7uY1jfOG4xX_RsBmoWvTD0OTyq6TOEB5G5_uFE6Ylpxj5MKEQ'})</script>
+</body>
+</html>

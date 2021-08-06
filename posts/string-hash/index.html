@@ -1,22 +1,72 @@
-<!doctype html><html lang><head><meta charset=utf-8><meta name=generator content="Hugo 0.83.1"><meta http-equiv=x-ua-compatible content="IE=edge"><meta name=viewport content="width=device-width,initial-scale=1,shrink-to-fit=no"><meta name=twitter:card content="summary"><meta name=twitter:title content="Perfect hashing for fixed-size string set - 一个程序员的辩白"><meta name=twitter:description content="As aforementioned, we&amp;rsquo;ve dicussed perfect hashing for integers.
+<!doctype html><html lang>
+<head>
+<meta charset=utf-8>
+<meta name=generator content="Hugo 0.87.0">
+<meta http-equiv=x-ua-compatible content="IE=edge">
+<meta name=viewport content="width=device-width,initial-scale=1,shrink-to-fit=no">
+<meta name=twitter:card content="summary">
+<meta name=twitter:title content="Perfect hashing for fixed-size string set - 一个程序员的辩白">
+<meta name=twitter:description content="As aforementioned, we&amp;rsquo;ve dicussed perfect hashing for integers.
 It turns out that the concept can be generalized for string hashing.
 Leading out a simple question: How you do check if a string inside a small set?
 Let&amp;rsquo;s concrete the question, consider we&amp;rsquo;re about to writing a C lexer.
 The first step is to parse each token, we need to issue an error if any token mismatch the finite-state machine.
-For example, like a variable name categorized into reserved keywords."><meta name=twitter:site content="https://leiless.me/"><meta name=twitter:creator content><meta name=twitter:image content="https://leiless.me/avatar.jpg"><meta property="og:locale" content><meta property="og:type" content="article"><meta property="og:title" content="Perfect hashing for fixed-size string set - 一个程序员的辩白"><meta property="og:description" content="As aforementioned, we&amp;rsquo;ve dicussed perfect hashing for integers.
+For example, like a variable name categorized into reserved keywords.">
+<meta name=twitter:site content="https://leiless.me/">
+<meta name=twitter:creator content>
+<meta name=twitter:image content="https://leiless.me/avatar.jpg">
+<meta property="og:locale" content>
+<meta property="og:type" content="article">
+<meta property="og:title" content="Perfect hashing for fixed-size string set - 一个程序员的辩白">
+<meta property="og:description" content="As aforementioned, we&amp;rsquo;ve dicussed perfect hashing for integers.
 It turns out that the concept can be generalized for string hashing.
 Leading out a simple question: How you do check if a string inside a small set?
 Let&amp;rsquo;s concrete the question, consider we&amp;rsquo;re about to writing a C lexer.
 The first step is to parse each token, we need to issue an error if any token mismatch the finite-state machine.
-For example, like a variable name categorized into reserved keywords."><meta property="og:url" content="https://leiless.me/posts/string-hash/"><meta property="og:site_name" content="一个程序员的辩白"><meta property="og:image" content="https://leiless.me/avatar.jpg"><title>Perfect hashing for fixed-size string set - 一个程序员的辩白</title><meta name=author content="Fishbone"><meta name=description content="As aforementioned, we&amp;rsquo;ve dicussed perfect hashing for integers.
+For example, like a variable name categorized into reserved keywords.">
+<meta property="og:url" content="https://leiless.me/posts/string-hash/">
+<meta property="og:site_name" content="一个程序员的辩白">
+<meta property="og:image" content="https://leiless.me/avatar.jpg">
+<title>Perfect hashing for fixed-size string set - 一个程序员的辩白</title>
+<meta name=author content="Fishbone">
+<meta name=description content="As aforementioned, we&amp;rsquo;ve dicussed perfect hashing for integers.
 It turns out that the concept can be generalized for string hashing.
 Leading out a simple question: How you do check if a string inside a small set?
 Let&amp;rsquo;s concrete the question, consider we&amp;rsquo;re about to writing a C lexer.
 The first step is to parse each token, we need to issue an error if any token mismatch the finite-state machine.
-For example, like a variable name categorized into reserved keywords."><link rel=stylesheet href="https://fonts.googleapis.com/css?family=Source+Code+Pro|Arvo:400,700"><link rel=stylesheet href=https://leiless.me/css/theme.css><link rel=stylesheet href=https://leiless.me/css/chroma.dracula.css></head><body class="font-serif bg-gray-200 border-t-4 border-blue-500 antialiased"><div class="w-full p-6 md:w-2/3 md:px-0 md:mx-auto xl:w-2/5"><header class=mb-6><div class="mb-6 md:flex md:items-center"><div><a class="text-lg mb-8 inline-block" href=/>&larr; Back Home</a><h1 class="text-4xl font-bold">Perfect hashing for fixed-size string set</h1><time datetime="2018-04-05 00:00:00 UTC">05 Apr 2018</time></div></div></header><article class=mb-12><p>As <a href=../lowest-bit-set/>aforementioned</a>, we&rsquo;ve dicussed perfect hashing for integers.</p><p>It turns out that the concept can be generalized for string hashing.</p><p>Leading out a simple question: How you do check if a string inside a small set?</p><p>Let&rsquo;s concrete the question, consider we&rsquo;re about to writing a C lexer.</p><p>The first step is to parse each token, we need to issue an error if any token mismatch the finite-state machine.</p><p>For example, like a variable name categorized into reserved keywords.</p><p> </p><p>Considering we want to write a C89-compatible tokenizer, we thus have following 32 keywords.</p><p>|auto|break|case|char|const|continue|default|do|
+For example, like a variable name categorized into reserved keywords.">
+<link rel=stylesheet href="https://fonts.googleapis.com/css?family=Source+Code+Pro|Arvo:400,700">
+<link rel=stylesheet href=https://leiless.me/css/theme.css>
+<link rel=stylesheet href=https://leiless.me/css/chroma.dracula.css>
+</head>
+<body class="font-serif bg-gray-200 border-t-4 border-blue-500 antialiased">
+<div class="w-full p-6 md:w-2/3 md:px-0 md:mx-auto xl:w-2/5">
+<header class=mb-6>
+<div class="mb-6 md:flex md:items-center">
+<div>
+<a class="text-lg mb-8 inline-block" href=/>&larr; Back Home</a>
+<h1 class="text-4xl font-bold">Perfect hashing for fixed-size string set</h1>
+<time datetime="2018-04-05 00:00:00 UTC">05 Apr 2018</time>
+</div>
+</div>
+</header>
+<article class=mb-12>
+<p>As <a href=../lowest-bit-set/>aforementioned</a>, we&rsquo;ve dicussed perfect hashing for integers.</p>
+<p>It turns out that the concept can be generalized for string hashing.</p>
+<p>Leading out a simple question: How you do check if a string inside a small set?</p>
+<p>Let&rsquo;s concrete the question, consider we&rsquo;re about to writing a C lexer.</p>
+<p>The first step is to parse each token, we need to issue an error if any token mismatch the finite-state machine.</p>
+<p>For example, like a variable name categorized into reserved keywords.</p>
+<p> </p>
+<p>Considering we want to write a C89-compatible tokenizer, we thus have following 32 keywords.</p>
+<p>|auto|break|case|char|const|continue|default|do|
 |double|else|enum|extern|float|for|goto|if|
 |int|long|register|return|short|signed|sizeof|static|
-|struct|switch|typedef|union|unsigned|void|volatile|while|</p><p>We can easily write out first naive draft.</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt> 1
+|struct|switch|typedef|union|unsigned|void|volatile|while|</p>
+<p>We can easily write out first naive draft.</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
 </span><span class=lnt> 2
 </span><span class=lnt> 3
 </span><span class=lnt> 4
@@ -32,7 +82,9 @@ For example, like a variable name categorized into reserved keywords."><link rel
 </span><span class=lnt>14
 </span><span class=lnt>15
 </span><span class=lnt>16
-</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-c data-lang=c><span class=k>static</span> <span class=k>const</span> <span class=kt>char</span> <span class=o>*</span><span class=n>c89kws</span><span class=p>[]</span> <span class=o>=</span> <span class=p>{</span>
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-c data-lang=c><span class=k>static</span> <span class=k>const</span> <span class=kt>char</span> <span class=o>*</span><span class=n>c89kws</span><span class=p>[]</span> <span class=o>=</span> <span class=p>{</span>
 	<span class=s>&#34;auto&#34;</span><span class=p>,</span> <span class=s>&#34;break&#34;</span><span class=p>,</span> <span class=s>&#34;case&#34;</span><span class=p>,</span> <span class=s>&#34;char&#34;</span><span class=p>,</span> <span class=s>&#34;const&#34;</span><span class=p>,</span> <span class=s>&#34;continue&#34;</span><span class=p>,</span> <span class=s>&#34;default&#34;</span><span class=p>,</span> <span class=s>&#34;do&#34;</span><span class=p>,</span>
 	<span class=s>&#34;double&#34;</span><span class=p>,</span> <span class=s>&#34;else&#34;</span><span class=p>,</span> <span class=s>&#34;enum&#34;</span><span class=p>,</span> <span class=s>&#34;extern&#34;</span><span class=p>,</span> <span class=s>&#34;float&#34;</span><span class=p>,</span> <span class=s>&#34;for&#34;</span><span class=p>,</span> <span class=s>&#34;goto&#34;</span><span class=p>,</span> <span class=s>&#34;if&#34;</span><span class=p>,</span>
 	<span class=s>&#34;int&#34;</span><span class=p>,</span> <span class=s>&#34;long&#34;</span><span class=p>,</span> <span class=s>&#34;register&#34;</span><span class=p>,</span> <span class=s>&#34;return&#34;</span><span class=p>,</span> <span class=s>&#34;short&#34;</span><span class=p>,</span> <span class=s>&#34;signed&#34;</span><span class=p>,</span> <span class=s>&#34;sizeof&#34;</span><span class=p>,</span> <span class=s>&#34;static&#34;</span><span class=p>,</span>
@@ -48,7 +100,14 @@ For example, like a variable name categorized into reserved keywords."><link rel
 			<span class=k>return</span> <span class=mi>1</span><span class=p>;</span>
 	<span class=k>return</span> <span class=mi>0</span><span class=p>;</span>
 <span class=p>}</span>
-</code></pre></td></tr></table></div></div><p>Complexity of above solution is <code>O(m * n)</code>, which <code>m</code> is average length of the keyword list, <code>n</code> is the size of the keyword list.</p><p> </p><p>Yet some guys may happen to optimize this by binary search, which yields the second draft.</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt> 1
+</code></pre></td></tr></table>
+</div>
+</div><p>Complexity of above solution is <code>O(m * n)</code>, which <code>m</code> is average length of the keyword list, <code>n</code> is the size of the keyword list.</p>
+<p> </p>
+<p>Yet some guys may happen to optimize this by binary search, which yields the second draft.</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
 </span><span class=lnt> 2
 </span><span class=lnt> 3
 </span><span class=lnt> 4
@@ -65,7 +124,9 @@ For example, like a variable name categorized into reserved keywords."><link rel
 </span><span class=lnt>15
 </span><span class=lnt>16
 </span><span class=lnt>17
-</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-c data-lang=c><span class=kt>int</span> <span class=nf>is_rsrv_c89kw2</span><span class=p>(</span><span class=k>const</span> <span class=kt>char</span> <span class=o>*</span><span class=n>tok</span><span class=p>)</span>
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-c data-lang=c><span class=kt>int</span> <span class=nf>is_rsrv_c89kw2</span><span class=p>(</span><span class=k>const</span> <span class=kt>char</span> <span class=o>*</span><span class=n>tok</span><span class=p>)</span>
 <span class=p>{</span>
 	<span class=n>assert</span><span class=p>(</span><span class=n>tok</span> <span class=o>!=</span> <span class=nb>NULL</span><span class=p>);</span>
 
@@ -82,7 +143,15 @@ For example, like a variable name categorized into reserved keywords."><link rel
 
 	<span class=k>return</span> <span class=mi>0</span><span class=p>;</span>
 <span class=p>}</span>
-</code></pre></td></tr></table></div></div><p>This should be reasonable for real-life implementation, time complexity down to <code>O(m * log2(n)</code>.</p><p> </p><p>Now we pursue a third solution, perfect hashing, first we need to probe an array that makes each elements in the list having an unique hash value(reduce the string to hash-value), the we utilize the integer perfect hashing for string matching.</p><p>By reducing string to integer value, we have lots of choices, the cheapest way is to hash.</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt> 1
+</code></pre></td></tr></table>
+</div>
+</div><p>This should be reasonable for real-life implementation, time complexity down to <code>O(m * log2(n)</code>.</p>
+<p> </p>
+<p>Now we pursue a third solution, perfect hashing, first we need to probe an array that makes each elements in the list having an unique hash value(reduce the string to hash-value), the we utilize the integer perfect hashing for string matching.</p>
+<p>By reducing string to integer value, we have lots of choices, the cheapest way is to hash.</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
 </span><span class=lnt> 2
 </span><span class=lnt> 3
 </span><span class=lnt> 4
@@ -92,7 +161,9 @@ For example, like a variable name categorized into reserved keywords."><link rel
 </span><span class=lnt> 8
 </span><span class=lnt> 9
 </span><span class=lnt>10
-</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-c data-lang=c><span class=cm>/*
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-c data-lang=c><span class=cm>/*
 </span><span class=cm> * This is a bad string-hash function, yet useful when used in fixed-set
 </span><span class=cm> */</span>
 <span class=cp>#define LOSELOSE2(s) ({         \
@@ -102,7 +173,19 @@ For example, like a variable name categorized into reserved keywords."><link rel
 </span><span class=cp>        h += p[i] | (i + 1);    \
 </span><span class=cp>    h;                          \
 </span><span class=cp>})
-</span></code></pre></td></tr></table></div></div><p>Above is one of the possible hash function, when apply to the give list, it yields the result(not yet sorted, any two of them not equal).</p><blockquote><p>446, 528, 414, 422, 557, 884, 754, 212, 645, 427, 439, 672, 542, 329, 444, 207,</p><p>334, 434, 892, 683, 567, 638, 659, 660, 686, 670, 763, 556, 875, 437, 890, 541,</p></blockquote><p>P.S. if we replace <code>(i + 1)</code> with <code>0</code>, the<code> LOSELOSE2()</code> become <a href=http://www.cse.yorku.ca/~oz/hash.html>classic K&R lose-lose</a>.</p><p> </p><p>Now we need to probe an unique magic number which reduce those 32 numbers into range <em>[0, 32)</em>, and also any two of them cannot overlap.</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt> 1
+</span></code></pre></td></tr></table>
+</div>
+</div><p>Above is one of the possible hash function, when apply to the give list, it yields the result(not yet sorted, any two of them not equal).</p>
+<blockquote>
+<p>446, 528, 414, 422, 557, 884, 754, 212, 645, 427, 439, 672, 542, 329, 444, 207,</p>
+<p>334, 434, 892, 683, 567, 638, 659, 660, 686, 670, 763, 556, 875, 437, 890, 541,</p>
+</blockquote>
+<p>P.S. if we replace <code>(i + 1)</code> with <code>0</code>, the<code> LOSELOSE2()</code> become <a href=http://www.cse.yorku.ca/~oz/hash.html>classic K&R lose-lose</a>.</p>
+<p> </p>
+<p>Now we need to probe an unique magic number which reduce those 32 numbers into range <em>[0, 32)</em>, and also any two of them cannot overlap.</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
 </span><span class=lnt> 2
 </span><span class=lnt> 3
 </span><span class=lnt> 4
@@ -174,7 +257,9 @@ For example, like a variable name categorized into reserved keywords."><link rel
 </span><span class=lnt>70
 </span><span class=lnt>71
 </span><span class=lnt>72
-</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-c data-lang=c><span class=k>static</span> <span class=k>const</span> <span class=kt>char</span> <span class=o>*</span><span class=n>c89kws</span><span class=p>[]</span> <span class=o>=</span> <span class=p>{</span>
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-c data-lang=c><span class=k>static</span> <span class=k>const</span> <span class=kt>char</span> <span class=o>*</span><span class=n>c89kws</span><span class=p>[]</span> <span class=o>=</span> <span class=p>{</span>
     <span class=s>&#34;auto&#34;</span><span class=p>,</span> <span class=s>&#34;break&#34;</span><span class=p>,</span> <span class=s>&#34;case&#34;</span><span class=p>,</span> <span class=s>&#34;char&#34;</span><span class=p>,</span> <span class=s>&#34;const&#34;</span><span class=p>,</span> <span class=s>&#34;continue&#34;</span><span class=p>,</span> <span class=s>&#34;default&#34;</span><span class=p>,</span> <span class=s>&#34;do&#34;</span><span class=p>,</span>
     <span class=s>&#34;double&#34;</span><span class=p>,</span> <span class=s>&#34;else&#34;</span><span class=p>,</span> <span class=s>&#34;enum&#34;</span><span class=p>,</span> <span class=s>&#34;extern&#34;</span><span class=p>,</span> <span class=s>&#34;float&#34;</span><span class=p>,</span> <span class=s>&#34;for&#34;</span><span class=p>,</span> <span class=s>&#34;goto&#34;</span><span class=p>,</span> <span class=s>&#34;if&#34;</span><span class=p>,</span>
     <span class=s>&#34;int&#34;</span><span class=p>,</span> <span class=s>&#34;long&#34;</span><span class=p>,</span> <span class=s>&#34;register&#34;</span><span class=p>,</span> <span class=s>&#34;return&#34;</span><span class=p>,</span> <span class=s>&#34;short&#34;</span><span class=p>,</span> <span class=s>&#34;signed&#34;</span><span class=p>,</span> <span class=s>&#34;sizeof&#34;</span><span class=p>,</span> <span class=s>&#34;static&#34;</span><span class=p>,</span>
@@ -246,11 +331,42 @@ For example, like a variable name categorized into reserved keywords."><link rel
 
     <span class=k>return</span> <span class=mi>0</span><span class=p>;</span>
 <span class=p>}</span>
-</code></pre></td></tr></table></div></div><p>Unfortunately, if you run above program, it will print <code>probe failed</code> message.</p><p>If you take a closer look at those string-hash values(I sorted them for convenience).</p><blockquote><p>207, 212, 329, 334, 414, 422, 427, 434, 437, 439, 444, 446, 528, 541, 542, 556,</p><p>557, 567, 638, 645, 659, 660, 670, 672, 683, 686, 754, 763, 875, 884, 890, 892,</p></blockquote><p>You&rsquo;ll find that they&rsquo;re too close to each other(that&rsquo;s why I used a variant of lose-lose), which of course proved <code>loselose</code> is an extremely poor hash function.</p><p>There are two obvious solutions:</p><ul><li><p>Pursue an uniformly distributed(universal) hash function</p></li><li><p>Expand the slots, which allow empty(unused) slot.</p></li></ul><p>Difficulty for the first one is that it&rsquo;s not easy to find such hash function which strike a balance between simplicity and speed.</p><p>The drawback for the second one is that it may consume extra space to store unused slots, yet, it may overstated, consider I want to add two extra keywords <code>inline</code> and <code>restrict</code> to the keyword list, which the unused slots can now be used without reinventing a new hash function.</p><p> </p><p>So, if I double the slots number(half of them will be unused thus), and of course we also need to change the hash a little bit:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
+</code></pre></td></tr></table>
+</div>
+</div><p>Unfortunately, if you run above program, it will print <code>probe failed</code> message.</p>
+<p>If you take a closer look at those string-hash values(I sorted them for convenience).</p>
+<blockquote>
+<p>207, 212, 329, 334, 414, 422, 427, 434, 437, 439, 444, 446, 528, 541, 542, 556,</p>
+<p>557, 567, 638, 645, 659, 660, 670, 672, 683, 686, 754, 763, 875, 884, 890, 892,</p>
+</blockquote>
+<p>You&rsquo;ll find that they&rsquo;re too close to each other(that&rsquo;s why I used a variant of lose-lose), which of course proved <code>loselose</code> is an extremely poor hash function.</p>
+<p>There are two obvious solutions:</p>
+<ul>
+<li>
+<p>Pursue an uniformly distributed(universal) hash function</p>
+</li>
+<li>
+<p>Expand the slots, which allow empty(unused) slot.</p>
+</li>
+</ul>
+<p>Difficulty for the first one is that it&rsquo;s not easy to find such hash function which strike a balance between simplicity and speed.</p>
+<p>The drawback for the second one is that it may consume extra space to store unused slots, yet, it may overstated, consider I want to add two extra keywords <code>inline</code> and <code>restrict</code> to the keyword list, which the unused slots can now be used without reinventing a new hash function.</p>
+<p> </p>
+<p>So, if I double the slots number(half of them will be unused thus), and of course we also need to change the hash a little bit:</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
 </span><span class=lnt>2
-</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-c data-lang=c><span class=cp>#define SLOT 64
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-c data-lang=c><span class=cp>#define SLOT 64
 </span><span class=cp>#define SHIFT 26    </span><span class=cm>/* 32 - log2(64) = 32 - 6 = 26 */</span><span class=cp>
-</span></code></pre></td></tr></table></div></div><p>You would see the following output:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
+</span></code></pre></td></tr></table>
+</div>
+</div><p>You would see the following output:</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
 </span><span class=lnt>2
 </span><span class=lnt>3
 </span><span class=lnt>4
@@ -259,7 +375,9 @@ For example, like a variable name categorized into reserved keywords."><link rel
 </span><span class=lnt>7
 </span><span class=lnt>8
 </span><span class=lnt>9
-</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-fallback data-lang=fallback>0x02da187e:
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback>0x02da187e:
 -1, 31, 12, -1, -1, -1, 21, -1,
 -1, -1, -1,  8, 27,  4, -1, -1,
 -1, -1, -1, 15, 20, 22, 23,  7,
@@ -268,7 +386,14 @@ For example, like a variable name categorized into reserved keywords."><link rel
 -1, 24, 13, -1,  3, -1, 16, 28,
  9, -1, -1, -1, -1, 17,  5, 29,
  1, 10, 30, 18, 14,  0, -1, -1,
-</code></pre></td></tr></table></div></div><p>Of which, -1 indicate unused slots. and other indices should map to corresponding string in the <code>c89kws</code> array.</p><p> </p><p>Hence we have a third draft, hopefully it&rsquo;s the final one.</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt> 1
+</code></pre></td></tr></table>
+</div>
+</div><p>Of which, -1 indicate unused slots. and other indices should map to corresponding string in the <code>c89kws</code> array.</p>
+<p> </p>
+<p>Hence we have a third draft, hopefully it&rsquo;s the final one.</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
 </span><span class=lnt> 2
 </span><span class=lnt> 3
 </span><span class=lnt> 4
@@ -297,7 +422,9 @@ For example, like a variable name categorized into reserved keywords."><link rel
 </span><span class=lnt>27
 </span><span class=lnt>28
 </span><span class=lnt>29
-</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-c data-lang=c><span class=k>static</span> <span class=k>const</span> <span class=kt>char</span> <span class=o>*</span><span class=n>c89kwmap</span><span class=p>[]</span> <span class=o>=</span> <span class=p>{</span>
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-c data-lang=c><span class=k>static</span> <span class=k>const</span> <span class=kt>char</span> <span class=o>*</span><span class=n>c89kwmap</span><span class=p>[]</span> <span class=o>=</span> <span class=p>{</span>
     <span class=nb>NULL</span><span class=p>,</span> <span class=s>&#34;while&#34;</span><span class=p>,</span> <span class=s>&#34;float&#34;</span><span class=p>,</span> <span class=nb>NULL</span><span class=p>,</span> <span class=nb>NULL</span><span class=p>,</span> <span class=nb>NULL</span><span class=p>,</span> <span class=s>&#34;signed&#34;</span><span class=p>,</span> <span class=nb>NULL</span><span class=p>,</span>
     <span class=nb>NULL</span><span class=p>,</span> <span class=nb>NULL</span><span class=p>,</span> <span class=nb>NULL</span><span class=p>,</span> <span class=s>&#34;double&#34;</span><span class=p>,</span> <span class=s>&#34;union&#34;</span><span class=p>,</span> <span class=s>&#34;const&#34;</span><span class=p>,</span> <span class=nb>NULL</span><span class=p>,</span> <span class=nb>NULL</span><span class=p>,</span>
     <span class=nb>NULL</span><span class=p>,</span> <span class=nb>NULL</span><span class=p>,</span> <span class=nb>NULL</span><span class=p>,</span> <span class=s>&#34;if&#34;</span><span class=p>,</span> <span class=s>&#34;short&#34;</span><span class=p>,</span> <span class=s>&#34;sizeof&#34;</span><span class=p>,</span> <span class=s>&#34;static&#34;</span><span class=p>,</span> <span class=s>&#34;do&#34;</span><span class=p>,</span>
@@ -326,7 +453,16 @@ For example, like a variable name categorized into reserved keywords."><link rel
     <span class=k>const</span> <span class=kt>char</span> <span class=o>*</span><span class=n>p</span> <span class=o>=</span> <span class=n>c89kwmap</span><span class=p>[</span><span class=n>QHASH</span><span class=p>(</span><span class=n>LOSELOSE2</span><span class=p>(</span><span class=n>tok</span><span class=p>))];</span>
     <span class=k>return</span> <span class=n>p</span> <span class=o>&amp;&amp;</span> <span class=o>!</span><span class=n>strcmp</span><span class=p>(</span><span class=n>p</span><span class=p>,</span> <span class=n>tok</span><span class=p>);</span>
 <span class=p>}</span>
-</code></pre></td></tr></table></div></div><p>As the code revealed, it hashed twice, and yield one string comparison. Which is <code>O(n)</code> time complexity for any given string.</p><p>Even better than the binary search version.</p><p> </p><p><strong>Updated Apr 29, 2018</strong></p><p>Yet here comes a fourth draft, which even faster than <code>is_rsrv_c89kw3()</code>.</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt> 1
+</code></pre></td></tr></table>
+</div>
+</div><p>As the code revealed, it hashed twice, and yield one string comparison. Which is <code>O(n)</code> time complexity for any given string.</p>
+<p>Even better than the binary search version.</p>
+<p> </p>
+<p><strong>Updated Apr 29, 2018</strong></p>
+<p>Yet here comes a fourth draft, which even faster than <code>is_rsrv_c89kw3()</code>.</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
 </span><span class=lnt> 2
 </span><span class=lnt> 3
 </span><span class=lnt> 4
@@ -360,7 +496,9 @@ For example, like a variable name categorized into reserved keywords."><link rel
 </span><span class=lnt>32
 </span><span class=lnt>33
 </span><span class=lnt>34
-</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-c data-lang=c><span class=k>static</span> <span class=k>const</span> <span class=kt>char</span> <span class=o>*</span><span class=n>c89kwmap2</span><span class=p>[]</span> <span class=o>=</span> <span class=p>{</span>
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-c data-lang=c><span class=k>static</span> <span class=k>const</span> <span class=kt>char</span> <span class=o>*</span><span class=n>c89kwmap2</span><span class=p>[]</span> <span class=o>=</span> <span class=p>{</span>
     <span class=s>&#34;default&#34;</span><span class=p>,</span> <span class=nb>NULL</span><span class=p>,</span> <span class=s>&#34;short&#34;</span><span class=p>,</span> <span class=nb>NULL</span><span class=p>,</span> <span class=s>&#34;goto&#34;</span><span class=p>,</span> <span class=s>&#34;continue&#34;</span><span class=p>,</span> <span class=s>&#34;auto&#34;</span><span class=p>,</span> <span class=nb>NULL</span><span class=p>,</span>
     <span class=nb>NULL</span><span class=p>,</span> <span class=s>&#34;typedef&#34;</span><span class=p>,</span> <span class=s>&#34;signed&#34;</span><span class=p>,</span> <span class=s>&#34;volatile&#34;</span><span class=p>,</span> <span class=nb>NULL</span><span class=p>,</span> <span class=s>&#34;register&#34;</span><span class=p>,</span> <span class=nb>NULL</span><span class=p>,</span> <span class=s>&#34;for&#34;</span><span class=p>,</span>
     <span class=nb>NULL</span><span class=p>,</span> <span class=s>&#34;double&#34;</span><span class=p>,</span> <span class=nb>NULL</span><span class=p>,</span> <span class=s>&#34;if&#34;</span><span class=p>,</span> <span class=s>&#34;int&#34;</span><span class=p>,</span> <span class=nb>NULL</span><span class=p>,</span> <span class=nb>NULL</span><span class=p>,</span> <span class=nb>NULL</span><span class=p>,</span>
@@ -394,7 +532,19 @@ For example, like a variable name categorized into reserved keywords."><link rel
     <span class=cm>/* False-positive comparison */</span>
     <span class=k>return</span> <span class=n>p</span> <span class=o>&amp;&amp;</span> <span class=o>!</span><span class=n>strcmp</span><span class=p>(</span><span class=n>p</span><span class=p>,</span> <span class=n>tok</span><span class=p>);</span>
 <span class=p>}</span>
-</code></pre></td></tr></table></div></div><p>Feel free to add more keywords, and then recalculate the string-map and magic number.</p><p> </p><p>If your hash function is universal enough, you may happen to find a magic number without expanding the slots, and even reduce the hash value into an <em>unsigned char</em>, i.e. <code>uint8_t</code>, so the second hash consumes nearly nothing.</p><p>The <code>is_rsrv_c89kw4()</code> done nearly perfect, the first string-hash is simple enough, and the second hash reduced first one into an <em>unsigned short</em>, i.e. <code>uint16_t</code>.</p><p>You may take further expansion over slots, which yield even smaller magic number(with penalty of extra space).</p><p> </p><p>If you using <a href=https://www.gnu.org/software/gperf/>GNU gperf</a> to generate hash function, put above keywords as input, you&rsquo;ll find similar pattern.</p><p>FYI, I&rsquo;ve put the machine-generated result here. Happy hacking!</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt> 1
+</code></pre></td></tr></table>
+</div>
+</div><p>Feel free to add more keywords, and then recalculate the string-map and magic number.</p>
+<p> </p>
+<p>If your hash function is universal enough, you may happen to find a magic number without expanding the slots, and even reduce the hash value into an <em>unsigned char</em>, i.e. <code>uint8_t</code>, so the second hash consumes nearly nothing.</p>
+<p>The <code>is_rsrv_c89kw4()</code> done nearly perfect, the first string-hash is simple enough, and the second hash reduced first one into an <em>unsigned short</em>, i.e. <code>uint16_t</code>.</p>
+<p>You may take further expansion over slots, which yield even smaller magic number(with penalty of extra space).</p>
+<p> </p>
+<p>If you using <a href=https://www.gnu.org/software/gperf/>GNU gperf</a> to generate hash function, put above keywords as input, you&rsquo;ll find similar pattern.</p>
+<p>FYI, I&rsquo;ve put the machine-generated result here. Happy hacking!</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
 </span><span class=lnt> 2
 </span><span class=lnt> 3
 </span><span class=lnt> 4
@@ -468,7 +618,9 @@ For example, like a variable name categorized into reserved keywords."><link rel
 </span><span class=lnt>72
 </span><span class=lnt>73
 </span><span class=lnt>74
-</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-c data-lang=c><span class=cp>#define TOTAL_KEYWORDS 32
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-c data-lang=c><span class=cp>#define TOTAL_KEYWORDS 32
 </span><span class=cp>#define MIN_WORD_LENGTH 2
 </span><span class=cp>#define MAX_WORD_LENGTH 8
 </span><span class=cp>#define MIN_HASH_VALUE 3
@@ -542,7 +694,15 @@ For example, like a variable name categorized into reserved keywords."><link rel
     <span class=p>}</span>
   <span class=k>return</span> <span class=mi>0</span><span class=p>;</span>
 <span class=p>}</span>
-</code></pre></td></tr></table></div></div><p> </p><p><strong>Updated Jan 03, 2020</strong></p><p>One drawback of the perfect hashing is that after we got a magic array, the order of the array has been shuffled due to the two-way hashing.</p><p>If we want to bound the array with an extra value, we need to introduce an extra value array, with the same organization of the key array.</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt> 1
+</code></pre></td></tr></table>
+</div>
+</div><p> </p>
+<p><strong>Updated Jan 03, 2020</strong></p>
+<p>One drawback of the perfect hashing is that after we got a magic array, the order of the array has been shuffled due to the two-way hashing.</p>
+<p>If we want to bound the array with an extra value, we need to introduce an extra value array, with the same organization of the key array.</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
 </span><span class=lnt> 2
 </span><span class=lnt> 3
 </span><span class=lnt> 4
@@ -556,7 +716,9 @@ For example, like a variable name categorized into reserved keywords."><link rel
 </span><span class=lnt>12
 </span><span class=lnt>13
 </span><span class=lnt>14
-</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-c data-lang=c><span class=k>static</span> <span class=k>const</span> <span class=kt>char</span> <span class=o>*</span><span class=n>c89kw_key</span><span class=p>[]</span> <span class=o>=</span> <span class=p>{</span>
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-c data-lang=c><span class=k>static</span> <span class=k>const</span> <span class=kt>char</span> <span class=o>*</span><span class=n>c89kw_key</span><span class=p>[]</span> <span class=o>=</span> <span class=p>{</span>
     <span class=s>&#34;default&#34;</span><span class=p>,</span> <span class=nb>NULL</span><span class=p>,</span> <span class=s>&#34;short&#34;</span><span class=p>,</span> <span class=nb>NULL</span><span class=p>,</span> <span class=s>&#34;goto&#34;</span><span class=p>,</span> <span class=s>&#34;continue&#34;</span><span class=p>,</span> <span class=s>&#34;auto&#34;</span><span class=p>,</span> <span class=nb>NULL</span><span class=p>,</span>
     <span class=nb>NULL</span><span class=p>,</span> <span class=s>&#34;typedef&#34;</span><span class=p>,</span> <span class=s>&#34;signed&#34;</span><span class=p>,</span> <span class=s>&#34;volatile&#34;</span><span class=p>,</span> <span class=nb>NULL</span><span class=p>,</span> <span class=s>&#34;register&#34;</span><span class=p>,</span> <span class=nb>NULL</span><span class=p>,</span> <span class=s>&#34;for&#34;</span><span class=p>,</span>
     <span class=nb>NULL</span><span class=p>,</span> <span class=s>&#34;double&#34;</span><span class=p>,</span> <span class=nb>NULL</span><span class=p>,</span> <span class=s>&#34;if&#34;</span><span class=p>,</span> <span class=s>&#34;int&#34;</span><span class=p>,</span> <span class=nb>NULL</span><span class=p>,</span> <span class=nb>NULL</span><span class=p>,</span> <span class=nb>NULL</span><span class=p>,</span>
@@ -570,14 +732,43 @@ For example, like a variable name categorized into reserved keywords."><link rel
 <span class=k>static</span> <span class=k>const</span> <span class=kt>void</span> <span class=o>*</span><span class=n>c89kw_val</span><span class=p>[]</span> <span class=o>=</span> <span class=p>{</span>
 	<span class=s>&#34;value for &#39;default&#39; key&#34;</span><span class=p>,</span> <span class=nb>NULL</span><span class=p>,</span> <span class=s>&#34;value for &#39;short&#39;&#34;</span><span class=p>,</span> <span class=p>...</span>
 <span class=p>}</span>
-</code></pre></td></tr></table></div></div><p>Or we can also initialize the <code>c89kw_val</code> array on-the-fly:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
+</code></pre></td></tr></table>
+</div>
+</div><p>Or we can also initialize the <code>c89kw_val</code> array on-the-fly:</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
 </span><span class=lnt>2
 </span><span class=lnt>3
 </span><span class=lnt>4
 </span><span class=lnt>5
-</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-c data-lang=c><span class=p>(</span><span class=kt>void</span><span class=p>)</span> <span class=n>memset</span><span class=p>(</span><span class=n>c89kw_val</span><span class=p>,</span> <span class=mi>0</span><span class=p>,</span> <span class=k>sizeof</span><span class=p>(</span><span class=n>c89kw_val</span><span class=p>)</span> <span class=o>/</span> <span class=k>sizeof</span><span class=p>(</span><span class=o>*</span><span class=n>c89kw_val</span><span class=p>));</span>
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-c data-lang=c><span class=p>(</span><span class=kt>void</span><span class=p>)</span> <span class=n>memset</span><span class=p>(</span><span class=n>c89kw_val</span><span class=p>,</span> <span class=mi>0</span><span class=p>,</span> <span class=k>sizeof</span><span class=p>(</span><span class=n>c89kw_val</span><span class=p>)</span> <span class=o>/</span> <span class=k>sizeof</span><span class=p>(</span><span class=o>*</span><span class=n>c89kw_val</span><span class=p>));</span>
 
 <span class=n>c89kw_val</span><span class=p>[</span><span class=n>QHASH2</span><span class=p>(</span><span class=n>LOSELOSE2</span><span class=p>(</span><span class=s>&#34;default&#34;</span><span class=p>))]</span> <span class=o>=</span> <span class=cm>/* value for &#39;default&#39; key */</span><span class=p>;</span>
 <span class=cm>/* ... */</span>
 <span class=n>c89kw_val</span><span class=p>[</span><span class=n>QHASH2</span><span class=p>(</span><span class=n>LOSELOSE2</span><span class=p>(</span><span class=s>&#34;enum&#34;</span><span class=p>))]</span> <span class=o>=</span> <span class=cm>/* ... */</span><span class=p>;</span>
-</code></pre></td></tr></table></div></div><p> </p><h3 id=references>References</h3><blockquote><p><a href=https://en.wikibooks.org/wiki/C_Programming/Language_Reference>C Programming/Language Reference#ANSI C (C89)/ISO C (C90)</a></p><p><a href=http://www.cse.yorku.ca/~oz/hash.html>Hash Functions</a></p><p><a href=https://aras-p.info/blog/2016/08/09/More-Hash-Function-Tests/>More Hash Function Tests</a></p></blockquote><script src=https://utteranc.es/client.js repo=leiless/blog issue-term=pathname label=comment theme=github-light crossorigin=anonymous async></script></article><footer><p><a href=https://leiless.me/>一个程序员的辩白</a> <span style=color:gray>&copy;</span> 2017 - 2021. Proudly made with <a href=https://gohugo.io/ target=_blank>Hugo</a> and <a href=https://tailwindcss.com/ target=_blank>TailwindCSS</a>.</p><p style=margin-top:-15px;font-size:10px>Released under <a href=https://creativecommons.org/licenses/by-nc-sa/4.0/>CC BY-NC-SA 4.0</a> license.</p></footer></div><script async src="https://www.googletagmanager.com/gtag/js?id=G-RMJ7KLHXH8"></script><script>var doNotTrack=!1;if(!doNotTrack){window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag('js',new Date),gtag('config','G-RMJ7KLHXH8',{anonymize_ip:!1})}</script><script>(function(a,c,d,e){if(typeof a.webpushr!='undefined')return;a.webpushr=a.webpushr||function(){(a.webpushr.q=a.webpushr.q||[]).push(arguments)};var b,f=c.getElementsByTagName(d)[0];b=c.createElement(d),b.id=e,b.async=1,b.src="https://cdn.webpushr.com/app.min.js",f.parentNode.appendChild(b)})(window,document,'script','webpushr-jssdk'),webpushr('setup',{key:'BJji5mvLAV3k-EncfEEH_CtK_CdcXWnXc-fvhs7uY1jfOG4xX_RsBmoWvTD0OTyq6TOEB5G5_uFE6Ylpxj5MKEQ'})</script></body></html>
+</code></pre></td></tr></table>
+</div>
+</div><p> </p>
+<h3 id=references>References</h3>
+<blockquote>
+<p><a href=https://en.wikibooks.org/wiki/C_Programming/Language_Reference>C Programming/Language Reference#ANSI C (C89)/ISO C (C90)</a></p>
+<p><a href=http://www.cse.yorku.ca/~oz/hash.html>Hash Functions</a></p>
+<p><a href=https://aras-p.info/blog/2016/08/09/More-Hash-Function-Tests/>More Hash Function Tests</a></p>
+</blockquote>
+<script src=https://utteranc.es/client.js repo=leiless/blog issue-term=pathname label=comment theme=github-light crossorigin=anonymous async></script>
+</article>
+<footer>
+<p>
+<a href=https://leiless.me/>一个程序员的辩白</a> <span style=color:gray>&copy;</span> 2017 - 2021. Proudly made with <a href=https://gohugo.io/ target=_blank>Hugo</a> and <a href=https://tailwindcss.com/ target=_blank>TailwindCSS</a>.
+</p>
+<p style=margin-top:-15px;font-size:10px>Released under <a href=https://creativecommons.org/licenses/by-nc-sa/4.0/>CC BY-NC-SA 4.0</a> license.</p>
+</footer>
+</div>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-RMJ7KLHXH8"></script>
+<script>var doNotTrack=!1;if(!doNotTrack){window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag('js',new Date),gtag('config','G-RMJ7KLHXH8',{anonymize_ip:!1})}</script>
+<script>(function(a,c,d,e){if(typeof a.webpushr!='undefined')return;a.webpushr=a.webpushr||function(){(a.webpushr.q=a.webpushr.q||[]).push(arguments)};var b,f=c.getElementsByTagName(d)[0];b=c.createElement(d),b.id=e,b.async=1,b.src="https://cdn.webpushr.com/app.min.js",f.parentNode.appendChild(b)})(window,document,'script','webpushr-jssdk'),webpushr('setup',{key:'BJji5mvLAV3k-EncfEEH_CtK_CdcXWnXc-fvhs7uY1jfOG4xX_RsBmoWvTD0OTyq6TOEB5G5_uFE6Ylpxj5MKEQ'})</script>
+</body>
+</html>

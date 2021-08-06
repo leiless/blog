@@ -1,38 +1,162 @@
-<!doctype html><html lang><head><meta charset=utf-8><meta name=generator content="Hugo 0.83.1"><meta http-equiv=x-ua-compatible content="IE=edge"><meta name=viewport content="width=device-width,initial-scale=1,shrink-to-fit=no"><meta name=twitter:card content="summary"><meta name=twitter:title content="Pseudorandom in chaos - 一个程序员的辩白"><meta name=twitter:description content="Randomized data is commonly used in fuzz testing, game engine, UUID, pipelines, etc.
+<!doctype html><html lang>
+<head>
+<meta charset=utf-8>
+<meta name=generator content="Hugo 0.87.0">
+<meta http-equiv=x-ua-compatible content="IE=edge">
+<meta name=viewport content="width=device-width,initial-scale=1,shrink-to-fit=no">
+<meta name=twitter:card content="summary">
+<meta name=twitter:title content="Pseudorandom in chaos - 一个程序员的辩白">
+<meta name=twitter:description content="Randomized data is commonly used in fuzz testing, game engine, UUID, pipelines, etc.
 Yet due to massive historically reasons, many C programmers tends to misuse the random functionalities.
  rand(3) and srand(3) Those two first appeared in Open Group Issue 1, it may a good starting point to explain why those two are commonly used among other pseudorandom functions.
-As you examine the rand(3) implementation specification, you&amp;rsquo;ll find some caveats:"><meta name=twitter:site content="https://leiless.me/"><meta name=twitter:creator content><meta name=twitter:image content="https://leiless.me/avatar.jpg"><meta property="og:locale" content><meta property="og:type" content="article"><meta property="og:title" content="Pseudorandom in chaos - 一个程序员的辩白"><meta property="og:description" content="Randomized data is commonly used in fuzz testing, game engine, UUID, pipelines, etc.
+As you examine the rand(3) implementation specification, you&amp;rsquo;ll find some caveats:">
+<meta name=twitter:site content="https://leiless.me/">
+<meta name=twitter:creator content>
+<meta name=twitter:image content="https://leiless.me/avatar.jpg">
+<meta property="og:locale" content>
+<meta property="og:type" content="article">
+<meta property="og:title" content="Pseudorandom in chaos - 一个程序员的辩白">
+<meta property="og:description" content="Randomized data is commonly used in fuzz testing, game engine, UUID, pipelines, etc.
 Yet due to massive historically reasons, many C programmers tends to misuse the random functionalities.
  rand(3) and srand(3) Those two first appeared in Open Group Issue 1, it may a good starting point to explain why those two are commonly used among other pseudorandom functions.
-As you examine the rand(3) implementation specification, you&amp;rsquo;ll find some caveats:"><meta property="og:url" content="https://leiless.me/posts/pseudo-random/"><meta property="og:site_name" content="一个程序员的辩白"><meta property="og:image" content="https://leiless.me/avatar.jpg"><title>Pseudorandom in chaos - 一个程序员的辩白</title><meta name=author content="Fishbone"><meta name=description content="Randomized data is commonly used in fuzz testing, game engine, UUID, pipelines, etc.
+As you examine the rand(3) implementation specification, you&amp;rsquo;ll find some caveats:">
+<meta property="og:url" content="https://leiless.me/posts/pseudo-random/">
+<meta property="og:site_name" content="一个程序员的辩白">
+<meta property="og:image" content="https://leiless.me/avatar.jpg">
+<title>Pseudorandom in chaos - 一个程序员的辩白</title>
+<meta name=author content="Fishbone">
+<meta name=description content="Randomized data is commonly used in fuzz testing, game engine, UUID, pipelines, etc.
 Yet due to massive historically reasons, many C programmers tends to misuse the random functionalities.
  rand(3) and srand(3) Those two first appeared in Open Group Issue 1, it may a good starting point to explain why those two are commonly used among other pseudorandom functions.
-As you examine the rand(3) implementation specification, you&amp;rsquo;ll find some caveats:"><link rel=stylesheet href="https://fonts.googleapis.com/css?family=Source+Code+Pro|Arvo:400,700"><link rel=stylesheet href=https://leiless.me/css/theme.css><link rel=stylesheet href=https://leiless.me/css/chroma.dracula.css></head><body class="font-serif bg-gray-200 border-t-4 border-blue-500 antialiased"><div class="w-full p-6 md:w-2/3 md:px-0 md:mx-auto xl:w-2/5"><header class=mb-6><div class="mb-6 md:flex md:items-center"><div><a class="text-lg mb-8 inline-block" href=/>&larr; Back Home</a><h1 class="text-4xl font-bold">Pseudorandom in chaos</h1><time datetime="2018-05-05 00:00:00 UTC">05 May 2018</time></div></div></header><article class=mb-12><p>Randomized data is commonly used in <a href=https://en.wikipedia.org/wiki/Fuzzing>fuzz testing</a>, game engine, <a href=https://en.wikipedia.org/wiki/Universally_unique_identifier>UUID</a>, pipelines, etc.</p><p>Yet due to massive historically reasons, many C programmers tends to misuse the random functionalities.</p><p> </p><h2 id=rand3-and-srand3>rand(3) and srand(3)</h2><p>Those two first appeared in <a href=http://pubs.opengroup.org/onlinepubs/9699919799/functions/rand.html>Open Group Issue 1</a>,
-it may a good starting point to explain why those two are commonly used among other pseudorandom functions.</p><p>As you examine the <a href=http://pubs.opengroup.org/onlinepubs/9699919799/functions/rand.html>rand(3) implementation specification</a>, you&rsquo;ll find some caveats:</p><ul><li>Range:</li></ul><blockquote><p>The rand_r() function shall compute a sequence of pseudo-random integers in the range [0, {RAND_MAX}]. (The value of the {RAND_MAX} macro shall be at least 32767.)</p></blockquote><p>When dates back to early era, CPU is 16-bits addressable, people can only generate pseudorandom within 16-bits range, still a historically issue, thus we have to stay compatible.</p><p>Though standard specify the RAND_MAX at least sized 16-bits, since in nowadays, most mainstream CPUs are 32-bits, the backing OS standard library is fairy likely to define RAND_MAX as 32-bits maximum signed integer. Wish may satisfy general purpose.</p><p>You should definitely check the RAND_MAX macro manually if the range matters. Protability still issue if you want to write implementation-independent code.</p><ul><li>Period</li></ul><blockquote><p>The rand() function shall compute a sequence of pseudo-random integers in the range [0, {RAND_MAX}] [XSI] with a period of at least 2^32.</p></blockquote><p>This seems isn&rsquo;t an issue if your RAND_MAX is sized 32-bits or less, o.w. there may sequence loop.</p><p>Why period matters? Rationale quoted from <em>References</em></p><blockquote><p>Compare this with the Mersenne Twister algorithm, which is 2^19937-1. You typically want the period of a random number generator to exceed the amount of numbers expected to be generated, because that&rsquo;s the point where the sequence repeats.</p></blockquote><ul><li>Randomness quality</li></ul><p>Like select(2), rand(3) is another example of poor library implementation(at least once a while), old rand(3) implementation generate pseudorandom numbers which is predictable or not fully pseudorandomized.</p><p>(Nowaday rand(3) implementation have good quality over pseudorandomness, won&rsquo;t be a big issue though)</p><ul><li>Statistical distribution</li></ul><p>Still implementation-dependent, theoretically, distribution of general-purpose pseudorandom generator should conform <a href=https://en.wikipedia.org/wiki/Continuous_uniform_distribution>uniform distribution</a>. Yet the specification claim nothing upon the distribution.</p><p>FYI, quoted from <em>references</em>:</p><blockquote><p>Even when rand claims a uniform distribution, it may not be a terribly good distribution, which greatly affects any attempts to adjust the range.</p></blockquote><p>If the distribution is a critical factor, you may happen to write your own pseudorandom generator. In most cases, rand(3) satisfy your daily-use needs.</p><p> </p><p>A common misuse of rand(3) is use it without prior call srand(3), quoted from specification:</p><blockquote><p>The srand() function uses the argument as a seed for a new sequence of pseudo-random numbers to be returned by subsequent calls to rand(). If srand() is then called with the same seed value, the sequence of pseudo-random numbers shall be repeated. If rand() is called before any calls to srand() are made, the same sequence shall be generated as when srand() is first called with a seed value of 1.</p></blockquote><p>E.g. the srand() have initial seed 1 if no prior srand(3) call is made, in such case, you have no randomness at all.</p><p>So you inevitably need to seed the generator, yet another common misuse of srand(3) is use</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
+As you examine the rand(3) implementation specification, you&amp;rsquo;ll find some caveats:">
+<link rel=stylesheet href="https://fonts.googleapis.com/css?family=Source+Code+Pro|Arvo:400,700">
+<link rel=stylesheet href=https://leiless.me/css/theme.css>
+<link rel=stylesheet href=https://leiless.me/css/chroma.dracula.css>
+</head>
+<body class="font-serif bg-gray-200 border-t-4 border-blue-500 antialiased">
+<div class="w-full p-6 md:w-2/3 md:px-0 md:mx-auto xl:w-2/5">
+<header class=mb-6>
+<div class="mb-6 md:flex md:items-center">
+<div>
+<a class="text-lg mb-8 inline-block" href=/>&larr; Back Home</a>
+<h1 class="text-4xl font-bold">Pseudorandom in chaos</h1>
+<time datetime="2018-05-05 00:00:00 UTC">05 May 2018</time>
+</div>
+</div>
+</header>
+<article class=mb-12>
+<p>Randomized data is commonly used in <a href=https://en.wikipedia.org/wiki/Fuzzing>fuzz testing</a>, game engine, <a href=https://en.wikipedia.org/wiki/Universally_unique_identifier>UUID</a>, pipelines, etc.</p>
+<p>Yet due to massive historically reasons, many C programmers tends to misuse the random functionalities.</p>
+<p> </p>
+<h2 id=rand3-and-srand3>rand(3) and srand(3)</h2>
+<p>Those two first appeared in <a href=http://pubs.opengroup.org/onlinepubs/9699919799/functions/rand.html>Open Group Issue 1</a>,
+it may a good starting point to explain why those two are commonly used among other pseudorandom functions.</p>
+<p>As you examine the <a href=http://pubs.opengroup.org/onlinepubs/9699919799/functions/rand.html>rand(3) implementation specification</a>, you&rsquo;ll find some caveats:</p>
+<ul>
+<li>Range:</li>
+</ul>
+<blockquote>
+<p>The rand_r() function shall compute a sequence of pseudo-random integers in the range [0, {RAND_MAX}]. (The value of the {RAND_MAX} macro shall be at least 32767.)</p>
+</blockquote>
+<p>When dates back to early era, CPU is 16-bits addressable, people can only generate pseudorandom within 16-bits range, still a historically issue, thus we have to stay compatible.</p>
+<p>Though standard specify the RAND_MAX at least sized 16-bits, since in nowadays, most mainstream CPUs are 32-bits, the backing OS standard library is fairy likely to define RAND_MAX as 32-bits maximum signed integer. Wish may satisfy general purpose.</p>
+<p>You should definitely check the RAND_MAX macro manually if the range matters. Protability still issue if you want to write implementation-independent code.</p>
+<ul>
+<li>Period</li>
+</ul>
+<blockquote>
+<p>The rand() function shall compute a sequence of pseudo-random integers in the range [0, {RAND_MAX}] [XSI] with a period of at least 2^32.</p>
+</blockquote>
+<p>This seems isn&rsquo;t an issue if your RAND_MAX is sized 32-bits or less, o.w. there may sequence loop.</p>
+<p>Why period matters? Rationale quoted from <em>References</em></p>
+<blockquote>
+<p>Compare this with the Mersenne Twister algorithm, which is 2^19937-1. You typically want the period of a random number generator to exceed the amount of numbers expected to be generated, because that&rsquo;s the point where the sequence repeats.</p>
+</blockquote>
+<ul>
+<li>Randomness quality</li>
+</ul>
+<p>Like select(2), rand(3) is another example of poor library implementation(at least once a while), old rand(3) implementation generate pseudorandom numbers which is predictable or not fully pseudorandomized.</p>
+<p>(Nowaday rand(3) implementation have good quality over pseudorandomness, won&rsquo;t be a big issue though)</p>
+<ul>
+<li>Statistical distribution</li>
+</ul>
+<p>Still implementation-dependent, theoretically, distribution of general-purpose pseudorandom generator should conform <a href=https://en.wikipedia.org/wiki/Continuous_uniform_distribution>uniform distribution</a>. Yet the specification claim nothing upon the distribution.</p>
+<p>FYI, quoted from <em>references</em>:</p>
+<blockquote>
+<p>Even when rand claims a uniform distribution, it may not be a terribly good distribution, which greatly affects any attempts to adjust the range.</p>
+</blockquote>
+<p>If the distribution is a critical factor, you may happen to write your own pseudorandom generator. In most cases, rand(3) satisfy your daily-use needs.</p>
+<p> </p>
+<p>A common misuse of rand(3) is use it without prior call srand(3), quoted from specification:</p>
+<blockquote>
+<p>The srand() function uses the argument as a seed for a new sequence of pseudo-random numbers to be returned by subsequent calls to rand(). If srand() is then called with the same seed value, the sequence of pseudo-random numbers shall be repeated. If rand() is called before any calls to srand() are made, the same sequence shall be generated as when srand() is first called with a seed value of 1.</p>
+</blockquote>
+<p>E.g. the srand() have initial seed 1 if no prior srand(3) call is made, in such case, you have no randomness at all.</p>
+<p>So you inevitably need to seed the generator, yet another common misuse of srand(3) is use</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
 </span><span class=lnt>2
 </span><span class=lnt>3
 </span><span class=lnt>4
-</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-fallback data-lang=fallback>#include &lt;stdio.h&gt;
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback>#include &lt;stdio.h&gt;
 #include &lt;time.h&gt;
 
 srand((unsigned int) time(NULL));
-</code></pre></td></tr></table></div></div><p>do the seeding, this turns to be a bad practice. To understand why, you may <a href=https://stackoverflow.com/questions/471248/what-is-ultimately-a-time-t-typedef-to>wrapup a test program</a> like the following:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
+</code></pre></td></tr></table>
+</div>
+</div><p>do the seeding, this turns to be a bad practice. To understand why, you may <a href=https://stackoverflow.com/questions/471248/what-is-ultimately-a-time-t-typedef-to>wrapup a test program</a> like the following:</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
 </span><span class=lnt>2
 </span><span class=lnt>3
 </span><span class=lnt>4
 </span><span class=lnt>5
 </span><span class=lnt>6
 </span><span class=lnt>7
-</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-c data-lang=c><span class=cp>#include</span> <span class=cpf>&lt;time.h&gt;</span><span class=cp>
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-c data-lang=c><span class=cp>#include</span> <span class=cpf>&lt;time.h&gt;</span><span class=cp>
 </span><span class=cp></span>
 <span class=kt>int</span> <span class=nf>main</span><span class=p>(</span><span class=kt>void</span><span class=p>)</span>
 <span class=p>{</span>
     <span class=n>time_t</span> <span class=n>a</span><span class=p>;</span>
     <span class=k>return</span> <span class=mi>0</span><span class=p>;</span>
 <span class=p>}</span>
-</code></pre></td></tr></table></div></div><p>And do the macro-expansion(replace with your favorite C compiler)</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
-</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-sh data-lang=sh>$ gcc -E test.c <span class=p>|</span> grep time_t
-</code></pre></td></tr></table></div></div><p>You would see the following output</p><blockquote><p>typedef long int __time_t;</p></blockquote><blockquote><p># 1 &ldquo;/usr/include/bits/types/time_t.h&rdquo; 1 3 4</p></blockquote><blockquote><p>typedef __time_t time_t;</p></blockquote><p>See, the parameter of srand(3) is typed unsigned int, yet the return value of time(2) is time_t, which is typedef of long int.</p><p>There may precision loss over higher bits(if long sized 64-bits), though won&rsquo;t be a big deal, the higher 32-bits usually invariant in considerably timespan.</p><p>The issue is the time(2) itself, it return time scaled in seconds, when you bump two generators within one second, you&rsquo;re fairy likely get the same seed.</p><p>In other words, the time(2) is coarse-grained over subsecond-level seeding.</p><p> </p><p>There&rsquo;re many ways to get a better seed</p><h3 id=1-incomplete-time-hash>1. Incomplete time hash</h3><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt> 1
+</code></pre></td></tr></table>
+</div>
+</div><p>And do the macro-expansion(replace with your favorite C compiler)</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-sh data-lang=sh>$ gcc -E test.c <span class=p>|</span> grep time_t
+</code></pre></td></tr></table>
+</div>
+</div><p>You would see the following output</p>
+<blockquote>
+<p>typedef long int __time_t;</p>
+</blockquote>
+<blockquote>
+<p># 1 &ldquo;/usr/include/bits/types/time_t.h&rdquo; 1 3 4</p>
+</blockquote>
+<blockquote>
+<p>typedef __time_t time_t;</p>
+</blockquote>
+<p>See, the parameter of srand(3) is typed unsigned int, yet the return value of time(2) is time_t, which is typedef of long int.</p>
+<p>There may precision loss over higher bits(if long sized 64-bits), though won&rsquo;t be a big deal, the higher 32-bits usually invariant in considerably timespan.</p>
+<p>The issue is the time(2) itself, it return time scaled in seconds, when you bump two generators within one second, you&rsquo;re fairy likely get the same seed.</p>
+<p>In other words, the time(2) is coarse-grained over subsecond-level seeding.</p>
+<p> </p>
+<p>There&rsquo;re many ways to get a better seed</p>
+<h3 id=1-incomplete-time-hash>1. Incomplete time hash</h3>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
 </span><span class=lnt> 2
 </span><span class=lnt> 3
 </span><span class=lnt> 4
@@ -43,7 +167,9 @@ srand((unsigned int) time(NULL));
 </span><span class=lnt> 9
 </span><span class=lnt>10
 </span><span class=lnt>11
-</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-c data-lang=c><span class=kt>unsigned</span> <span class=kt>int</span> <span class=nf>time_seed</span><span class=p>(</span><span class=kt>void</span><span class=p>)</span>
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-c data-lang=c><span class=kt>unsigned</span> <span class=kt>int</span> <span class=nf>time_seed</span><span class=p>(</span><span class=kt>void</span><span class=p>)</span>
 <span class=p>{</span>
     <span class=n>time_t</span> <span class=n>now</span> <span class=o>=</span> <span class=n>time</span><span class=p>(</span><span class=nb>NULL</span><span class=p>);</span>
     <span class=kt>unsigned</span> <span class=kt>char</span> <span class=o>*</span><span class=n>p</span> <span class=o>=</span> <span class=p>(</span><span class=kt>unsigned</span> <span class=kt>char</span> <span class=o>*</span><span class=p>)</span> <span class=o>&amp;</span><span class=n>now</span><span class=p>;</span>
@@ -54,9 +180,61 @@ srand((unsigned int) time(NULL));
 
     <span class=k>return</span> <span class=n>seed</span><span class=p>;</span>
 <span class=p>}</span>
-</code></pre></td></tr></table></div></div><p>This solution give by <a href=http://www.eternallyconfuzzled.com/arts/jsw_art_rand.aspx>Julienne Walker</a>, yet it turns out incomplete in subsecond-level.</p><p>Still produce the same value within a second, though it&rsquo;s hashed.</p><p> </p><h3 id=2-predictable-entropy>2. Predictable entropy</h3><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
-</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-c data-lang=c><span class=kt>int</span> <span class=n>seed</span> <span class=o>=</span> <span class=p>(</span><span class=kt>int</span><span class=p>)</span> <span class=n>time</span><span class=p>(</span><span class=nb>NULL</span><span class=p>)</span> <span class=o>%</span> <span class=n>getpid</span><span class=p>()</span> <span class=o>+</span> <span class=n>getppid</span><span class=p>();</span>
-</code></pre></td></tr></table></div></div><p>This solution give by <a href=https://www.astro.umd.edu/~ricotti/NEWWEB/teaching/ASTR415/>Massimo Ricotti</a> in his Astronomy class. (awe)</p><p>Still subsecond-level precision, yet it works pretty fine if you bear this in mind, especially in multithreading environment.</p><p>If you scrutinize this in deep, you&rsquo;ll find the pid may restricted by system configuration.</p><p>Taking Linux as an example, the default maximum pid can be found at <em>/proc/sys/kernel/pid_max</em></p><blockquote><p>/proc/sys/kernel/pid_max (since Linux 2.5.34)</p></blockquote><blockquote><p>This file specifies the value at which PIDs wrap around (i.e., the value in</p></blockquote><blockquote><p>this file is one greater than the maximum PID). PIDs greater than this value</p></blockquote><blockquote><p>are not allocated; thus, the value in this file also acts as a system-wide</p></blockquote><blockquote><p>limit on the total number of processes and threads. The default value for</p></blockquote><blockquote><p>this file, 32768, results in the same range of PIDs as on earlier kernels. On</p></blockquote><blockquote><p>32-bit platforms, 32768 is the maximum value for pid_max. On 64-bit systems,</p></blockquote><blockquote><p>pid_max can be set to any value up to 2^22 (PID_MAX_LIMIT, approximately 4</p></blockquote><blockquote><p>million).</p></blockquote><p>In 32-bits system, the result cannnot exceed 2 * 32768, which sharply restricted the seed range.</p><p>FreeBSD define its <a href="http://fxr.watson.org/fxr/source/sys/proc.h?v=FREEBSD11;im=3#L807">maximum pid</a>(99999 by initial) as macro, seems untunable if compiled.</p><p><em>P.S.</em> most UNIX-like systems restricted their default pid range in ten-thousand level(stay backward compatible?), <a href=https://unix.stackexchange.com/questions/16883/what-is-the-maximum-value-of-the-process-id/316499#316499>FYI</a>.</p><p>And since the monotonic time is linearly increased, the pid may very likely to follow the same pattern.</p><p>Thus the seed is predictable in some ways.</p><p> </p><h3 id=3-too-much-randomness>3. Too much randomness</h3><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt> 1
+</code></pre></td></tr></table>
+</div>
+</div><p>This solution give by <a href=http://www.eternallyconfuzzled.com/arts/jsw_art_rand.aspx>Julienne Walker</a>, yet it turns out incomplete in subsecond-level.</p>
+<p>Still produce the same value within a second, though it&rsquo;s hashed.</p>
+<p> </p>
+<h3 id=2-predictable-entropy>2. Predictable entropy</h3>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-c data-lang=c><span class=kt>int</span> <span class=n>seed</span> <span class=o>=</span> <span class=p>(</span><span class=kt>int</span><span class=p>)</span> <span class=n>time</span><span class=p>(</span><span class=nb>NULL</span><span class=p>)</span> <span class=o>%</span> <span class=n>getpid</span><span class=p>()</span> <span class=o>+</span> <span class=n>getppid</span><span class=p>();</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>This solution give by <a href=https://www.astro.umd.edu/~ricotti/NEWWEB/teaching/ASTR415/>Massimo Ricotti</a> in his Astronomy class. (awe)</p>
+<p>Still subsecond-level precision, yet it works pretty fine if you bear this in mind, especially in multithreading environment.</p>
+<p>If you scrutinize this in deep, you&rsquo;ll find the pid may restricted by system configuration.</p>
+<p>Taking Linux as an example, the default maximum pid can be found at <em>/proc/sys/kernel/pid_max</em></p>
+<blockquote>
+<p>/proc/sys/kernel/pid_max (since Linux 2.5.34)</p>
+</blockquote>
+<blockquote>
+<p>This file specifies the value at which PIDs wrap around (i.e., the value in</p>
+</blockquote>
+<blockquote>
+<p>this file is one greater than the maximum PID). PIDs greater than this value</p>
+</blockquote>
+<blockquote>
+<p>are not allocated; thus, the value in this file also acts as a system-wide</p>
+</blockquote>
+<blockquote>
+<p>limit on the total number of processes and threads. The default value for</p>
+</blockquote>
+<blockquote>
+<p>this file, 32768, results in the same range of PIDs as on earlier kernels. On</p>
+</blockquote>
+<blockquote>
+<p>32-bit platforms, 32768 is the maximum value for pid_max. On 64-bit systems,</p>
+</blockquote>
+<blockquote>
+<p>pid_max can be set to any value up to 2^22 (PID_MAX_LIMIT, approximately 4</p>
+</blockquote>
+<blockquote>
+<p>million).</p>
+</blockquote>
+<p>In 32-bits system, the result cannnot exceed 2 * 32768, which sharply restricted the seed range.</p>
+<p>FreeBSD define its <a href="http://fxr.watson.org/fxr/source/sys/proc.h?v=FREEBSD11;im=3#L807">maximum pid</a>(99999 by initial) as macro, seems untunable if compiled.</p>
+<p><em>P.S.</em> most UNIX-like systems restricted their default pid range in ten-thousand level(stay backward compatible?), <a href=https://unix.stackexchange.com/questions/16883/what-is-the-maximum-value-of-the-process-id/316499#316499>FYI</a>.</p>
+<p>And since the monotonic time is linearly increased, the pid may very likely to follow the same pattern.</p>
+<p>Thus the seed is predictable in some ways.</p>
+<p> </p>
+<h3 id=3-too-much-randomness>3. Too much randomness</h3>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
 </span><span class=lnt> 2
 </span><span class=lnt> 3
 </span><span class=lnt> 4
@@ -69,7 +247,9 @@ srand((unsigned int) time(NULL));
 </span><span class=lnt>11
 </span><span class=lnt>12
 </span><span class=lnt>13
-</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-c data-lang=c><span class=cp>#include</span> <span class=cpf>&lt;time.h&gt;</span><span class=cp>
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-c data-lang=c><span class=cp>#include</span> <span class=cpf>&lt;time.h&gt;</span><span class=cp>
 </span><span class=cp>#include</span> <span class=cpf>&lt;unistd.h&gt;</span><span class=cp>
 </span><span class=cp>#include</span> <span class=cpf>&lt;stdlib.h&gt;</span><span class=cp>
 </span><span class=cp>#include</span> <span class=cpf>&lt;sys/time.h&gt;</span><span class=cp>
@@ -82,7 +262,15 @@ srand((unsigned int) time(NULL));
     <span class=n>gettimeofday</span><span class=p>(</span><span class=o>&amp;</span><span class=n>tv</span><span class=p>,</span> <span class=nb>NULL</span><span class=p>);</span>
     <span class=n>srandom</span><span class=p>((</span><span class=n>getpid</span><span class=p>()</span> <span class=o>&lt;&lt;</span> <span class=mi>16</span><span class=p>)</span> <span class=o>^</span> <span class=n>tv</span><span class=p>.</span><span class=n>tv_sec</span> <span class=o>^</span> <span class=n>tv</span><span class=p>.</span><span class=n>tv_usec</span> <span class=o>^</span> <span class=n>junk</span><span class=p>);</span>
 <span class=p>}</span>
-</code></pre></td></tr></table></div></div><p>This solution give us sub-microsecond level precision seed, sounds great!</p><p>Yet it leaves undefined behaviour of using uninitialized data. Many compilers will ignored the entire translate unit(in this case, the entire expression) by default or by optimization flags.</p><p>Compile above code and objdump it</p><p><strong><a href=https://godbolt.org/g/HL5tTv>x86-64 gcc 7.3 -O0 flag</a></strong></p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt> 1
+</code></pre></td></tr></table>
+</div>
+</div><p>This solution give us sub-microsecond level precision seed, sounds great!</p>
+<p>Yet it leaves undefined behaviour of using uninitialized data. Many compilers will ignored the entire translate unit(in this case, the entire expression) by default or by optimization flags.</p>
+<p>Compile above code and objdump it</p>
+<p><strong><a href=https://godbolt.org/g/HL5tTv>x86-64 gcc 7.3 -O0 flag</a></strong></p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
 </span><span class=lnt> 2
 </span><span class=lnt> 3
 </span><span class=lnt> 4
@@ -105,7 +293,9 @@ srand((unsigned int) time(NULL));
 </span><span class=lnt>21
 </span><span class=lnt>22
 </span><span class=lnt>23
-</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-asm data-lang=asm><span class=nl>junk_srandom:</span>
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-asm data-lang=asm><span class=nl>junk_srandom:</span>
         <span class=nf>push</span>    <span class=no>rbp</span>
         <span class=nf>mov</span>     <span class=no>rbp</span><span class=p>,</span> <span class=no>rsp</span>
         <span class=nf>sub</span>     <span class=no>rsp</span><span class=p>,</span> <span class=mi>32</span>
@@ -128,7 +318,12 @@ srand((unsigned int) time(NULL));
         <span class=nf>nop</span>
         <span class=nf>leave</span>
         <span class=nf>ret</span>
-</code></pre></td></tr></table></div></div><p><strong><a href=https://godbolt.org/g/zG3MhF>x86-64 gcc 7.3 -O1 flag</a></strong></p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt> 1
+</code></pre></td></tr></table>
+</div>
+</div><p><strong><a href=https://godbolt.org/g/zG3MhF>x86-64 gcc 7.3 -O1 flag</a></strong></p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
 </span><span class=lnt> 2
 </span><span class=lnt> 3
 </span><span class=lnt> 4
@@ -141,7 +336,9 @@ srand((unsigned int) time(NULL));
 </span><span class=lnt>11
 </span><span class=lnt>12
 </span><span class=lnt>13
-</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-asm data-lang=asm><span class=nl>junk_srandom:</span>
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-asm data-lang=asm><span class=nl>junk_srandom:</span>
         <span class=nf>sub</span>     <span class=no>rsp</span><span class=p>,</span> <span class=mi>24</span>
         <span class=nf>mov</span>     <span class=no>esi</span><span class=p>,</span> <span class=mi>0</span>
         <span class=nf>mov</span>     <span class=no>rdi</span><span class=p>,</span> <span class=no>rsp</span>
@@ -154,7 +351,13 @@ srand((unsigned int) time(NULL));
         <span class=nf>call</span>    <span class=no>srandom</span>
         <span class=nf>add</span>     <span class=no>rsp</span><span class=p>,</span> <span class=mi>24</span>
         <span class=nf>ret</span>
-</code></pre></td></tr></table></div></div><p>You&rsquo;ll notice entire <em>junk</em> variable optimized out(more specifically, the GCC threat it as zero), since its behaviour is undefined. You&rsquo;d better to avoid to use this solution, it&rsquo;s extremely dangerous.</p><p>Yet with <a href=https://godbolt.org/g/B1xkMN>minimal remedy</a>, we can bring it back to life.</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt> 1
+</code></pre></td></tr></table>
+</div>
+</div><p>You&rsquo;ll notice entire <em>junk</em> variable optimized out(more specifically, the GCC threat it as zero), since its behaviour is undefined. You&rsquo;d better to avoid to use this solution, it&rsquo;s extremely dangerous.</p>
+<p>Yet with <a href=https://godbolt.org/g/B1xkMN>minimal remedy</a>, we can bring it back to life.</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
 </span><span class=lnt> 2
 </span><span class=lnt> 3
 </span><span class=lnt> 4
@@ -174,7 +377,9 @@ srand((unsigned int) time(NULL));
 </span><span class=lnt>18
 </span><span class=lnt>19
 </span><span class=lnt>20
-</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-fallback data-lang=fallback>#include &lt;time.h&gt;
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback>#include &lt;time.h&gt;
 #include &lt;unistd.h&gt;
 #include &lt;stdlib.h&gt;
 #include &lt;stdint.h&gt;
@@ -194,12 +399,62 @@ void loselose_srand(void)
      */
     srand(((getpid() + getppid()) &lt;&lt; 16) ^ tv.tv_sec ^ tv.tv_usec ^ (p &amp; 0xffff00));
 }
-</code></pre></td></tr></table></div></div><p>This benifits from the <a href=https://en.wikipedia.org/wiki/Address_space_layout_randomization>ASLR</a> technique, which sightly deviated from original junk_srandom().</p><p>If ASLR not available in your system, you may replace it with clock(3), which is processor time.</p><p> </p><p>Nanosecond level seeding seems overkill, pasted here in case you need it.</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
+</code></pre></td></tr></table>
+</div>
+</div><p>This benifits from the <a href=https://en.wikipedia.org/wiki/Address_space_layout_randomization>ASLR</a> technique, which sightly deviated from original junk_srandom().</p>
+<p>If ASLR not available in your system, you may replace it with clock(3), which is processor time.</p>
+<p> </p>
+<p>Nanosecond level seeding seems overkill, pasted here in case you need it.</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
 </span><span class=lnt>2
 </span><span class=lnt>3
 </span><span class=lnt>4
-</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-c data-lang=c><span class=cp>#include</span> <span class=cpf>&lt;time.h&gt;</span><span class=cp>
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-c data-lang=c><span class=cp>#include</span> <span class=cpf>&lt;time.h&gt;</span><span class=cp>
 </span><span class=cp></span>
 <span class=k>struct</span> <span class=n>timespec</span> <span class=n>ts</span><span class=p>;</span>
 <span class=n>clock_gettime</span><span class=p>(</span><span class=n>CLOCK_REALTIME</span><span class=p>,</span> <span class=o>&amp;</span><span class=n>ts</span><span class=p>);</span>
-</code></pre></td></tr></table></div></div><p> </p><h2 id=random3-and-srandom3>random(3) and srandom(3)</h2><p>This pair sourced POSIX, fixed several flaws mentioned above.</p><p>As <a href=http://pubs.opengroup.org/onlinepubs/9699919799/functions/srandom.html>the specification</a> states,</p><blockquote><p>The random() function shall use a non-linear additive feedback random-number generator employing a default state array size of 31 long integers to return successive pseudo-random numbers in the range from 0 to 2^31-1. The period of this random-number generator is approximately 16 x (2^31-1). The size of the state array determines the period of the random-number generator. Increasing the state array size shall increase the period.</p></blockquote><blockquote><p>With 256 bytes of state information, the period of the random-number generator shall be greater than 2^69.</p></blockquote><p>The range and period is enough for general-purpose. You still need a better seed for srandom(3) though, and since its argument typed unsigned int, the merely time(NULL) still provides subsecond level seeding.</p><p> </p><h2 id=conclusion>Conclusion</h2><p>Random number is a complex topic, maybe it&rsquo;s unusual for you to use random number, yet once you got any chance, do not misuse the basic random functionalities, even you don&rsquo;t need sounding randomness. When the randomness is critical(say, you&rsquo;re devloping a cryptographic hash algorithm), do NOT pursue rand(3) or srand(3), they&rsquo;re terrible. Instead, develop one from scratch, or using state-of-the-art PRNG like <a href=https://metacpan.org/release/Math-Random-TT800>TT800</a> or the <a href=https://en.wikipedia.org/wiki/Mersenne_Twister>Mersenne Twister</a>.</p><p> </p><h2 id=references><em>References</em></h2><blockquote><p><a href=https://wiki.sei.cmu.edu/confluence/display/c/EXP33-C.+Do+not+read+uninitialized+memory>EXP33-C. Do not read uninitialized memory</a></p><p><a href=https://wiki.sei.cmu.edu/confluence/display/c/MSC30-C.+Do+not+use+the+rand%28%29+function+for+generating+pseudorandom+numbers>MSC30-C. Do not use the rand() function for generating pseudorandom numbers</a></p><p><a href=https://wiki.sei.cmu.edu/confluence/display/c/MSC32-C.+Properly+seed+pseudorandom+number+generators>MSC32-C. Properly seed pseudorandom number generators</a></p><p><a href=http://www.eternallyconfuzzled.com/arts/jsw_art_rand.aspx>Using rand() (C/C++): Advice for the C standard library&rsquo;s rand() function.</a></p><p><a href=https://www.astro.umd.edu/~ricotti/NEWWEB/teaching/ASTR415/class12.pdf>Random numbers and cryptography</a></p><p><a href=https://kqueue.org/blog/2012/06/25/more-randomness-or-less/>More randomness or less</a></p><p><a href=https://godbolt.org>Compiler Explorer</a></p></blockquote><script src=https://utteranc.es/client.js repo=leiless/blog issue-term=pathname label=comment theme=github-light crossorigin=anonymous async></script></article><footer><p><a href=https://leiless.me/>一个程序员的辩白</a> <span style=color:gray>&copy;</span> 2017 - 2021. Proudly made with <a href=https://gohugo.io/ target=_blank>Hugo</a> and <a href=https://tailwindcss.com/ target=_blank>TailwindCSS</a>.</p><p style=margin-top:-15px;font-size:10px>Released under <a href=https://creativecommons.org/licenses/by-nc-sa/4.0/>CC BY-NC-SA 4.0</a> license.</p></footer></div><script async src="https://www.googletagmanager.com/gtag/js?id=G-RMJ7KLHXH8"></script><script>var doNotTrack=!1;if(!doNotTrack){window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag('js',new Date),gtag('config','G-RMJ7KLHXH8',{anonymize_ip:!1})}</script><script>(function(a,c,d,e){if(typeof a.webpushr!='undefined')return;a.webpushr=a.webpushr||function(){(a.webpushr.q=a.webpushr.q||[]).push(arguments)};var b,f=c.getElementsByTagName(d)[0];b=c.createElement(d),b.id=e,b.async=1,b.src="https://cdn.webpushr.com/app.min.js",f.parentNode.appendChild(b)})(window,document,'script','webpushr-jssdk'),webpushr('setup',{key:'BJji5mvLAV3k-EncfEEH_CtK_CdcXWnXc-fvhs7uY1jfOG4xX_RsBmoWvTD0OTyq6TOEB5G5_uFE6Ylpxj5MKEQ'})</script></body></html>
+</code></pre></td></tr></table>
+</div>
+</div><p> </p>
+<h2 id=random3-and-srandom3>random(3) and srandom(3)</h2>
+<p>This pair sourced POSIX, fixed several flaws mentioned above.</p>
+<p>As <a href=http://pubs.opengroup.org/onlinepubs/9699919799/functions/srandom.html>the specification</a> states,</p>
+<blockquote>
+<p>The random() function shall use a non-linear additive feedback random-number generator employing a default state array size of 31 long integers to return successive pseudo-random numbers in the range from 0 to 2^31-1. The period of this random-number generator is approximately 16 x (2^31-1). The size of the state array determines the period of the random-number generator. Increasing the state array size shall increase the period.</p>
+</blockquote>
+<blockquote>
+<p>With 256 bytes of state information, the period of the random-number generator shall be greater than 2^69.</p>
+</blockquote>
+<p>The range and period is enough for general-purpose. You still need a better seed for srandom(3) though, and since its argument typed unsigned int, the merely time(NULL) still provides subsecond level seeding.</p>
+<p> </p>
+<h2 id=conclusion>Conclusion</h2>
+<p>Random number is a complex topic, maybe it&rsquo;s unusual for you to use random number, yet once you got any chance, do not misuse the basic random functionalities, even you don&rsquo;t need sounding randomness. When the randomness is critical(say, you&rsquo;re devloping a cryptographic hash algorithm), do NOT pursue rand(3) or srand(3), they&rsquo;re terrible. Instead, develop one from scratch, or using state-of-the-art PRNG like <a href=https://metacpan.org/release/Math-Random-TT800>TT800</a> or the <a href=https://en.wikipedia.org/wiki/Mersenne_Twister>Mersenne Twister</a>.</p>
+<p> </p>
+<h2 id=references><em>References</em></h2>
+<blockquote>
+<p><a href=https://wiki.sei.cmu.edu/confluence/display/c/EXP33-C.+Do+not+read+uninitialized+memory>EXP33-C. Do not read uninitialized memory</a></p>
+<p><a href=https://wiki.sei.cmu.edu/confluence/display/c/MSC30-C.+Do+not+use+the+rand%28%29+function+for+generating+pseudorandom+numbers>MSC30-C. Do not use the rand() function for generating pseudorandom numbers</a></p>
+<p><a href=https://wiki.sei.cmu.edu/confluence/display/c/MSC32-C.+Properly+seed+pseudorandom+number+generators>MSC32-C. Properly seed pseudorandom number generators</a></p>
+<p><a href=http://www.eternallyconfuzzled.com/arts/jsw_art_rand.aspx>Using rand() (C/C++): Advice for the C standard library&rsquo;s rand() function.</a></p>
+<p><a href=https://www.astro.umd.edu/~ricotti/NEWWEB/teaching/ASTR415/class12.pdf>Random numbers and cryptography</a></p>
+<p><a href=https://kqueue.org/blog/2012/06/25/more-randomness-or-less/>More randomness or less</a></p>
+<p><a href=https://godbolt.org>Compiler Explorer</a></p>
+</blockquote>
+<script src=https://utteranc.es/client.js repo=leiless/blog issue-term=pathname label=comment theme=github-light crossorigin=anonymous async></script>
+</article>
+<footer>
+<p>
+<a href=https://leiless.me/>一个程序员的辩白</a> <span style=color:gray>&copy;</span> 2017 - 2021. Proudly made with <a href=https://gohugo.io/ target=_blank>Hugo</a> and <a href=https://tailwindcss.com/ target=_blank>TailwindCSS</a>.
+</p>
+<p style=margin-top:-15px;font-size:10px>Released under <a href=https://creativecommons.org/licenses/by-nc-sa/4.0/>CC BY-NC-SA 4.0</a> license.</p>
+</footer>
+</div>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-RMJ7KLHXH8"></script>
+<script>var doNotTrack=!1;if(!doNotTrack){window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag('js',new Date),gtag('config','G-RMJ7KLHXH8',{anonymize_ip:!1})}</script>
+<script>(function(a,c,d,e){if(typeof a.webpushr!='undefined')return;a.webpushr=a.webpushr||function(){(a.webpushr.q=a.webpushr.q||[]).push(arguments)};var b,f=c.getElementsByTagName(d)[0];b=c.createElement(d),b.id=e,b.async=1,b.src="https://cdn.webpushr.com/app.min.js",f.parentNode.appendChild(b)})(window,document,'script','webpushr-jssdk'),webpushr('setup',{key:'BJji5mvLAV3k-EncfEEH_CtK_CdcXWnXc-fvhs7uY1jfOG4xX_RsBmoWvTD0OTyq6TOEB5G5_uFE6Ylpxj5MKEQ'})</script>
+</body>
+</html>

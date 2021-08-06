@@ -1,13 +1,56 @@
-<!doctype html><html lang><head><meta charset=utf-8><meta name=generator content="Hugo 0.83.1"><meta http-equiv=x-ua-compatible content="IE=edge"><meta name=viewport content="width=device-width,initial-scale=1,shrink-to-fit=no"><meta name=twitter:card content="summary"><meta name=twitter:title content="Lowest Bit Set - 一个程序员的辩白"><meta name=twitter:description content="How do you solve the question &amp;ldquo;Determine position of lowest bit set&amp;rdquo;?
+<!doctype html><html lang>
+<head>
+<meta charset=utf-8>
+<meta name=generator content="Hugo 0.87.0">
+<meta http-equiv=x-ua-compatible content="IE=edge">
+<meta name=viewport content="width=device-width,initial-scale=1,shrink-to-fit=no">
+<meta name=twitter:card content="summary">
+<meta name=twitter:title content="Lowest Bit Set - 一个程序员的辩白">
+<meta name=twitter:description content="How do you solve the question &amp;ldquo;Determine position of lowest bit set&amp;rdquo;?
 I&amp;rsquo;m not excepting you to solve it by now, but think about it.
 The intuitive way to solve it may like Position of lowest bit set:
-1 2 3 4 5 6 7 8 9 10 11 12 13  unsigned int lowest_bit_set_naive(unsigned int x) { // x=0 is not properly handled by while-loop  if (x == 0) return 0; unsigned int result = 0; while ((x &amp;amp; 1) == 0) { x &amp;gt;&amp;gt;= 1; result++; } return result; }   Yes, it solved the question nicely, I don&amp;rsquo;t want be captious, 0 and 1 have the same value returned :-("><meta name=twitter:site content="https://leiless.me/"><meta name=twitter:creator content><meta name=twitter:image content="https://leiless.me/avatar.jpg"><meta property="og:locale" content><meta property="og:type" content="article"><meta property="og:title" content="Lowest Bit Set - 一个程序员的辩白"><meta property="og:description" content="How do you solve the question &amp;ldquo;Determine position of lowest bit set&amp;rdquo;?
+1 2 3 4 5 6 7 8 9 10 11 12 13  unsigned int lowest_bit_set_naive(unsigned int x) { // x=0 is not properly handled by while-loop  if (x == 0) return 0; unsigned int result = 0; while ((x &amp;amp; 1) == 0) { x &amp;gt;&amp;gt;= 1; result++; } return result; }   Yes, it solved the question nicely, I don&amp;rsquo;t want be captious, 0 and 1 have the same value returned :-(">
+<meta name=twitter:site content="https://leiless.me/">
+<meta name=twitter:creator content>
+<meta name=twitter:image content="https://leiless.me/avatar.jpg">
+<meta property="og:locale" content>
+<meta property="og:type" content="article">
+<meta property="og:title" content="Lowest Bit Set - 一个程序员的辩白">
+<meta property="og:description" content="How do you solve the question &amp;ldquo;Determine position of lowest bit set&amp;rdquo;?
 I&amp;rsquo;m not excepting you to solve it by now, but think about it.
 The intuitive way to solve it may like Position of lowest bit set:
-1 2 3 4 5 6 7 8 9 10 11 12 13  unsigned int lowest_bit_set_naive(unsigned int x) { // x=0 is not properly handled by while-loop  if (x == 0) return 0; unsigned int result = 0; while ((x &amp;amp; 1) == 0) { x &amp;gt;&amp;gt;= 1; result++; } return result; }   Yes, it solved the question nicely, I don&amp;rsquo;t want be captious, 0 and 1 have the same value returned :-("><meta property="og:url" content="https://leiless.me/posts/lowest-bit-set/"><meta property="og:site_name" content="一个程序员的辩白"><meta property="og:image" content="https://leiless.me/avatar.jpg"><title>Lowest Bit Set - 一个程序员的辩白</title><meta name=author content="Fishbone"><meta name=description content="How do you solve the question &amp;ldquo;Determine position of lowest bit set&amp;rdquo;?
+1 2 3 4 5 6 7 8 9 10 11 12 13  unsigned int lowest_bit_set_naive(unsigned int x) { // x=0 is not properly handled by while-loop  if (x == 0) return 0; unsigned int result = 0; while ((x &amp;amp; 1) == 0) { x &amp;gt;&amp;gt;= 1; result++; } return result; }   Yes, it solved the question nicely, I don&amp;rsquo;t want be captious, 0 and 1 have the same value returned :-(">
+<meta property="og:url" content="https://leiless.me/posts/lowest-bit-set/">
+<meta property="og:site_name" content="一个程序员的辩白">
+<meta property="og:image" content="https://leiless.me/avatar.jpg">
+<title>Lowest Bit Set - 一个程序员的辩白</title>
+<meta name=author content="Fishbone">
+<meta name=description content="How do you solve the question &amp;ldquo;Determine position of lowest bit set&amp;rdquo;?
 I&amp;rsquo;m not excepting you to solve it by now, but think about it.
 The intuitive way to solve it may like Position of lowest bit set:
-1 2 3 4 5 6 7 8 9 10 11 12 13  unsigned int lowest_bit_set_naive(unsigned int x) { // x=0 is not properly handled by while-loop  if (x == 0) return 0; unsigned int result = 0; while ((x &amp;amp; 1) == 0) { x &amp;gt;&amp;gt;= 1; result++; } return result; }   Yes, it solved the question nicely, I don&amp;rsquo;t want be captious, 0 and 1 have the same value returned :-("><link rel=stylesheet href="https://fonts.googleapis.com/css?family=Source+Code+Pro|Arvo:400,700"><link rel=stylesheet href=https://leiless.me/css/theme.css><link rel=stylesheet href=https://leiless.me/css/chroma.dracula.css></head><body class="font-serif bg-gray-200 border-t-4 border-blue-500 antialiased"><div class="w-full p-6 md:w-2/3 md:px-0 md:mx-auto xl:w-2/5"><header class=mb-6><div class="mb-6 md:flex md:items-center"><div><a class="text-lg mb-8 inline-block" href=/>&larr; Back Home</a><h1 class="text-4xl font-bold">Lowest Bit Set</h1><time datetime="2017-07-01 00:00:00 UTC">01 Jul 2017</time></div></div></header><article class=mb-12><p>How do you solve the question &ldquo;Determine position of lowest bit set&rdquo;?</p><p>I&rsquo;m not excepting you to solve it by now, but think about it.</p><p>The intuitive way to solve it may like <a href=https://bits.stephan-brumme.com/lowestBitSet.html>Position of lowest bit set</a>:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt> 1
+1 2 3 4 5 6 7 8 9 10 11 12 13  unsigned int lowest_bit_set_naive(unsigned int x) { // x=0 is not properly handled by while-loop  if (x == 0) return 0; unsigned int result = 0; while ((x &amp;amp; 1) == 0) { x &amp;gt;&amp;gt;= 1; result++; } return result; }   Yes, it solved the question nicely, I don&amp;rsquo;t want be captious, 0 and 1 have the same value returned :-(">
+<link rel=stylesheet href="https://fonts.googleapis.com/css?family=Source+Code+Pro|Arvo:400,700">
+<link rel=stylesheet href=https://leiless.me/css/theme.css>
+<link rel=stylesheet href=https://leiless.me/css/chroma.dracula.css>
+</head>
+<body class="font-serif bg-gray-200 border-t-4 border-blue-500 antialiased">
+<div class="w-full p-6 md:w-2/3 md:px-0 md:mx-auto xl:w-2/5">
+<header class=mb-6>
+<div class="mb-6 md:flex md:items-center">
+<div>
+<a class="text-lg mb-8 inline-block" href=/>&larr; Back Home</a>
+<h1 class="text-4xl font-bold">Lowest Bit Set</h1>
+<time datetime="2017-07-01 00:00:00 UTC">01 Jul 2017</time>
+</div>
+</div>
+</header>
+<article class=mb-12>
+<p>How do you solve the question &ldquo;Determine position of lowest bit set&rdquo;?</p>
+<p>I&rsquo;m not excepting you to solve it by now, but think about it.</p>
+<p>The intuitive way to solve it may like <a href=https://bits.stephan-brumme.com/lowestBitSet.html>Position of lowest bit set</a>:</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
 </span><span class=lnt> 2
 </span><span class=lnt> 3
 </span><span class=lnt> 4
@@ -20,7 +63,9 @@ The intuitive way to solve it may like Position of lowest bit set:
 </span><span class=lnt>11
 </span><span class=lnt>12
 </span><span class=lnt>13
-</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-c data-lang=c><span class=kt>unsigned</span> <span class=kt>int</span> <span class=nf>lowest_bit_set_naive</span><span class=p>(</span><span class=kt>unsigned</span> <span class=kt>int</span> <span class=n>x</span><span class=p>)</span>
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-c data-lang=c><span class=kt>unsigned</span> <span class=kt>int</span> <span class=nf>lowest_bit_set_naive</span><span class=p>(</span><span class=kt>unsigned</span> <span class=kt>int</span> <span class=n>x</span><span class=p>)</span>
 <span class=p>{</span>
     <span class=c1>// x=0 is not properly handled by while-loop
 </span><span class=c1></span>    <span class=k>if</span> <span class=p>(</span><span class=n>x</span> <span class=o>==</span> <span class=mi>0</span><span class=p>)</span> <span class=k>return</span> <span class=mi>0</span><span class=p>;</span>
@@ -33,7 +78,15 @@ The intuitive way to solve it may like Position of lowest bit set:
 
     <span class=k>return</span> <span class=n>result</span><span class=p>;</span>
 <span class=p>}</span>
-</code></pre></td></tr></table></div></div><p>Yes, it solved the question nicely, I don&rsquo;t want be captious, 0 and 1 have the same value returned :-(</p><p> </p><p><a href=https://bits.stephan-brumme.com/lowestBitSet.html>Position of lowest bit set</a> also given an opaque solution to this question.</p><p>Much more like this(rearranged):</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt> 1
+</code></pre></td></tr></table>
+</div>
+</div><p>Yes, it solved the question nicely, I don&rsquo;t want be captious, 0 and 1 have the same value returned :-(</p>
+<p> </p>
+<p><a href=https://bits.stephan-brumme.com/lowestBitSet.html>Position of lowest bit set</a> also given an opaque solution to this question.</p>
+<p>Much more like this(rearranged):</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
 </span><span class=lnt> 2
 </span><span class=lnt> 3
 </span><span class=lnt> 4
@@ -50,7 +103,9 @@ The intuitive way to solve it may like Position of lowest bit set:
 </span><span class=lnt>15
 </span><span class=lnt>16
 </span><span class=lnt>17
-</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-c data-lang=c><span class=k>const</span> <span class=kt>unsigned</span> <span class=kt>int</span> <span class=n>MultiplyDeBruijnBitPosition</span><span class=p>[</span><span class=mi>32</span><span class=p>]</span> <span class=o>=</span> <span class=p>{</span>
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-c data-lang=c><span class=k>const</span> <span class=kt>unsigned</span> <span class=kt>int</span> <span class=n>MultiplyDeBruijnBitPosition</span><span class=p>[</span><span class=mi>32</span><span class=p>]</span> <span class=o>=</span> <span class=p>{</span>
     <span class=c1>// precomputed lookup table
 </span><span class=c1></span>    <span class=mi>0</span><span class=p>,</span>  <span class=mi>1</span><span class=p>,</span> <span class=mi>28</span><span class=p>,</span>  <span class=mi>2</span><span class=p>,</span> <span class=mi>29</span><span class=p>,</span> <span class=mi>14</span><span class=p>,</span> <span class=mi>24</span><span class=p>,</span>  <span class=mi>3</span><span class=p>,</span> <span class=mi>30</span><span class=p>,</span> <span class=mi>22</span><span class=p>,</span> <span class=mi>20</span><span class=p>,</span> <span class=mi>15</span><span class=p>,</span> <span class=mi>25</span><span class=p>,</span> <span class=mi>17</span><span class=p>,</span>  <span class=mi>4</span><span class=p>,</span>  <span class=mi>8</span><span class=p>,</span>
     <span class=mi>31</span><span class=p>,</span> <span class=mi>27</span><span class=p>,</span> <span class=mi>13</span><span class=p>,</span> <span class=mi>23</span><span class=p>,</span> <span class=mi>21</span><span class=p>,</span> <span class=mi>19</span><span class=p>,</span> <span class=mi>16</span><span class=p>,</span>  <span class=mi>7</span><span class=p>,</span> <span class=mi>26</span><span class=p>,</span> <span class=mi>12</span><span class=p>,</span> <span class=mi>18</span><span class=p>,</span>  <span class=mi>6</span><span class=p>,</span> <span class=mi>11</span><span class=p>,</span>  <span class=mi>5</span><span class=p>,</span> <span class=mi>10</span><span class=p>,</span>  <span class=mi>9</span>
@@ -67,7 +122,30 @@ The intuitive way to solve it may like Position of lowest bit set:
     <span class=c1>// convert to actual position
 </span><span class=c1></span>    <span class=k>return</span> <span class=n>MultiplyDeBruijnBitPosition</span><span class=p>[</span><span class=n>x</span><span class=p>];</span>
 <span class=p>}</span>
-</code></pre></td></tr></table></div></div><p> </p><p>Even with comments, it&rsquo;s not easy to understand this for some people(like me) at the first glance.</p><p>The most confusions come from:</p><ul><li>What&rsquo;s the De Bruijn constant?</li><li>How the lookup table precomputed?</li></ul><p>Before answering those two questions, I need explain to you what&rsquo;s the idea behind this opaque solution:</p><ul><li><p>It applied a mapping concept, which means, the bit set position is one-to-one.</p></li><li><p>Generate a precomputed array to store the mapping result, which can lead us to real position.</p></li></ul><p>Though we now know that the magic number can generate an unique 5-bits number. But how we can generate it?</p><p> </p><p>My intuitive way is brute-force probing, which is easy and applicable.</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt> 1
+</code></pre></td></tr></table>
+</div>
+</div><p> </p>
+<p>Even with comments, it&rsquo;s not easy to understand this for some people(like me) at the first glance.</p>
+<p>The most confusions come from:</p>
+<ul>
+<li>What&rsquo;s the De Bruijn constant?</li>
+<li>How the lookup table precomputed?</li>
+</ul>
+<p>Before answering those two questions, I need explain to you what&rsquo;s the idea behind this opaque solution:</p>
+<ul>
+<li>
+<p>It applied a mapping concept, which means, the bit set position is one-to-one.</p>
+</li>
+<li>
+<p>Generate a precomputed array to store the mapping result, which can lead us to real position.</p>
+</li>
+</ul>
+<p>Though we now know that the magic number can generate an unique 5-bits number. But how we can generate it?</p>
+<p> </p>
+<p>My intuitive way is brute-force probing, which is easy and applicable.</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
 </span><span class=lnt> 2
 </span><span class=lnt> 3
 </span><span class=lnt> 4
@@ -120,7 +198,9 @@ The intuitive way to solve it may like Position of lowest bit set:
 </span><span class=lnt>51
 </span><span class=lnt>52
 </span><span class=lnt>53
-</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-c data-lang=c><span class=cp>#include</span> <span class=cpf>&lt;stdio.h&gt;</span><span class=cp>
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-c data-lang=c><span class=cp>#include</span> <span class=cpf>&lt;stdio.h&gt;</span><span class=cp>
 </span><span class=cp>#include</span> <span class=cpf>&lt;string.h&gt;</span><span class=cp>
 </span><span class=cp></span>
 <span class=cp>#define LIM 32
@@ -173,17 +253,30 @@ The intuitive way to solve it may like Position of lowest bit set:
         <span class=n>putchar</span><span class=p>(</span><span class=n>j</span> <span class=o>%</span> <span class=mi>8</span> <span class=o>!=</span> <span class=mi>7</span> <span class=o>?</span> <span class=sc>&#39; &#39;</span> <span class=o>:</span> <span class=sc>&#39;\n&#39;</span><span class=p>);</span>
     <span class=p>}</span>
 <span class=p>}</span>
-</code></pre></td></tr></table></div></div><p>If you invoke <code>probing()</code>, it should generate following output:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
+</code></pre></td></tr></table>
+</div>
+</div><p>If you invoke <code>probing()</code>, it should generate following output:</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
 </span><span class=lnt>2
 </span><span class=lnt>3
 </span><span class=lnt>4
 </span><span class=lnt>5
-</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-fallback data-lang=fallback>0x04653adf:
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback>0x04653adf:
  0,  1,  2,  6,  3, 11,  7, 16,
  4, 14, 12, 21,  8, 23, 17, 26,
 31,  5, 10, 15, 13, 20, 22, 25,
 30,  9, 19, 24, 29, 18, 28, 27,
-</code></pre></td></tr></table></div></div><p>Of which <code>0x04653adf</code> is the minimal magic number, <a href=https://gist.github.com/leiless/6e1489558c815d2d085cbd40089a900f>there are plenty of those magic numbers</a>. <code>0x077cb531</code> is another case.</p><p>Based on this, we can make up our own version here:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt> 1
+</code></pre></td></tr></table>
+</div>
+</div><p>Of which <code>0x04653adf</code> is the minimal magic number, <a href=https://gist.github.com/leiless/6e1489558c815d2d085cbd40089a900f>there are plenty of those magic numbers</a>. <code>0x077cb531</code> is another case.</p>
+<p>Based on this, we can make up our own version here:</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
 </span><span class=lnt> 2
 </span><span class=lnt> 3
 </span><span class=lnt> 4
@@ -204,7 +297,9 @@ The intuitive way to solve it may like Position of lowest bit set:
 </span><span class=lnt>19
 </span><span class=lnt>20
 </span><span class=lnt>21
-</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-c data-lang=c><span class=k>static</span> <span class=k>const</span> <span class=kt>int</span> <span class=n>debj32</span><span class=p>[]</span> <span class=o>=</span> <span class=p>{</span>
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-c data-lang=c><span class=k>static</span> <span class=k>const</span> <span class=kt>int</span> <span class=n>debj32</span><span class=p>[]</span> <span class=o>=</span> <span class=p>{</span>
      <span class=mi>0</span><span class=p>,</span>  <span class=mi>1</span><span class=p>,</span>  <span class=mi>2</span><span class=p>,</span>  <span class=mi>6</span><span class=p>,</span>  <span class=mi>3</span><span class=p>,</span> <span class=mi>11</span><span class=p>,</span>  <span class=mi>7</span><span class=p>,</span> <span class=mi>16</span><span class=p>,</span>
      <span class=mi>4</span><span class=p>,</span> <span class=mi>14</span><span class=p>,</span> <span class=mi>12</span><span class=p>,</span> <span class=mi>21</span><span class=p>,</span>  <span class=mi>8</span><span class=p>,</span> <span class=mi>23</span><span class=p>,</span> <span class=mi>17</span><span class=p>,</span> <span class=mi>26</span><span class=p>,</span>
     <span class=mi>31</span><span class=p>,</span>  <span class=mi>5</span><span class=p>,</span> <span class=mi>10</span><span class=p>,</span> <span class=mi>15</span><span class=p>,</span> <span class=mi>13</span><span class=p>,</span> <span class=mi>20</span><span class=p>,</span> <span class=mi>22</span><span class=p>,</span> <span class=mi>25</span><span class=p>,</span>
@@ -225,7 +320,13 @@ The intuitive way to solve it may like Position of lowest bit set:
 <span class=p>{</span>
     <span class=k>return</span> <span class=n>x</span> <span class=o>?</span> <span class=n>debj32</span><span class=p>[((</span><span class=n>x</span> <span class=o>&amp;</span> <span class=o>-</span><span class=n>x</span><span class=p>)</span> <span class=o>*</span> <span class=mh>0x04653adf</span><span class=p>)</span> <span class=o>&gt;&gt;</span> <span class=mi>27</span><span class=p>]</span> <span class=o>:</span> <span class=o>-</span><span class=mi>1</span><span class=p>;</span>
 <span class=p>}</span>
-</code></pre></td></tr></table></div></div><p> </p><p>The magic thing is that it already adopted in Haskell <a href=https://hackage.haskell.org/package/hashtables/src/cbits/sse-42.c>hashtables package</a>:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt> 1
+</code></pre></td></tr></table>
+</div>
+</div><p> </p>
+<p>The magic thing is that it already adopted in Haskell <a href=https://hackage.haskell.org/package/hashtables/src/cbits/sse-42.c>hashtables package</a>:</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
 </span><span class=lnt> 2
 </span><span class=lnt> 3
 </span><span class=lnt> 4
@@ -239,33 +340,81 @@ The intuitive way to solve it may like Position of lowest bit set:
 </span><span class=lnt>12
 </span><span class=lnt>13
 </span><span class=lnt>14
-</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-c data-lang=c><span class=k>static</span> <span class=n>uint8_t</span> <span class=n>de_bruijn_table</span><span class=p>[]</span> <span class=o>=</span> <span class=p>{</span>
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-c data-lang=c><span class=k>static</span> <span class=kt>uint8_t</span> <span class=n>de_bruijn_table</span><span class=p>[]</span> <span class=o>=</span> <span class=p>{</span>
     <span class=mi>0</span><span class=p>,</span>   <span class=mi>1</span><span class=p>,</span> <span class=mi>28</span><span class=p>,</span>  <span class=mi>2</span><span class=p>,</span> <span class=mi>29</span><span class=p>,</span> <span class=mi>14</span><span class=p>,</span> <span class=mi>24</span><span class=p>,</span>  <span class=mi>3</span><span class=p>,</span> <span class=mi>30</span><span class=p>,</span> <span class=mi>22</span><span class=p>,</span> <span class=mi>20</span><span class=p>,</span> <span class=mi>15</span><span class=p>,</span> <span class=mi>25</span><span class=p>,</span> <span class=mi>17</span><span class=p>,</span>  <span class=mi>4</span><span class=p>,</span>  <span class=mi>8</span><span class=p>,</span>
     <span class=mi>31</span><span class=p>,</span> <span class=mi>27</span><span class=p>,</span> <span class=mi>13</span><span class=p>,</span> <span class=mi>23</span><span class=p>,</span> <span class=mi>21</span><span class=p>,</span> <span class=mi>19</span><span class=p>,</span> <span class=mi>16</span><span class=p>,</span>  <span class=mi>7</span><span class=p>,</span> <span class=mi>26</span><span class=p>,</span> <span class=mi>12</span><span class=p>,</span> <span class=mi>18</span><span class=p>,</span>  <span class=mi>6</span><span class=p>,</span> <span class=mi>11</span><span class=p>,</span>  <span class=mi>5</span><span class=p>,</span> <span class=mi>10</span><span class=p>,</span>  <span class=mi>9</span>
 <span class=p>};</span>
 
-<span class=k>static</span> <span class=kr>inline</span> <span class=n>int32_t</span> <span class=nf>mask</span><span class=p>(</span><span class=n>int32_t</span> <span class=n>a</span><span class=p>,</span> <span class=n>int32_t</span> <span class=n>b</span><span class=p>)</span> <span class=p>{</span> <span class=k>return</span> <span class=o>-</span><span class=p>(</span><span class=n>a</span> <span class=o>==</span> <span class=n>b</span><span class=p>);</span> <span class=p>}</span>
+<span class=k>static</span> <span class=kr>inline</span> <span class=kt>int32_t</span> <span class=nf>mask</span><span class=p>(</span><span class=kt>int32_t</span> <span class=n>a</span><span class=p>,</span> <span class=kt>int32_t</span> <span class=n>b</span><span class=p>)</span> <span class=p>{</span> <span class=k>return</span> <span class=o>-</span><span class=p>(</span><span class=n>a</span> <span class=o>==</span> <span class=n>b</span><span class=p>);</span> <span class=p>}</span>
 
-<span class=k>static</span> <span class=kr>inline</span> <span class=n>int32_t</span> <span class=nf>first_bit_set</span><span class=p>(</span><span class=n>int32_t</span> <span class=n>a</span><span class=p>)</span> <span class=p>{</span>
-    <span class=n>int32_t</span> <span class=n>zero_case</span> <span class=o>=</span> <span class=n>mask</span><span class=p>(</span><span class=mi>0</span><span class=p>,</span> <span class=n>a</span><span class=p>);</span>
-    <span class=n>uint32_t</span> <span class=n>x</span> <span class=o>=</span> <span class=p>(</span><span class=n>uint32_t</span><span class=p>)</span> <span class=p>(</span><span class=n>a</span> <span class=o>&amp;</span> <span class=o>-</span><span class=n>a</span><span class=p>);</span>
+<span class=k>static</span> <span class=kr>inline</span> <span class=kt>int32_t</span> <span class=nf>first_bit_set</span><span class=p>(</span><span class=kt>int32_t</span> <span class=n>a</span><span class=p>)</span> <span class=p>{</span>
+    <span class=kt>int32_t</span> <span class=n>zero_case</span> <span class=o>=</span> <span class=n>mask</span><span class=p>(</span><span class=mi>0</span><span class=p>,</span> <span class=n>a</span><span class=p>);</span>
+    <span class=kt>uint32_t</span> <span class=n>x</span> <span class=o>=</span> <span class=p>(</span><span class=kt>uint32_t</span><span class=p>)</span> <span class=p>(</span><span class=n>a</span> <span class=o>&amp;</span> <span class=o>-</span><span class=n>a</span><span class=p>);</span>
     <span class=n>x</span> <span class=o>*=</span> <span class=mh>0x077CB531</span><span class=p>;</span>
     <span class=n>x</span> <span class=o>&gt;&gt;=</span> <span class=mi>27</span><span class=p>;</span>
     <span class=k>return</span> <span class=n>zero_case</span> <span class=o>|</span> <span class=n>de_bruijn_table</span><span class=p>[</span><span class=n>x</span><span class=p>];</span>
 <span class=p>}</span>
-</code></pre></td></tr></table></div></div><p>Also its Haskell <a href=https://hackage.haskell.org/package/bits/src/src/Data/Bits/Extras.hs>bits package</a>:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
+</code></pre></td></tr></table>
+</div>
+</div><p>Also its Haskell <a href=https://hackage.haskell.org/package/bits/src/src/Data/Bits/Extras.hs>bits package</a>:</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
 </span><span class=lnt>2
 </span><span class=lnt>3
 </span><span class=lnt>4
 </span><span class=lnt>5
-</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-haskell data-lang=haskell><span class=kr>instance</span> <span class=kt>Ranked</span> <span class=kt>Word32</span> <span class=kr>where</span>
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-haskell data-lang=haskell><span class=kr>instance</span> <span class=kt>Ranked</span> <span class=kt>Word32</span> <span class=kr>where</span>
   <span class=n>lsb</span> <span class=n>n</span> <span class=ow>=</span> <span class=n>fromIntegral</span> <span class=o>$</span> <span class=n>go</span> <span class=p>(</span><span class=n>unsafeShiftR</span> <span class=p>((</span><span class=n>n</span> <span class=o>.&amp;.</span> <span class=p>(</span><span class=o>-</span><span class=n>n</span><span class=p>))</span> <span class=o>*</span> <span class=mh>0x077CB531</span><span class=p>)</span> <span class=mi>27</span><span class=p>)</span> <span class=kr>where</span>
     <span class=n>go</span> <span class=ow>::</span> <span class=kt>Word32</span> <span class=ow>-&gt;</span> <span class=kt>Word8</span>
     <span class=n>go</span> <span class=n>i</span> <span class=ow>=</span> <span class=n>inlinePerformIO</span> <span class=o>$</span> <span class=n>peekElemOff</span> <span class=n>debruijn_lsb32</span> <span class=p>(</span><span class=n>fromIntegral</span> <span class=n>i</span><span class=p>)</span>
   <span class=cm>{-# INLINE lsb #-}</span>
-</code></pre></td></tr></table></div></div><p>And there&rsquo;re <a href=https://hackage.haskell.org/package/bits/src/cbits/debruijn.c>some deBruijn tables</a> you can use instantly.
-Although the number they used(i.e. <code>0x077CB531</code>) is not optimal.</p><p> </p><p>Note that <code>lsb64()</code> is extremely horrible, the magic number can be very huge. In this case, it&rsquo;s <code>0x07edd5e59a4e28c2</code>, most of the time it leads <code>lsb64()</code> to do the tedious multiplication.</p><p>One possible optimization can be mapping from <code>lsb64()</code> to <code>lsb32()</code>.</p><p>When we get the lowest set bit(i.e. <code>x & -x</code>):</p><ul><li>If <code>x</code> equals to zero, return -1 directly</li><li>Bit-and&rsquo;ing <code>x</code> with <code>0xffffffff</code>, if it&rsquo;s not zero, just return <code>lsb32()</code>.</li><li>Since lower 32-bit is zero, we just return <code>32 + lsb32(x >> 32)</code>.</li></ul><p>It may makes <a href=https://en.wikipedia.org/wiki/Arithmetic_logic_unit>ALU</a>&rsquo;s life easier.</p><p> </p><p>Also, there&rsquo;re several things you need to note about.</p><ul><li><p>This solution isn&rsquo;t efficient than you might think. <a href=http://bits.stephan-brumme.com/lowestBitSet.html>Stephan Brumme</a> already done the practical analysis for you.</p></li><li><p>It&rsquo;s only applicable for finite range of data(of which each value must be unique).</p></li><li><p>Above case is perfect hashing(e.g. 32 possible results can be complete filled with 5 bits). If you want to mapping for, saying 10 known results, you must utilize 4 bits. Which left 6 unmapped slots(of those slots you can mark them up as invalid however)</p></li><li><p>If you using GCC, you can use <a href=https://gcc.gnu.org/onlinedocs/gcc/Other-Builtins.html><code>__builtin_ffs()</code></a> function to replace <code>lsb32()</code></p></li></ul><blockquote><p>Built-in Function: <code>int __builtin_ffs (int x)</code>:
-Returns one plus the index of the least significant 1-bit of <code>x</code>, or if <code>x</code> is zero, returns zero.</p></blockquote><ul><li>The magic number <code>0x07edd5e59a4e28c2</code> for lsb64() clearly not the minimal one, the minimal is <code>0x0218a392cd3d5dbf</code>. But what I&rsquo;d like to tell you is that the brute-force algorithm isn&rsquo;t applicable to probe it. If you get interested in how to probe for it, <em>references</em> at bottom might help you.</li></ul><p> </p><p>In case you might want to use 64-bit version of LSB, here is code snippet(though I think you can use <code>lsb32()</code> to implement <code>lsb64()</code>):</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt> 1
+</code></pre></td></tr></table>
+</div>
+</div><p>And there&rsquo;re <a href=https://hackage.haskell.org/package/bits/src/cbits/debruijn.c>some deBruijn tables</a> you can use instantly.
+Although the number they used(i.e. <code>0x077CB531</code>) is not optimal.</p>
+<p> </p>
+<p>Note that <code>lsb64()</code> is extremely horrible, the magic number can be very huge. In this case, it&rsquo;s <code>0x07edd5e59a4e28c2</code>, most of the time it leads <code>lsb64()</code> to do the tedious multiplication.</p>
+<p>One possible optimization can be mapping from <code>lsb64()</code> to <code>lsb32()</code>.</p>
+<p>When we get the lowest set bit(i.e. <code>x & -x</code>):</p>
+<ul>
+<li>If <code>x</code> equals to zero, return -1 directly</li>
+<li>Bit-and&rsquo;ing <code>x</code> with <code>0xffffffff</code>, if it&rsquo;s not zero, just return <code>lsb32()</code>.</li>
+<li>Since lower 32-bit is zero, we just return <code>32 + lsb32(x >> 32)</code>.</li>
+</ul>
+<p>It may makes <a href=https://en.wikipedia.org/wiki/Arithmetic_logic_unit>ALU</a>&rsquo;s life easier.</p>
+<p> </p>
+<p>Also, there&rsquo;re several things you need to note about.</p>
+<ul>
+<li>
+<p>This solution isn&rsquo;t efficient than you might think. <a href=http://bits.stephan-brumme.com/lowestBitSet.html>Stephan Brumme</a> already done the practical analysis for you.</p>
+</li>
+<li>
+<p>It&rsquo;s only applicable for finite range of data(of which each value must be unique).</p>
+</li>
+<li>
+<p>Above case is perfect hashing(e.g. 32 possible results can be complete filled with 5 bits). If you want to mapping for, saying 10 known results, you must utilize 4 bits. Which left 6 unmapped slots(of those slots you can mark them up as invalid however)</p>
+</li>
+<li>
+<p>If you using GCC, you can use <a href=https://gcc.gnu.org/onlinedocs/gcc/Other-Builtins.html><code>__builtin_ffs()</code></a> function to replace <code>lsb32()</code></p>
+</li>
+</ul>
+<blockquote>
+<p>Built-in Function: <code>int __builtin_ffs (int x)</code>:
+Returns one plus the index of the least significant 1-bit of <code>x</code>, or if <code>x</code> is zero, returns zero.</p>
+</blockquote>
+<ul>
+<li>The magic number <code>0x07edd5e59a4e28c2</code> for lsb64() clearly not the minimal one, the minimal is <code>0x0218a392cd3d5dbf</code>. But what I&rsquo;d like to tell you is that the brute-force algorithm isn&rsquo;t applicable to probe it. If you get interested in how to probe for it, <em>references</em> at bottom might help you.</li>
+</ul>
+<p> </p>
+<p>In case you might want to use 64-bit version of LSB, here is code snippet(though I think you can use <code>lsb32()</code> to implement <code>lsb64()</code>):</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
 </span><span class=lnt> 2
 </span><span class=lnt> 3
 </span><span class=lnt> 4
@@ -311,7 +460,9 @@ Returns one plus the index of the least significant 1-bit of <code>x</code>, or 
 </span><span class=lnt>44
 </span><span class=lnt>45
 </span><span class=lnt>46
-</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-c data-lang=c><span class=k>static</span> <span class=k>const</span> <span class=kt>int</span> <span class=n>debj64</span><span class=p>[]</span> <span class=o>=</span> <span class=p>{</span>
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-c data-lang=c><span class=k>static</span> <span class=k>const</span> <span class=kt>int</span> <span class=n>debj64</span><span class=p>[]</span> <span class=o>=</span> <span class=p>{</span>
      <span class=mi>0</span><span class=p>,</span>  <span class=mi>1</span><span class=p>,</span>  <span class=mi>2</span><span class=p>,</span>  <span class=mi>7</span><span class=p>,</span>  <span class=mi>3</span><span class=p>,</span> <span class=mi>13</span><span class=p>,</span>  <span class=mi>8</span><span class=p>,</span> <span class=mi>19</span><span class=p>,</span>
      <span class=mi>4</span><span class=p>,</span> <span class=mi>25</span><span class=p>,</span> <span class=mi>14</span><span class=p>,</span> <span class=mi>28</span><span class=p>,</span>  <span class=mi>9</span><span class=p>,</span> <span class=mi>34</span><span class=p>,</span> <span class=mi>20</span><span class=p>,</span> <span class=mi>40</span><span class=p>,</span>
      <span class=mi>5</span><span class=p>,</span> <span class=mi>17</span><span class=p>,</span> <span class=mi>26</span><span class=p>,</span> <span class=mi>38</span><span class=p>,</span> <span class=mi>15</span><span class=p>,</span> <span class=mi>46</span><span class=p>,</span> <span class=mi>29</span><span class=p>,</span> <span class=mi>48</span><span class=p>,</span>
@@ -357,7 +508,13 @@ Returns one plus the index of the least significant 1-bit of <code>x</code>, or 
     <span class=k>if</span> <span class=p>(</span><span class=n>x</span> <span class=o>&gt;&gt;</span> <span class=mi>32</span><span class=p>)</span> <span class=n>i</span> <span class=o>=</span> <span class=mi>32</span><span class=p>,</span> <span class=n>x</span> <span class=o>&gt;&gt;=</span> <span class=mi>32</span><span class=p>;</span>
     <span class=k>return</span> <span class=n>i</span> <span class=o>|</span> <span class=n>debj32</span><span class=p>[((</span><span class=kt>unsigned</span> <span class=kt>int</span><span class=p>)</span> <span class=p>((</span><span class=n>x</span> <span class=o>&amp;</span> <span class=o>-</span><span class=n>x</span><span class=p>)</span> <span class=o>*</span> <span class=mh>0x04653adf</span><span class=p>))</span> <span class=o>&gt;&gt;</span> <span class=mi>27</span><span class=p>];</span>
 <span class=p>}</span>
-</code></pre></td></tr></table></div></div><p> </p><p>Other magic numbers you may need</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt> 1
+</code></pre></td></tr></table>
+</div>
+</div><p> </p>
+<p>Other magic numbers you may need</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
 </span><span class=lnt> 2
 </span><span class=lnt> 3
 </span><span class=lnt> 4
@@ -382,7 +539,9 @@ Returns one plus the index of the least significant 1-bit of <code>x</code>, or 
 </span><span class=lnt>23
 </span><span class=lnt>24
 </span><span class=lnt>25
-</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-c data-lang=c><span class=cp>#define OPAQUE8 0x17u
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-c data-lang=c><span class=cp>#define OPAQUE8 0x17u
 </span><span class=cp></span><span class=k>static</span> <span class=k>const</span> <span class=kt>int</span> <span class=n>debj8</span><span class=p>[]</span> <span class=o>=</span> <span class=p>{</span>
      <span class=mi>0</span><span class=p>,</span>  <span class=mi>1</span><span class=p>,</span>  <span class=mi>2</span><span class=p>,</span>  <span class=mi>4</span><span class=p>,</span>  <span class=mi>7</span><span class=p>,</span>  <span class=mi>3</span><span class=p>,</span>  <span class=mi>6</span><span class=p>,</span>  <span class=mi>5</span><span class=p>,</span>
 <span class=p>};</span>
@@ -390,7 +549,7 @@ Returns one plus the index of the least significant 1-bit of <code>x</code>, or 
 <span class=cm>/*
 </span><span class=cm> * The universal LSB, reduced panicky mul-op.
 </span><span class=cm> */</span>
-<span class=kt>int</span> <span class=nf>lsb64u</span><span class=p>(</span><span class=n>uint64_t</span> <span class=n>x</span><span class=p>)</span>
+<span class=kt>int</span> <span class=nf>lsb64u</span><span class=p>(</span><span class=kt>uint64_t</span> <span class=n>x</span><span class=p>)</span>
 <span class=p>{</span>
     <span class=k>if</span> <span class=p>(</span><span class=n>x</span> <span class=o>==</span> <span class=mi>0</span><span class=p>)</span> <span class=k>return</span> <span class=o>-</span><span class=mi>1</span><span class=p>;</span>
     <span class=kt>int</span> <span class=n>pad</span> <span class=o>=</span> <span class=mi>0</span><span class=p>;</span>
@@ -407,6 +566,40 @@ Returns one plus the index of the least significant 1-bit of <code>x</code>, or 
      <span class=mi>0</span><span class=p>,</span>  <span class=mi>1</span><span class=p>,</span>  <span class=mi>2</span><span class=p>,</span>  <span class=mi>5</span><span class=p>,</span>  <span class=mi>3</span><span class=p>,</span>  <span class=mi>9</span><span class=p>,</span>  <span class=mi>6</span><span class=p>,</span> <span class=mi>11</span><span class=p>,</span>
     <span class=mi>15</span><span class=p>,</span>  <span class=mi>4</span><span class=p>,</span>  <span class=mi>8</span><span class=p>,</span> <span class=mi>10</span><span class=p>,</span> <span class=mi>14</span><span class=p>,</span>  <span class=mi>7</span><span class=p>,</span> <span class=mi>13</span><span class=p>,</span> <span class=mi>12</span><span class=p>,</span>
 <span class=p>};</span>
-</code></pre></td></tr></table></div></div><p> </p><p>As mentioned before, this method can be categorized into prefect hashing. In case you got interested,
+</code></pre></td></tr></table>
+</div>
+</div><p> </p>
+<p>As mentioned before, this method can be categorized into prefect hashing. In case you got interested,
 GNU already provided a good tool <a href=https://www.gnu.org/software/gperf/><em>gperf</em></a>
-for generating perfect hashing function. Check that out!</p><p>Phew! Writing as second language isn&rsquo;t easy for me, if you found anything wrong, please let me know :-P</p><p> </p><p><a href=../string-hash/>In an incoming article</a>, I will generalize this method for string hashing. which reduce time complexity to <em>O(n)</em> for small fixed-size string matching.</p><p> </p><h3 id=references>References</h3><blockquote><p><a href=https://en.wikipedia.org/wiki/Find_first_set>Find first set - Wikipedia</a></p><p><a href=https://graphics.stanford.edu/~seander/bithacks.html>Bit Twiddling Hacks</a></p><p><a href=http://www.matrix67.com/blog/archives/3985>神秘常量复出！用0x077CB531计算末尾0的个数</a></p><p><a href=https://bits.stephan-brumme.com/lowestBitSet.html>Position of lowest bit set</a></p><p><a href=https://www.chessprogramming.org/BitScan>BitScan - ChessProgramming Wiki</a></p><p><a href=https://www.chessprogramming.org/Nicolaas_de_Bruijn>Nicolaas de Bruijn - ChessProgramming Wiki</a></p><p><a href=https://www.chessprogramming.org/De_Bruijn_Sequence_Generator>De Bruijn Sequence Generator - ChessProgramming Wiki</a></p><p><a href=https://hackage.haskell.org/package/bits/src/cbits/debruijn.c>Haskell de Bruijn LSB table</a></p><p><a href=https://gist.github.com/leiless/2d2c625231512070e623cf143955051b>List of first 8192 64-bit De Bruijn constants for LSB(Lowest Set Bit) - gist</a></p><p><a href=https://gist.github.com/leiless/6e1489558c815d2d085cbd40089a900f>List of first 4096 32-bit De Bruijn constants for LSB - gist</a></p></blockquote><script src=https://utteranc.es/client.js repo=leiless/blog issue-term=pathname label=comment theme=github-light crossorigin=anonymous async></script></article><footer><p><a href=https://leiless.me/>一个程序员的辩白</a> <span style=color:gray>&copy;</span> 2017 - 2021. Proudly made with <a href=https://gohugo.io/ target=_blank>Hugo</a> and <a href=https://tailwindcss.com/ target=_blank>TailwindCSS</a>.</p><p style=margin-top:-15px;font-size:10px>Released under <a href=https://creativecommons.org/licenses/by-nc-sa/4.0/>CC BY-NC-SA 4.0</a> license.</p></footer></div><script async src="https://www.googletagmanager.com/gtag/js?id=G-RMJ7KLHXH8"></script><script>var doNotTrack=!1;if(!doNotTrack){window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag('js',new Date),gtag('config','G-RMJ7KLHXH8',{anonymize_ip:!1})}</script><script>(function(a,c,d,e){if(typeof a.webpushr!='undefined')return;a.webpushr=a.webpushr||function(){(a.webpushr.q=a.webpushr.q||[]).push(arguments)};var b,f=c.getElementsByTagName(d)[0];b=c.createElement(d),b.id=e,b.async=1,b.src="https://cdn.webpushr.com/app.min.js",f.parentNode.appendChild(b)})(window,document,'script','webpushr-jssdk'),webpushr('setup',{key:'BJji5mvLAV3k-EncfEEH_CtK_CdcXWnXc-fvhs7uY1jfOG4xX_RsBmoWvTD0OTyq6TOEB5G5_uFE6Ylpxj5MKEQ'})</script></body></html>
+for generating perfect hashing function. Check that out!</p>
+<p>Phew! Writing as second language isn&rsquo;t easy for me, if you found anything wrong, please let me know :-P</p>
+<p> </p>
+<p><a href=../string-hash/>In an incoming article</a>, I will generalize this method for string hashing. which reduce time complexity to <em>O(n)</em> for small fixed-size string matching.</p>
+<p> </p>
+<h3 id=references>References</h3>
+<blockquote>
+<p><a href=https://en.wikipedia.org/wiki/Find_first_set>Find first set - Wikipedia</a></p>
+<p><a href=https://graphics.stanford.edu/~seander/bithacks.html>Bit Twiddling Hacks</a></p>
+<p><a href=http://www.matrix67.com/blog/archives/3985>神秘常量复出！用0x077CB531计算末尾0的个数</a></p>
+<p><a href=https://bits.stephan-brumme.com/lowestBitSet.html>Position of lowest bit set</a></p>
+<p><a href=https://www.chessprogramming.org/BitScan>BitScan - ChessProgramming Wiki</a></p>
+<p><a href=https://www.chessprogramming.org/Nicolaas_de_Bruijn>Nicolaas de Bruijn - ChessProgramming Wiki</a></p>
+<p><a href=https://www.chessprogramming.org/De_Bruijn_Sequence_Generator>De Bruijn Sequence Generator - ChessProgramming Wiki</a></p>
+<p><a href=https://hackage.haskell.org/package/bits/src/cbits/debruijn.c>Haskell de Bruijn LSB table</a></p>
+<p><a href=https://gist.github.com/leiless/2d2c625231512070e623cf143955051b>List of first 8192 64-bit De Bruijn constants for LSB(Lowest Set Bit) - gist</a></p>
+<p><a href=https://gist.github.com/leiless/6e1489558c815d2d085cbd40089a900f>List of first 4096 32-bit De Bruijn constants for LSB - gist</a></p>
+</blockquote>
+<script src=https://utteranc.es/client.js repo=leiless/blog issue-term=pathname label=comment theme=github-light crossorigin=anonymous async></script>
+</article>
+<footer>
+<p>
+<a href=https://leiless.me/>一个程序员的辩白</a> <span style=color:gray>&copy;</span> 2017 - 2021. Proudly made with <a href=https://gohugo.io/ target=_blank>Hugo</a> and <a href=https://tailwindcss.com/ target=_blank>TailwindCSS</a>.
+</p>
+<p style=margin-top:-15px;font-size:10px>Released under <a href=https://creativecommons.org/licenses/by-nc-sa/4.0/>CC BY-NC-SA 4.0</a> license.</p>
+</footer>
+</div>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-RMJ7KLHXH8"></script>
+<script>var doNotTrack=!1;if(!doNotTrack){window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag('js',new Date),gtag('config','G-RMJ7KLHXH8',{anonymize_ip:!1})}</script>
+<script>(function(a,c,d,e){if(typeof a.webpushr!='undefined')return;a.webpushr=a.webpushr||function(){(a.webpushr.q=a.webpushr.q||[]).push(arguments)};var b,f=c.getElementsByTagName(d)[0];b=c.createElement(d),b.id=e,b.async=1,b.src="https://cdn.webpushr.com/app.min.js",f.parentNode.appendChild(b)})(window,document,'script','webpushr-jssdk'),webpushr('setup',{key:'BJji5mvLAV3k-EncfEEH_CtK_CdcXWnXc-fvhs7uY1jfOG4xX_RsBmoWvTD0OTyq6TOEB5G5_uFE6Ylpxj5MKEQ'})</script>
+</body>
+</html>

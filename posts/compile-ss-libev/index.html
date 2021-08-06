@@ -1,31 +1,97 @@
-<!doctype html><html lang><head><meta charset=utf-8><meta name=generator content="Hugo 0.83.1"><meta http-equiv=x-ua-compatible content="IE=edge"><meta name=viewport content="width=device-width,initial-scale=1,shrink-to-fit=no"><meta name=twitter:card content="summary"><meta name=twitter:title content="Compile shadowsocks-libev statically - 一个程序员的辩白"><meta name=twitter:description content="(Update 2021-01-01: this article has been revised to adopt latest ss-libev)
+<!doctype html><html lang>
+<head>
+<meta charset=utf-8>
+<meta name=generator content="Hugo 0.87.0">
+<meta http-equiv=x-ua-compatible content="IE=edge">
+<meta name=viewport content="width=device-width,initial-scale=1,shrink-to-fit=no">
+<meta name=twitter:card content="summary">
+<meta name=twitter:title content="Compile shadowsocks-libev statically - 一个程序员的辩白">
+<meta name=twitter:description content="(Update 2021-01-01: this article has been revised to adopt latest ss-libev)
 Previously I&amp;rsquo;ve discussed how to compile and run an user-mode Linux.
 In this post, I&amp;rsquo;ll talk about how to compile a statically-linked shadowsocks-libev.
  Preparation Before we do anything, we need to install basic build packages.
 Following are common package group you may use:
  CentOS/Fedora: sudo yum groupinstall &amp;quot;Development Tools&amp;quot;
 Debian/Ubuntu: sudo apt-get install build-essential
-Arch Linux/Manjaro: sudo pacman -Sy base-devel"><meta name=twitter:site content="https://leiless.me/"><meta name=twitter:creator content><meta name=twitter:image content="https://leiless.me/avatar.jpg"><meta property="og:locale" content><meta property="og:type" content="article"><meta property="og:title" content="Compile shadowsocks-libev statically - 一个程序员的辩白"><meta property="og:description" content="(Update 2021-01-01: this article has been revised to adopt latest ss-libev)
+Arch Linux/Manjaro: sudo pacman -Sy base-devel">
+<meta name=twitter:site content="https://leiless.me/">
+<meta name=twitter:creator content>
+<meta name=twitter:image content="https://leiless.me/avatar.jpg">
+<meta property="og:locale" content>
+<meta property="og:type" content="article">
+<meta property="og:title" content="Compile shadowsocks-libev statically - 一个程序员的辩白">
+<meta property="og:description" content="(Update 2021-01-01: this article has been revised to adopt latest ss-libev)
 Previously I&amp;rsquo;ve discussed how to compile and run an user-mode Linux.
 In this post, I&amp;rsquo;ll talk about how to compile a statically-linked shadowsocks-libev.
  Preparation Before we do anything, we need to install basic build packages.
 Following are common package group you may use:
  CentOS/Fedora: sudo yum groupinstall &amp;quot;Development Tools&amp;quot;
 Debian/Ubuntu: sudo apt-get install build-essential
-Arch Linux/Manjaro: sudo pacman -Sy base-devel"><meta property="og:url" content="https://leiless.me/posts/compile-ss-libev/"><meta property="og:site_name" content="一个程序员的辩白"><meta property="og:image" content="https://leiless.me/avatar.jpg"><title>Compile shadowsocks-libev statically - 一个程序员的辩白</title><meta name=author content="Fishbone"><meta name=description content="(Update 2021-01-01: this article has been revised to adopt latest ss-libev)
+Arch Linux/Manjaro: sudo pacman -Sy base-devel">
+<meta property="og:url" content="https://leiless.me/posts/compile-ss-libev/">
+<meta property="og:site_name" content="一个程序员的辩白">
+<meta property="og:image" content="https://leiless.me/avatar.jpg">
+<title>Compile shadowsocks-libev statically - 一个程序员的辩白</title>
+<meta name=author content="Fishbone">
+<meta name=description content="(Update 2021-01-01: this article has been revised to adopt latest ss-libev)
 Previously I&amp;rsquo;ve discussed how to compile and run an user-mode Linux.
 In this post, I&amp;rsquo;ll talk about how to compile a statically-linked shadowsocks-libev.
  Preparation Before we do anything, we need to install basic build packages.
 Following are common package group you may use:
  CentOS/Fedora: sudo yum groupinstall &amp;quot;Development Tools&amp;quot;
 Debian/Ubuntu: sudo apt-get install build-essential
-Arch Linux/Manjaro: sudo pacman -Sy base-devel"><link rel=stylesheet href="https://fonts.googleapis.com/css?family=Source+Code+Pro|Arvo:400,700"><link rel=stylesheet href=https://leiless.me/css/theme.css><link rel=stylesheet href=https://leiless.me/css/chroma.dracula.css></head><body class="font-serif bg-gray-200 border-t-4 border-blue-500 antialiased"><div class="w-full p-6 md:w-2/3 md:px-0 md:mx-auto xl:w-2/5"><header class=mb-6><div class="mb-6 md:flex md:items-center"><div><a class="text-lg mb-8 inline-block" href=/>&larr; Back Home</a><h1 class="text-4xl font-bold">Compile shadowsocks-libev statically</h1><time datetime="2017-07-31 00:00:00 UTC">31 Jul 2017</time></div></div></header><article class=mb-12><p>(Update 2021-01-01: this article has been revised to adopt latest <code>ss-libev</code>)</p><p><a href=../../../2017/07/25/openvz-bbr.html>Previously</a> I&rsquo;ve discussed how to compile and run an user-mode Linux.</p><p>In this post, I&rsquo;ll talk about how to compile a statically-linked <code>shadowsocks-libev</code>.</p><p> </p><h3 id=preparation>Preparation</h3><p>Before we do anything, we need to install basic build packages.</p><p>Following are common package group you may use:</p><blockquote><p>CentOS/Fedora: <code>sudo yum groupinstall "Development Tools"</code></p><p>Debian/Ubuntu: <code>sudo apt-get install build-essential</code></p><p>Arch Linux/Manjaro: <code>sudo pacman -Sy base-devel</code></p></blockquote><p>You may happen to install <code>git</code>, <code>autoconf</code>, <code>automake</code>, <code>libtool</code>, <code>gettext</code>, <code>asciidoc</code>, <code>xmlto</code> manually.</p><p> </p><p>To compile <code>shadowsocks-libev</code>(<code>ss-libev</code> for short) statically, its dependencies must be compiled(also static) first.</p><p><code>ss-libev</code> depends on several packages: <code>mbedTLS</code>, <code>libsodium</code>, <code>pcre</code>, <code>libev</code>, <code>c-ares</code>.</p><p>And assuming current directory is <code>/tmp/foo</code> and statically-linked packages will be installed in <code>$SS_DIR</code>(using <code>--prefix</code> option in <code>configure</code> file).</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
+Arch Linux/Manjaro: sudo pacman -Sy base-devel">
+<link rel=stylesheet href="https://fonts.googleapis.com/css?family=Source+Code+Pro|Arvo:400,700">
+<link rel=stylesheet href=https://leiless.me/css/theme.css>
+<link rel=stylesheet href=https://leiless.me/css/chroma.dracula.css>
+</head>
+<body class="font-serif bg-gray-200 border-t-4 border-blue-500 antialiased">
+<div class="w-full p-6 md:w-2/3 md:px-0 md:mx-auto xl:w-2/5">
+<header class=mb-6>
+<div class="mb-6 md:flex md:items-center">
+<div>
+<a class="text-lg mb-8 inline-block" href=/>&larr; Back Home</a>
+<h1 class="text-4xl font-bold">Compile shadowsocks-libev statically</h1>
+<time datetime="2017-07-31 00:00:00 UTC">31 Jul 2017</time>
+</div>
+</div>
+</header>
+<article class=mb-12>
+<p>(Update 2021-01-01: this article has been revised to adopt latest <code>ss-libev</code>)</p>
+<p><a href=../../../2017/07/25/openvz-bbr.html>Previously</a> I&rsquo;ve discussed how to compile and run an user-mode Linux.</p>
+<p>In this post, I&rsquo;ll talk about how to compile a statically-linked <code>shadowsocks-libev</code>.</p>
+<p> </p>
+<h3 id=preparation>Preparation</h3>
+<p>Before we do anything, we need to install basic build packages.</p>
+<p>Following are common package group you may use:</p>
+<blockquote>
+<p>CentOS/Fedora: <code>sudo yum groupinstall "Development Tools"</code></p>
+<p>Debian/Ubuntu: <code>sudo apt-get install build-essential</code></p>
+<p>Arch Linux/Manjaro: <code>sudo pacman -Sy base-devel</code></p>
+</blockquote>
+<p>You may happen to install <code>git</code>, <code>autoconf</code>, <code>automake</code>, <code>libtool</code>, <code>gettext</code>, <code>asciidoc</code>, <code>xmlto</code> manually.</p>
+<p> </p>
+<p>To compile <code>shadowsocks-libev</code>(<code>ss-libev</code> for short) statically, its dependencies must be compiled(also static) first.</p>
+<p><code>ss-libev</code> depends on several packages: <code>mbedTLS</code>, <code>libsodium</code>, <code>pcre</code>, <code>libev</code>, <code>c-ares</code>.</p>
+<p>And assuming current directory is <code>/tmp/foo</code> and statically-linked packages will be installed in <code>$SS_DIR</code>(using <code>--prefix</code> option in <code>configure</code> file).</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
 </span><span class=lnt>2
 </span><span class=lnt>3
-</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-bash data-lang=bash><span class=c1># Replace to yours</span>
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=c1># Replace to yours</span>
 <span class=nv>SS_DIR</span><span class=o>=</span><span class=nv>$HOME</span>/ss-libev
 mkdir -p <span class=s2>&#34;</span><span class=nv>$SS_DIR</span><span class=s2>&#34;</span>
-</code></pre></td></tr></table></div></div><p> </p><h3 id=compile-dependencies>Compile dependencies</h3><h4 id=mbedtlshttpsgithubcomarmmbedmbedtls><a href=https://github.com/ARMmbed/mbedtls>mbedTLS</a></h4><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt> 1
+</code></pre></td></tr></table>
+</div>
+</div><p> </p>
+<h3 id=compile-dependencies>Compile dependencies</h3>
+<h4 id=mbedtlshttpsgithubcomarmmbedmbedtls><a href=https://github.com/ARMmbed/mbedtls>mbedTLS</a></h4>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
 </span><span class=lnt> 2
 </span><span class=lnt> 3
 </span><span class=lnt> 4
@@ -38,7 +104,9 @@ mkdir -p <span class=s2>&#34;</span><span class=nv>$SS_DIR</span><span class=s2>
 </span><span class=lnt>11
 </span><span class=lnt>12
 </span><span class=lnt>13
-</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-bash data-lang=bash><span class=nb>set</span> -euf
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=nb>set</span> -euf
 
 <span class=nv>VER</span><span class=o>=</span><span class=k>$(</span>curl -sL https://api.github.com/repos/ARMmbed/mbedtls/releases/latest <span class=p>|</span> grep <span class=s1>&#39;&#34;tag_name&#34;:&#39;</span> <span class=p>|</span> cut -d<span class=s1>&#39;&#34;&#39;</span> -f4 <span class=p>|</span> tr -d <span class=s1>&#39;v&#39;</span><span class=k>)</span>
 wget https://github.com/ARMmbed/mbedtls/archive/v<span class=nv>$VER</span>.tar.gz -O mbedtls-<span class=nv>$VER</span>.tar.gz
@@ -51,7 +119,12 @@ sed -i <span class=s2>&#34;s|DESTDIR=/usr/local|DESTDIR=</span><span class=nv>$S
 
 <span class=c1># Back to /tmp/foo</span>
 <span class=nb>popd</span>
-</code></pre></td></tr></table></div></div><h4 id=libsodiumhttpsdoclibsodiumorg><a href=https://doc.libsodium.org/>libsodium</a></h4><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt> 1
+</code></pre></td></tr></table>
+</div>
+</div><h4 id=libsodiumhttpsdoclibsodiumorg><a href=https://doc.libsodium.org/>libsodium</a></h4>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
 </span><span class=lnt> 2
 </span><span class=lnt> 3
 </span><span class=lnt> 4
@@ -62,7 +135,9 @@ sed -i <span class=s2>&#34;s|DESTDIR=/usr/local|DESTDIR=</span><span class=nv>$S
 </span><span class=lnt> 9
 </span><span class=lnt>10
 </span><span class=lnt>11
-</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-bash data-lang=bash><span class=nb>set</span> -euf
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=nb>set</span> -euf
 
 <span class=nv>VER</span><span class=o>=</span><span class=k>$(</span>curl -sL https://download.libsodium.org/libsodium/releases/ <span class=p>|</span> cut -d<span class=s1>&#39;&#34;&#39;</span> -f2 <span class=p>|</span> grep <span class=s2>&#34;^libsodium-&#34;</span> <span class=p>|</span> grep <span class=s2>&#34;tar\.gz</span>$<span class=s2>&#34;</span> <span class=p>|</span> grep <span class=s2>&#34;\-stable\.&#34;</span> <span class=p>|</span> sort -V <span class=p>|</span> tail -1 <span class=p>|</span> grep -Eo <span class=s2>&#34;[0-9]+(\.[0-9]+)+&#34;</span><span class=k>)</span>
 wget https://download.libsodium.org/libsodium/releases/libsodium-<span class=nv>$VER</span>-stable.tar.gz
@@ -73,7 +148,12 @@ tar xf libsodium-<span class=nv>$VER</span>-stable.tar.gz
 make -j<span class=k>$(</span>nproc<span class=k>)</span> <span class=o>&amp;&amp;</span> make install
 
 <span class=nb>popd</span>
-</code></pre></td></tr></table></div></div><h4 id=pcrehttpswwwpcreorg><a href=https://www.pcre.org/>pcre</a></h4><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt> 1
+</code></pre></td></tr></table>
+</div>
+</div><h4 id=pcrehttpswwwpcreorg><a href=https://www.pcre.org/>pcre</a></h4>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
 </span><span class=lnt> 2
 </span><span class=lnt> 3
 </span><span class=lnt> 4
@@ -84,7 +164,9 @@ make -j<span class=k>$(</span>nproc<span class=k>)</span> <span class=o>&amp;&am
 </span><span class=lnt> 9
 </span><span class=lnt>10
 </span><span class=lnt>11
-</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-bash data-lang=bash><span class=nb>set</span> -euf
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=nb>set</span> -euf
 
 <span class=nv>VER</span><span class=o>=</span><span class=k>$(</span>curl -sL https://ftp.pcre.org/pub/pcre/ <span class=p>|</span> cut -d<span class=s1>&#39;&#34;&#39;</span> -f2 <span class=p>|</span> grep <span class=s2>&#34;^pcre-&#34;</span> <span class=p>|</span> grep <span class=s2>&#34;tar\.gz</span>$<span class=s2>&#34;</span> <span class=p>|</span> sort -V <span class=p>|</span> grep -Eo <span class=s2>&#34;[0-9]+\.[0-9]+&#34;</span> <span class=p>|</span> tail -1<span class=k>)</span>
 wget https://ftp.pcre.org/pub/pcre/pcre-<span class=nv>$VER</span>.tar.gz
@@ -95,7 +177,12 @@ tar xf pcre-<span class=nv>$VER</span>.tar.gz
 make -j<span class=k>$(</span>nproc<span class=k>)</span> <span class=o>&amp;&amp;</span> make install
 
 <span class=nb>popd</span>
-</code></pre></td></tr></table></div></div><h4 id=libevhttpsoftwareschmorpdepkglibevhtml><a href=http://software.schmorp.de/pkg/libev.html>libev</a></h4><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt> 1
+</code></pre></td></tr></table>
+</div>
+</div><h4 id=libevhttpsoftwareschmorpdepkglibevhtml><a href=http://software.schmorp.de/pkg/libev.html>libev</a></h4>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
 </span><span class=lnt> 2
 </span><span class=lnt> 3
 </span><span class=lnt> 4
@@ -106,7 +193,9 @@ make -j<span class=k>$(</span>nproc<span class=k>)</span> <span class=o>&amp;&am
 </span><span class=lnt> 9
 </span><span class=lnt>10
 </span><span class=lnt>11
-</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-bash data-lang=bash><span class=nb>set</span> -euf
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=nb>set</span> -euf
 
 <span class=nv>VER</span><span class=o>=</span><span class=k>$(</span>curl -sL http://dist.schmorp.de/libev/ <span class=p>|</span> cut -d<span class=s1>&#39;&#34;&#39;</span> -f2 <span class=p>|</span> grep <span class=s2>&#34;^libev-&#34;</span> <span class=p>|</span> grep <span class=s2>&#34;\.tar.gz</span>$<span class=s2>&#34;</span> <span class=p>|</span> grep -Eo <span class=s2>&#34;[0-9]+\.([0-9]+)+&#34;</span><span class=k>)</span>
 wget http://dist.schmorp.de/libev/libev-<span class=nv>$VER</span>.tar.gz
@@ -117,7 +206,12 @@ tar xf libev-<span class=nv>$VER</span>.tar.gz
 make -j<span class=k>$(</span>nproc<span class=k>)</span> <span class=o>&amp;&amp;</span> make install
 
 <span class=nb>popd</span>
-</code></pre></td></tr></table></div></div><h4 id=c-areshttpsgithubcomc-aresc-ares><a href=https://github.com/c-ares/c-ares>c-ares</a></h4><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt> 1
+</code></pre></td></tr></table>
+</div>
+</div><h4 id=c-areshttpsgithubcomc-aresc-ares><a href=https://github.com/c-ares/c-ares>c-ares</a></h4>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
 </span><span class=lnt> 2
 </span><span class=lnt> 3
 </span><span class=lnt> 4
@@ -129,7 +223,9 @@ make -j<span class=k>$(</span>nproc<span class=k>)</span> <span class=o>&amp;&am
 </span><span class=lnt>10
 </span><span class=lnt>11
 </span><span class=lnt>12
-</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-bash data-lang=bash><span class=nb>set</span> -euf
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=nb>set</span> -euf
 
 <span class=nv>VER</span><span class=o>=</span><span class=k>$(</span>curl -sL https://api.github.com/repos/c-ares/c-ares/releases/latest <span class=p>|</span> grep <span class=s1>&#39;&#34;name&#34;:&#39;</span> <span class=p>|</span> cut -d<span class=s1>&#39;&#34;&#39;</span> -f4 <span class=p>|</span> grep -E <span class=s2>&#34;^[0-9]+(\.[0-9]+)+</span>$<span class=s2>&#34;</span><span class=k>)</span>
 <span class=nv>URL</span><span class=o>=</span><span class=k>$(</span>curl -sL https://api.github.com/repos/c-ares/c-ares/releases/latest <span class=p>|</span> grep browser_download_url <span class=p>|</span> cut -d<span class=s1>&#39;&#34;&#39;</span> -f4 <span class=p>|</span> grep <span class=s2>&#34;\.tar\.gz</span>$<span class=s2>&#34;</span><span class=k>)</span>
@@ -141,19 +237,33 @@ tar xf c-ares-<span class=nv>$VER</span>.tar.gz
 make -j<span class=k>$(</span>nproc<span class=k>)</span> <span class=o>&amp;&amp;</span> make install
 
 <span class=nb>popd</span>
-</code></pre></td></tr></table></div></div><p> </p><h3 id=compile-shadowsocks-libevhttpsgithubcomshadowsocksshadowsocks-libev-statically>Compile <a href=https://github.com/shadowsocks/shadowsocks-libev>shadowsocks-libev</a> statically</h3><p>You can download latest <code>ss-libev</code> from GitHub API:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
+</code></pre></td></tr></table>
+</div>
+</div><p> </p>
+<h3 id=compile-shadowsocks-libevhttpsgithubcomshadowsocksshadowsocks-libev-statically>Compile <a href=https://github.com/shadowsocks/shadowsocks-libev>shadowsocks-libev</a> statically</h3>
+<p>You can download latest <code>ss-libev</code> from GitHub API:</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
 </span><span class=lnt>2
 </span><span class=lnt>3
 </span><span class=lnt>4
 </span><span class=lnt>5
 </span><span class=lnt>6
-</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-bash data-lang=bash><span class=nv>VER</span><span class=o>=</span><span class=k>$(</span>curl -sL https://api.github.com/repos/shadowsocks/shadowsocks-libev/releases/latest <span class=p>|</span> grep <span class=s1>&#39;&#34;tag_name&#34;&#39;</span> <span class=p>|</span> grep -Eo <span class=s2>&#34;[0-9]+(\.[0-9]+)+&#34;</span><span class=k>)</span>
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=nv>VER</span><span class=o>=</span><span class=k>$(</span>curl -sL https://api.github.com/repos/shadowsocks/shadowsocks-libev/releases/latest <span class=p>|</span> grep <span class=s1>&#39;&#34;tag_name&#34;&#39;</span> <span class=p>|</span> grep -Eo <span class=s2>&#34;[0-9]+(\.[0-9]+)+&#34;</span><span class=k>)</span>
 wget https://github.com/shadowsocks/shadowsocks-libev/releases/download/v<span class=nv>$VER</span>/shadowsocks-libev-<span class=nv>$VER</span>.tar.gz
 tar xf shadowsocks-libev-<span class=nv>$VER</span>.tar.gz
 
 <span class=nb>pushd</span> shadowsocks-libev-<span class=nv>$VER</span>
 <span class=c1># Run the same commands listed below...</span>
-</code></pre></td></tr></table></div></div><p>Or simply <code>git clone</code> it:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt> 1
+</code></pre></td></tr></table>
+</div>
+</div><p>Or simply <code>git clone</code> it:</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
 </span><span class=lnt> 2
 </span><span class=lnt> 3
 </span><span class=lnt> 4
@@ -176,7 +286,9 @@ tar xf shadowsocks-libev-<span class=nv>$VER</span>.tar.gz
 </span><span class=lnt>21
 </span><span class=lnt>22
 </span><span class=lnt>23
-</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-bash data-lang=bash><span class=c1># Build upon HEAD, which functionalities may unstable.</span>
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=c1># Build upon HEAD, which functionalities may unstable.</span>
 git clone --depth <span class=m>1</span> https://github.com/shadowsocks/shadowsocks-libev
 
 <span class=nb>pushd</span> shadowsocks-libev
@@ -199,7 +311,14 @@ git submodule update
 make -j<span class=k>$(</span>nproc<span class=k>)</span> <span class=o>&amp;&amp;</span> make install
 
 <span class=nb>popd</span>
-</code></pre></td></tr></table></div></div><p> </p><h3 id=compile-simple-obfshttpsgithubcomshadowsockssimple-obfs>Compile <a href=https://github.com/shadowsocks/simple-obfs>simple-obfs</a></h3><p><a href=https://github.com/shadowsocks/simple-obfs><code>simple-obfs</code></a> is a simple obfuscating tool(plugin) used in <code>ss-libev</code>, which also can be statically compiled.</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt> 1
+</code></pre></td></tr></table>
+</div>
+</div><p> </p>
+<h3 id=compile-simple-obfshttpsgithubcomshadowsockssimple-obfs>Compile <a href=https://github.com/shadowsocks/simple-obfs>simple-obfs</a></h3>
+<p><a href=https://github.com/shadowsocks/simple-obfs><code>simple-obfs</code></a> is a simple obfuscating tool(plugin) used in <code>ss-libev</code>, which also can be statically compiled.</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
 </span><span class=lnt> 2
 </span><span class=lnt> 3
 </span><span class=lnt> 4
@@ -211,7 +330,9 @@ make -j<span class=k>$(</span>nproc<span class=k>)</span> <span class=o>&amp;&am
 </span><span class=lnt>10
 </span><span class=lnt>11
 </span><span class=lnt>12
-</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-bash data-lang=bash>git clone --depth <span class=m>1</span> https://github.com/shadowsocks/simple-obfs
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-bash data-lang=bash>git clone --depth <span class=m>1</span> https://github.com/shadowsocks/simple-obfs
 
 <span class=nb>pushd</span> simple-obfs
 git submodule init
@@ -223,7 +344,13 @@ git submodule update
 make -j<span class=k>$(</span>nproc<span class=k>)</span> <span class=o>&amp;&amp;</span> make install
 
 <span class=nb>popd</span>
-</code></pre></td></tr></table></div></div><p> </p><p>After all things done, you should have a copy of statically-linked <code>simple-obfs</code> and <code>ss-libev</code>:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt> 1
+</code></pre></td></tr></table>
+</div>
+</div><p> </p>
+<p>After all things done, you should have a copy of statically-linked <code>simple-obfs</code> and <code>ss-libev</code>:</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt> 1
 </span><span class=lnt> 2
 </span><span class=lnt> 3
 </span><span class=lnt> 4
@@ -233,7 +360,9 @@ make -j<span class=k>$(</span>nproc<span class=k>)</span> <span class=o>&amp;&am
 </span><span class=lnt> 8
 </span><span class=lnt> 9
 </span><span class=lnt>10
-</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-fallback data-lang=fallback>[$SS_DIR/shadowsocks-libev/bin]# ls -l
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback>[$SS_DIR/shadowsocks-libev/bin]# ls -l
 total 19344
 -rwxr-xr-x 1 root root 1617280 Aug  2 14:25 obfs-local
 -rwxr-xr-x 1 root root 1765240 Aug  2 14:25 obfs-server
@@ -243,28 +372,70 @@ total 19344
 -rwxr-xr-x 1 root root 3737000 Aug  2 14:21 ss-redir
 -rwxr-xr-x 1 root root 3965760 Aug  2 14:21 ss-server
 -rwxr-xr-x 1 root root 3271912 Aug  2 14:21 ss-tunnel
-</code></pre></td></tr></table></div></div><p>If you trying detect one of those file, say, <code>ss-local</code>, it&rsquo;ll shows:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
+</code></pre></td></tr></table>
+</div>
+</div><p>If you trying detect one of those file, say, <code>ss-local</code>, it&rsquo;ll shows:</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
 </span><span class=lnt>2
 </span><span class=lnt>3
 </span><span class=lnt>4
 </span><span class=lnt>5
-</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-fallback data-lang=fallback>$ file ss-local
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback>$ file ss-local
 ss-local: ELF 64-bit LSB executable, x86-64, version 1 (GNU/Linux), statically linked, for GNU/Linux 2.6.32, BuildID[sha1]=6584349d54fbf0f9e1c389c57ae1394dcbec2543, not stripped
 
 $ ldd ss-local
     not a dynamic executable
-</code></pre></td></tr></table></div></div><p>Which indicates it&rsquo;s statically-linked(<code>ss-nat</code> is an exception, it&rsquo;s a shell script).</p><p> </p><p>You can take further steps to strip all symbols, or even pack them up, which can decrease file size significantly.</p><p>Before you do anything to the final production, remember to back them up.</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
+</code></pre></td></tr></table>
+</div>
+</div><p>Which indicates it&rsquo;s statically-linked(<code>ss-nat</code> is an exception, it&rsquo;s a shell script).</p>
+<p> </p>
+<p>You can take further steps to strip all symbols, or even pack them up, which can decrease file size significantly.</p>
+<p>Before you do anything to the final production, remember to back them up.</p>
+<div class=highlight><div class=chroma>
+<table class=lntable><tr><td class=lntd>
+<pre tabindex=0 class=chroma><code><span class=lnt>1
 </span><span class=lnt>2
 </span><span class=lnt>3
 </span><span class=lnt>4
 </span><span class=lnt>5
 </span><span class=lnt>6
 </span><span class=lnt>7
-</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-bash data-lang=bash><span class=c1># Strip out all symbols</span>
+</span></code></pre></td>
+<td class=lntd>
+<pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=c1># Strip out all symbols</span>
 <span class=o>[</span><span class=nv>$SS_DIR</span>/shadowsocks-libev/bin<span class=o>]</span><span class=c1># find . ! -name &#39;ss-nat&#39; -type f | xargs strip -s</span>
 
 <span class=c1># NOTE: This should be optional, may make them unstable even erroneous.</span>
 <span class=o>[</span><span class=nv>$SS_DIR</span>/shadowsocks-libev/bin<span class=o>]</span><span class=c1># find . ! -name &#39;ss-nat&#39; -type f | xargs upx -9</span>
 <span class=c1># Also remember to test them</span>
 <span class=o>[</span><span class=nv>$SS_DIR</span>/shadowsocks-libev/bin<span class=o>]</span><span class=c1># find . ! -name &#39;ss-nat&#39; -type f | xargs upx -t</span>
-</code></pre></td></tr></table></div></div><p> </p><p>We&rsquo;re done, you can now use <code>ss-libev</code>.</p><p>FYI, I&rsquo;ve built <code>ss-libev</code> successfully under Debian 8 x64, its kernel is <code>3.16.0-4-amd64</code>.</p><p> </p><h3 id=references>References</h3><blockquote><p><a href=http://blog.suconghou.cn/post/shadowsocks-libev>静态编译shadowsocks libev</a></p><p><a href=https://haoutil.com/topic/cross-compile-shadowsocks-libev>交叉编译shadowsocks-libev</a></p><p><a href=https://gist.github.com/harv/dd0bcd5eba533cbc267f6a0aaf6bee62>cross_and_static_compile_shadowsocks-libev.sh - gist</a></p></blockquote><script src=https://utteranc.es/client.js repo=leiless/blog issue-term=pathname label=comment theme=github-light crossorigin=anonymous async></script></article><footer><p><a href=https://leiless.me/>一个程序员的辩白</a> <span style=color:gray>&copy;</span> 2017 - 2021. Proudly made with <a href=https://gohugo.io/ target=_blank>Hugo</a> and <a href=https://tailwindcss.com/ target=_blank>TailwindCSS</a>.</p><p style=margin-top:-15px;font-size:10px>Released under <a href=https://creativecommons.org/licenses/by-nc-sa/4.0/>CC BY-NC-SA 4.0</a> license.</p></footer></div><script async src="https://www.googletagmanager.com/gtag/js?id=G-RMJ7KLHXH8"></script><script>var doNotTrack=!1;if(!doNotTrack){window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag('js',new Date),gtag('config','G-RMJ7KLHXH8',{anonymize_ip:!1})}</script><script>(function(a,c,d,e){if(typeof a.webpushr!='undefined')return;a.webpushr=a.webpushr||function(){(a.webpushr.q=a.webpushr.q||[]).push(arguments)};var b,f=c.getElementsByTagName(d)[0];b=c.createElement(d),b.id=e,b.async=1,b.src="https://cdn.webpushr.com/app.min.js",f.parentNode.appendChild(b)})(window,document,'script','webpushr-jssdk'),webpushr('setup',{key:'BJji5mvLAV3k-EncfEEH_CtK_CdcXWnXc-fvhs7uY1jfOG4xX_RsBmoWvTD0OTyq6TOEB5G5_uFE6Ylpxj5MKEQ'})</script></body></html>
+</code></pre></td></tr></table>
+</div>
+</div><p> </p>
+<p>We&rsquo;re done, you can now use <code>ss-libev</code>.</p>
+<p>FYI, I&rsquo;ve built <code>ss-libev</code> successfully under Debian 8 x64, its kernel is <code>3.16.0-4-amd64</code>.</p>
+<p> </p>
+<h3 id=references>References</h3>
+<blockquote>
+<p><a href=http://blog.suconghou.cn/post/shadowsocks-libev>静态编译shadowsocks libev</a></p>
+<p><a href=https://haoutil.com/topic/cross-compile-shadowsocks-libev>交叉编译shadowsocks-libev</a></p>
+<p><a href=https://gist.github.com/harv/dd0bcd5eba533cbc267f6a0aaf6bee62>cross_and_static_compile_shadowsocks-libev.sh - gist</a></p>
+</blockquote>
+<script src=https://utteranc.es/client.js repo=leiless/blog issue-term=pathname label=comment theme=github-light crossorigin=anonymous async></script>
+</article>
+<footer>
+<p>
+<a href=https://leiless.me/>一个程序员的辩白</a> <span style=color:gray>&copy;</span> 2017 - 2021. Proudly made with <a href=https://gohugo.io/ target=_blank>Hugo</a> and <a href=https://tailwindcss.com/ target=_blank>TailwindCSS</a>.
+</p>
+<p style=margin-top:-15px;font-size:10px>Released under <a href=https://creativecommons.org/licenses/by-nc-sa/4.0/>CC BY-NC-SA 4.0</a> license.</p>
+</footer>
+</div>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-RMJ7KLHXH8"></script>
+<script>var doNotTrack=!1;if(!doNotTrack){window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag('js',new Date),gtag('config','G-RMJ7KLHXH8',{anonymize_ip:!1})}</script>
+<script>(function(a,c,d,e){if(typeof a.webpushr!='undefined')return;a.webpushr=a.webpushr||function(){(a.webpushr.q=a.webpushr.q||[]).push(arguments)};var b,f=c.getElementsByTagName(d)[0];b=c.createElement(d),b.id=e,b.async=1,b.src="https://cdn.webpushr.com/app.min.js",f.parentNode.appendChild(b)})(window,document,'script','webpushr-jssdk'),webpushr('setup',{key:'BJji5mvLAV3k-EncfEEH_CtK_CdcXWnXc-fvhs7uY1jfOG4xX_RsBmoWvTD0OTyq6TOEB5G5_uFE6Ylpxj5MKEQ'})</script>
+</body>
+</html>
