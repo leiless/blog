@@ -1,12 +1,9 @@
-<!doctype html><html lang>
+<!doctype html><html>
 <head>
 <meta charset=utf-8>
-<meta name=generator content="Hugo 0.87.0">
-<meta http-equiv=x-ua-compatible content="IE=edge">
-<meta name=viewport content="width=device-width,initial-scale=1,shrink-to-fit=no">
-<meta name=twitter:card content="summary">
-<meta name=twitter:title content="frp + trojan 组网提高网络质量 - 一个程序员的辩白">
-<meta name=twitter:description content="前段时间，家庭网络劣质化的厉害，可能是触碰到了土啬的逆鳞？
+<meta http-equiv=x-ua-compatible content="IE=edge"><title>frp + trojan 组网提高网络质量 - 一个程序员的辩白</title><meta name=viewport content="width=device-width,initial-scale=1">
+<meta itemprop=name content="frp + trojan 组网提高网络质量">
+<meta itemprop=description content="前段时间，家庭网络劣质化的厉害，可能是触碰到了土啬的逆鳞？
 当然针对这种情况解决方法无非下面的几种情况：
  光猫重新拨号，大概率获得一个新的NAT IP，也许可以满血复活。 换一个代理节点。 用IPLC线路/IPLC转发。 代理套CDN（需要代理软件的支持）。  以上除了最后一种方法其他我都试过。
 针对第三点需要特殊说明一下，由于资金的限制，我试过IPLC NAT和IPLC转发，不过感觉不是太稳定，很容易受到友商DDoS照顾，体验会比较差。
@@ -23,13 +20,10 @@
 不过，第二点并不具备普遍性，可能只有部分互联网从业者有这种条件。
 针对没有专线网络的情况，可以考虑使用家庭带宽，在移动设备上的网络QoS可能会好一些。 当然，这种情况没有解决开头说到的问题。
  本文将演示fatedier/frp + trojan-gfw来实现图上描述的组网方式，其他代理软件原理上是类似的。
-Server side setup 1 2 3 4 5 6 7 8 9  # 下载最新版frp V1=$(curl -sL https://api.github.com/repos/fatedier/frp/releases/latest | grep &amp;#39;&amp;#34;tag_name&amp;#34;:&amp;#39; | cut -d&amp;#39;&amp;#34;&amp;#39; -f4) V2=$(echo $V1 | cut -c2-) OS=$(uname -s | tr &amp;#39;[:upper:]&amp;#39; &amp;#39;[:lower:]&amp;#39;) AR=$(uname -m | sed &amp;#39;s/^x86_64$/amd64/&amp;#39;) wget &amp;#34;https://github.">
-<meta name=twitter:site content="https://leiless.me/">
-<meta name=twitter:creator content>
-<meta name=twitter:image content="https://leiless.me/avatar.jpg">
-<meta property="og:locale" content>
-<meta property="og:type" content="article">
-<meta property="og:title" content="frp + trojan 组网提高网络质量 - 一个程序员的辩白">
+Server side setup # 下载最新版frp V1=$(curl -sL https://api.github.com/repos/fatedier/frp/releases/latest | grep '&#34;tag_name&#34;:' | cut -d'&#34;' -f4) V2=$(echo $V1 | cut -c2-) OS=$(uname -s | tr '[:upper:]' '[:lower:]') AR=$(uname -m | sed 's/^x86_64$/amd64/') wget &#34;https://github."><meta itemprop=datePublished content="2021-01-16T00:00:00+00:00">
+<meta itemprop=dateModified content="2021-01-16T00:00:00+00:00">
+<meta itemprop=wordCount content="339">
+<meta itemprop=keywords content="frp,trojan,proxy,"><meta property="og:title" content="frp + trojan 组网提高网络质量">
 <meta property="og:description" content="前段时间，家庭网络劣质化的厉害，可能是触碰到了土啬的逆鳞？
 当然针对这种情况解决方法无非下面的几种情况：
  光猫重新拨号，大概率获得一个新的NAT IP，也许可以满血复活。 换一个代理节点。 用IPLC线路/IPLC转发。 代理套CDN（需要代理软件的支持）。  以上除了最后一种方法其他我都试过。
@@ -47,13 +41,14 @@ Server side setup 1 2 3 4 5 6 7 8 9  # 下载最新版frp V1=$(curl -sL https://
 不过，第二点并不具备普遍性，可能只有部分互联网从业者有这种条件。
 针对没有专线网络的情况，可以考虑使用家庭带宽，在移动设备上的网络QoS可能会好一些。 当然，这种情况没有解决开头说到的问题。
  本文将演示fatedier/frp + trojan-gfw来实现图上描述的组网方式，其他代理软件原理上是类似的。
-Server side setup 1 2 3 4 5 6 7 8 9  # 下载最新版frp V1=$(curl -sL https://api.github.com/repos/fatedier/frp/releases/latest | grep &amp;#39;&amp;#34;tag_name&amp;#34;:&amp;#39; | cut -d&amp;#39;&amp;#34;&amp;#39; -f4) V2=$(echo $V1 | cut -c2-) OS=$(uname -s | tr &amp;#39;[:upper:]&amp;#39; &amp;#39;[:lower:]&amp;#39;) AR=$(uname -m | sed &amp;#39;s/^x86_64$/amd64/&amp;#39;) wget &amp;#34;https://github.">
-<meta property="og:url" content="https://leiless.me/posts/frp-trojan/">
-<meta property="og:site_name" content="一个程序员的辩白">
-<meta property="og:image" content="https://leiless.me/avatar.jpg">
-<title>frp + trojan 组网提高网络质量 - 一个程序员的辩白</title>
-<meta name=author content="Fishbone">
-<meta name=description content="前段时间，家庭网络劣质化的厉害，可能是触碰到了土啬的逆鳞？
+Server side setup # 下载最新版frp V1=$(curl -sL https://api.github.com/repos/fatedier/frp/releases/latest | grep '&#34;tag_name&#34;:' | cut -d'&#34;' -f4) V2=$(echo $V1 | cut -c2-) OS=$(uname -s | tr '[:upper:]' '[:lower:]') AR=$(uname -m | sed 's/^x86_64$/amd64/') wget &#34;https://github.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://leiless.me/posts/frp-trojan/"><meta property="article:section" content="posts">
+<meta property="article:published_time" content="2021-01-16T00:00:00+00:00">
+<meta property="article:modified_time" content="2021-01-16T00:00:00+00:00">
+<meta name=twitter:card content="summary">
+<meta name=twitter:title content="frp + trojan 组网提高网络质量">
+<meta name=twitter:description content="前段时间，家庭网络劣质化的厉害，可能是触碰到了土啬的逆鳞？
 当然针对这种情况解决方法无非下面的几种情况：
  光猫重新拨号，大概率获得一个新的NAT IP，也许可以满血复活。 换一个代理节点。 用IPLC线路/IPLC转发。 代理套CDN（需要代理软件的支持）。  以上除了最后一种方法其他我都试过。
 针对第三点需要特殊说明一下，由于资金的限制，我试过IPLC NAT和IPLC转发，不过感觉不是太稳定，很容易受到友商DDoS照顾，体验会比较差。
@@ -70,37 +65,45 @@ Server side setup 1 2 3 4 5 6 7 8 9  # 下载最新版frp V1=$(curl -sL https://
 不过，第二点并不具备普遍性，可能只有部分互联网从业者有这种条件。
 针对没有专线网络的情况，可以考虑使用家庭带宽，在移动设备上的网络QoS可能会好一些。 当然，这种情况没有解决开头说到的问题。
  本文将演示fatedier/frp + trojan-gfw来实现图上描述的组网方式，其他代理软件原理上是类似的。
-Server side setup 1 2 3 4 5 6 7 8 9  # 下载最新版frp V1=$(curl -sL https://api.github.com/repos/fatedier/frp/releases/latest | grep &amp;#39;&amp;#34;tag_name&amp;#34;:&amp;#39; | cut -d&amp;#39;&amp;#34;&amp;#39; -f4) V2=$(echo $V1 | cut -c2-) OS=$(uname -s | tr &amp;#39;[:upper:]&amp;#39; &amp;#39;[:lower:]&amp;#39;) AR=$(uname -m | sed &amp;#39;s/^x86_64$/amd64/&amp;#39;) wget &amp;#34;https://github.">
-<link rel=stylesheet href="https://fonts.googleapis.com/css?family=Source+Code+Pro|Arvo:400,700">
-<link rel=stylesheet href=https://leiless.me/css/theme.css>
-<link rel=stylesheet href=https://leiless.me/css/chroma.dracula.css>
+Server side setup # 下载最新版frp V1=$(curl -sL https://api.github.com/repos/fatedier/frp/releases/latest | grep '&#34;tag_name&#34;:' | cut -d'&#34;' -f4) V2=$(echo $V1 | cut -c2-) OS=$(uname -s | tr '[:upper:]' '[:lower:]') AR=$(uname -m | sed 's/^x86_64$/amd64/') wget &#34;https://github.">
+<link href="https://fonts.googleapis.com/css?family=Playfair+Display:700" rel=stylesheet type=text/css>
+<link rel=stylesheet type=text/css media=screen href=https://leiless.me/css/normalize.css>
+<link rel=stylesheet type=text/css media=screen href=https://leiless.me/css/main.css>
+<link id=dark-scheme rel=stylesheet type=text/css href=https://leiless.me/css/dark.css>
+<script src=https://leiless.me/js/feather.min.js></script>
+<script src=https://leiless.me/js/main.js></script>
 </head>
-<body class="font-serif bg-gray-200 border-t-4 border-blue-500 antialiased">
-<div class="w-full p-6 md:w-2/3 md:px-0 md:mx-auto xl:w-2/5">
-<header class=mb-6>
-<div class="mb-6 md:flex md:items-center">
-<div>
-<a class="text-lg mb-8 inline-block" href=/>&larr; Back Home</a>
-<h1 class="text-4xl font-bold">frp + trojan 组网提高网络质量</h1>
-<time datetime="2021-01-16 00:00:00 UTC">16 Jan 2021</time>
-<ol class=mt-4>
-<li class=inline-block>
-<a class="border-none text-gray-800 text-lg bg-gray-400 hover:bg-gray-600 hover:text-white rounded-sm px-3 py-1" href=https://leiless.me/tags/frp>frp</a>
-</li>
-&nbsp;
-<li class=inline-block>
-<a class="border-none text-gray-800 text-lg bg-gray-400 hover:bg-gray-600 hover:text-white rounded-sm px-3 py-1" href=https://leiless.me/tags/trojan>trojan</a>
-</li>
-&nbsp;
-<li class=inline-block>
-<a class="border-none text-gray-800 text-lg bg-gray-400 hover:bg-gray-600 hover:text-white rounded-sm px-3 py-1" href=https://leiless.me/tags/proxy>proxy</a>
-</li>
-&nbsp;
-</ol>
+<body>
+<div class="container wrapper">
+<div class=header>
+<div class=avatar>
+<a href=https://leiless.me/>
+<img src=../../avatar.jpg alt=一个程序员的辩白>
+</a>
+</div>
+<h1 class=site-title><a href=https://leiless.me/>一个程序员的辩白</a></h1>
+<div class=site-description><p>关注分布式系统，DBMS，CI/CD，Deterministic Simulation。</p><nav class="nav social">
+<ul class=flat><li><a href=https://github.com/leiless title=GitHub><i data-feather=github></i></a></li><li><a href=https://twitter.com/funky_fishbone title=Twitter><i data-feather=twitter></i></a></li><li><a href=/index.xml title=RSS><i data-feather=rss></i></a></li><li><a href=# class=scheme-toggle id=scheme-toggle></a></li></ul>
+</nav>
+</div>
+<nav class=nav>
+<ul class=flat>
+</ul>
+</nav>
+</div>
+<div class=post>
+<div class=post-header>
+<div class=meta>
+<div class=date>
+<span class=day>16</span>
+<span class=rest>Jan 2021</span>
 </div>
 </div>
-</header>
-<article class=mb-12>
+<div class=matter>
+<h1 class=title>frp + trojan 组网提高网络质量</h1>
+</div>
+</div>
+<div class=markdown>
 <p>前段时间，家庭网络劣质化的厉害，可能是触碰到了土啬的逆鳞？</p>
 <p>当然针对这种情况解决方法无非下面的几种情况：</p>
 <ul>
@@ -136,192 +139,87 @@ Server side setup 1 2 3 4 5 6 7 8 9  # 下载最新版frp V1=$(curl -sL https://
 <p> </p>
 <p>本文将演示<a href=https://github.com/fatedier/frp>fatedier/frp</a> + <a href=https://github.com/trojan-gfw/trojan>trojan-gfw</a>来实现图上描述的组网方式，其他代理软件原理上是类似的。</p>
 <h2 id=server-side-setup>Server side setup</h2>
-<div class=highlight><div class=chroma>
-<table class=lntable><tr><td class=lntd>
-<pre tabindex=0 class=chroma><code><span class=lnt>1
-</span><span class=lnt>2
-</span><span class=lnt>3
-</span><span class=lnt>4
-</span><span class=lnt>5
-</span><span class=lnt>6
-</span><span class=lnt>7
-</span><span class=lnt>8
-</span><span class=lnt>9
-</span></code></pre></td>
-<td class=lntd>
-<pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=c1># 下载最新版frp</span>
-<span class=nv>V1</span><span class=o>=</span><span class=k>$(</span>curl -sL https://api.github.com/repos/fatedier/frp/releases/latest <span class=p>|</span> grep <span class=s1>&#39;&#34;tag_name&#34;:&#39;</span> <span class=p>|</span> cut -d<span class=s1>&#39;&#34;&#39;</span> -f4<span class=k>)</span>
-<span class=nv>V2</span><span class=o>=</span><span class=k>$(</span><span class=nb>echo</span> <span class=nv>$V1</span> <span class=p>|</span> cut -c2-<span class=k>)</span>
-<span class=nv>OS</span><span class=o>=</span><span class=k>$(</span>uname -s <span class=p>|</span> tr <span class=s1>&#39;[:upper:]&#39;</span> <span class=s1>&#39;[:lower:]&#39;</span><span class=k>)</span>
-<span class=nv>AR</span><span class=o>=</span><span class=k>$(</span>uname -m <span class=p>|</span> sed <span class=s1>&#39;s/^x86_64$/amd64/&#39;</span><span class=k>)</span>
-wget <span class=s2>&#34;https://github.com/fatedier/frp/releases/download/</span><span class=nv>$V1</span><span class=s2>/frp_</span><span class=si>${</span><span class=nv>V2</span><span class=si>}</span><span class=s2>_</span><span class=si>${</span><span class=nv>OS</span><span class=si>}</span><span class=s2>_</span><span class=nv>$AR</span><span class=s2>.tar.gz&#34;</span>
+<div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=color:green># 下载最新版frp</span>
+V1=<span style=color:#00f>$(</span>curl -sL https://api.github.com/repos/fatedier/frp/releases/latest | grep <span style=color:#a31515>&#39;&#34;tag_name&#34;:&#39;</span> | cut -d<span style=color:#a31515>&#39;&#34;&#39;</span> -f4<span style=color:#00f>)</span>
+V2=<span style=color:#00f>$(</span>echo $V1 | cut -c2-<span style=color:#00f>)</span>
+OS=<span style=color:#00f>$(</span>uname -s | tr <span style=color:#a31515>&#39;[:upper:]&#39;</span> <span style=color:#a31515>&#39;[:lower:]&#39;</span><span style=color:#00f>)</span>
+AR=<span style=color:#00f>$(</span>uname -m | sed <span style=color:#a31515>&#39;s/^x86_64$/amd64/&#39;</span><span style=color:#00f>)</span>
+wget <span style=color:#a31515>&#34;https://github.com/fatedier/frp/releases/download/</span>$V1<span style=color:#a31515>/frp_</span><span style=color:#a31515>${</span>V2<span style=color:#a31515>}</span><span style=color:#a31515>_</span><span style=color:#a31515>${</span>OS<span style=color:#a31515>}</span><span style=color:#a31515>_</span>$AR<span style=color:#a31515>.tar.gz&#34;</span>
 
-tar xf frp_<span class=si>${</span><span class=nv>V2</span><span class=si>}</span>_<span class=si>${</span><span class=nv>OS</span><span class=si>}</span>_<span class=nv>$AR</span>.tar.gz
-<span class=nb>cd</span> frp_<span class=si>${</span><span class=nv>V2</span><span class=si>}</span>_<span class=si>${</span><span class=nv>OS</span><span class=si>}</span>_<span class=nv>$AR</span>
-</code></pre></td></tr></table>
-</div>
-</div><p>新建<code>frps-trojan.ini</code></p>
-<div class=highlight><div class=chroma>
-<table class=lntable><tr><td class=lntd>
-<pre tabindex=0 class=chroma><code><span class=lnt>1
-</span><span class=lnt>2
-</span><span class=lnt>3
-</span><span class=lnt>4
-</span></code></pre></td>
-<td class=lntd>
-<pre tabindex=0 class=chroma><code class=language-ini data-lang=ini><span class=k>[common]</span>
-<span class=na>bind_port</span> <span class=o>=</span> <span class=s>7000</span>
-<span class=na>authentication_method</span> <span class=o>=</span> <span class=s>token</span>
-<span class=na>token</span> <span class=o>=</span> <span class=s>dummy_passw0rd</span>
-</code></pre></td></tr></table>
-</div>
-</div><p><code>frps</code>监听在云服务器的<code>7000</code>端口，采用了密码认证。</p>
+tar xf frp_<span style=color:#a31515>${</span>V2<span style=color:#a31515>}</span>_<span style=color:#a31515>${</span>OS<span style=color:#a31515>}</span>_$AR.tar.gz
+cd frp_<span style=color:#a31515>${</span>V2<span style=color:#a31515>}</span>_<span style=color:#a31515>${</span>OS<span style=color:#a31515>}</span>_$AR
+</code></pre></div><p>新建<code>frps-trojan.ini</code></p>
+<div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-ini data-lang=ini><span style=color:#00f>[common]</span>
+bind_port = <span style=color:#a31515>7000</span>
+authentication_method = <span style=color:#a31515>token</span>
+token = <span style=color:#a31515>dummy_passw0rd</span>
+</code></pre></div><p><code>frps</code>监听在云服务器的<code>7000</code>端口，采用了密码认证。</p>
 <p>运行<code>frps</code></p>
-<div class=highlight><div class=chroma>
-<table class=lntable><tr><td class=lntd>
-<pre tabindex=0 class=chroma><code><span class=lnt>1
-</span></code></pre></td>
-<td class=lntd>
-<pre tabindex=0 class=chroma><code class=language-bash data-lang=bash>./frps frps-trojan.ini
-</code></pre></td></tr></table>
-</div>
-</div><p> </p>
+<div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>./frps frps-trojan.ini
+</code></pre></div><p> </p>
 <h2 id=client-side-setup>Client side setup</h2>
 <p>客户端的配置稍稍麻烦一点，除了<code>frpc</code>之外，还需要额外配置<code>trojan-gfw</code>。</p>
 <p>下载并解压<code>frp</code>如前述，不再赘述。</p>
 <p>新建<code>frpc-trojan.ini</code></p>
-<div class=highlight><div class=chroma>
-<table class=lntable><tr><td class=lntd>
-<pre tabindex=0 class=chroma><code><span class=lnt> 1
-</span><span class=lnt> 2
-</span><span class=lnt> 3
-</span><span class=lnt> 4
-</span><span class=lnt> 5
-</span><span class=lnt> 6
-</span><span class=lnt> 7
-</span><span class=lnt> 8
-</span><span class=lnt> 9
-</span><span class=lnt>10
-</span><span class=lnt>11
-</span><span class=lnt>12
-</span><span class=lnt>13
-</span><span class=lnt>14
-</span><span class=lnt>15
-</span><span class=lnt>16
-</span><span class=lnt>17
-</span></code></pre></td>
-<td class=lntd>
-<pre tabindex=0 class=chroma><code class=language-ini data-lang=ini><span class=k>[common]</span>
-<span class=na>server_addr</span> <span class=o>=</span> <span class=s>$VPS_IP</span>
-<span class=na>server_port</span> <span class=o>=</span> <span class=s>7000</span>
-<span class=na>authentication_method</span> <span class=o>=</span> <span class=s>token</span>
-<span class=na>token</span> <span class=o>=</span> <span class=s>dummy_passw0rd</span>
+<div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-ini data-lang=ini><span style=color:#00f>[common]</span>
+server_addr = <span style=color:#a31515>$VPS_IP</span>
+server_port = <span style=color:#a31515>7000</span>
+authentication_method = <span style=color:#a31515>token</span>
+token = <span style=color:#a31515>dummy_passw0rd</span>
 
-<span class=k>[trojan-tcp]</span>
-<span class=na>type</span> <span class=o>=</span> <span class=s>tcp</span>
-<span class=na>remote_port</span> <span class=o>=</span> <span class=s>443</span>
-<span class=na>local_ip</span> <span class=o>=</span> <span class=s>127.0.0.1</span>
-<span class=na>local_port</span> <span class=o>=</span> <span class=s>1080</span>
+<span style=color:#00f>[trojan-tcp]</span>
+type = <span style=color:#a31515>tcp</span>
+remote_port = <span style=color:#a31515>443</span>
+local_ip = <span style=color:#a31515>127.0.0.1</span>
+local_port = <span style=color:#a31515>1080</span>
 
-<span class=k>[trojan-udp]</span>
-<span class=na>type</span> <span class=o>=</span> <span class=s>udp</span>
-<span class=na>remote_port</span> <span class=o>=</span> <span class=s>443</span>
-<span class=na>local_ip</span> <span class=o>=</span> <span class=s>127.0.0.1</span>
-<span class=na>local_port</span> <span class=o>=</span> <span class=s>1080</span>
-</code></pre></td></tr></table>
-</div>
-</div><p>其中，<code>$VPS_IP</code>为云服务器公网IP，来自VPS <code>frps</code>的<code>443</code>端口的流量最终将发送到NAT device的<code>127.0.0.1:1080</code>所在的进程。</p>
+<span style=color:#00f>[trojan-udp]</span>
+type = <span style=color:#a31515>udp</span>
+remote_port = <span style=color:#a31515>443</span>
+local_ip = <span style=color:#a31515>127.0.0.1</span>
+local_port = <span style=color:#a31515>1080</span>
+</code></pre></div><p>其中，<code>$VPS_IP</code>为云服务器公网IP，来自VPS <code>frps</code>的<code>443</code>端口的流量最终将发送到NAT device的<code>127.0.0.1:1080</code>所在的进程。</p>
 <p>运行<code>frpc</code></p>
-<div class=highlight><div class=chroma>
-<table class=lntable><tr><td class=lntd>
-<pre tabindex=0 class=chroma><code><span class=lnt>1
-</span></code></pre></td>
-<td class=lntd>
-<pre tabindex=0 class=chroma><code class=language-bash data-lang=bash>./frpc frpc-trojan.ini
-</code></pre></td></tr></table>
-</div>
-</div><h3 id=安装trojan-gfw>安装<code>trojan-gfw</code></h3>
+<div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>./frpc frpc-trojan.ini
+</code></pre></div><h3 id=安装trojan-gfw>安装<code>trojan-gfw</code></h3>
 <p>在我们的示例中，需要将<code>trojan</code>绑定(bind)到<code>127.0.0.1:1080</code>。</p>
 <p>参考<a href=https://github.com/trojan-gfw/trojan-quickstart>trojan-gfw/trojan-quickstart</a>，也可以直接去<a href=https://github.com/trojan-gfw/trojan/releases>trojan-gfw/trojan</a>下载。</p>
 <p><code>trojan</code>示例配置文件<code>forward.json</code></p>
-<div class=highlight><div class=chroma>
-<table class=lntable><tr><td class=lntd>
-<pre tabindex=0 class=chroma><code><span class=lnt> 1
-</span><span class=lnt> 2
-</span><span class=lnt> 3
-</span><span class=lnt> 4
-</span><span class=lnt> 5
-</span><span class=lnt> 6
-</span><span class=lnt> 7
-</span><span class=lnt> 8
-</span><span class=lnt> 9
-</span><span class=lnt>10
-</span><span class=lnt>11
-</span><span class=lnt>12
-</span><span class=lnt>13
-</span><span class=lnt>14
-</span><span class=lnt>15
-</span><span class=lnt>16
-</span><span class=lnt>17
-</span><span class=lnt>18
-</span><span class=lnt>19
-</span><span class=lnt>20
-</span><span class=lnt>21
-</span><span class=lnt>22
-</span><span class=lnt>23
-</span><span class=lnt>24
-</span><span class=lnt>25
-</span><span class=lnt>26
-</span><span class=lnt>27
-</span><span class=lnt>28
-</span><span class=lnt>29
-</span><span class=lnt>30
-</span></code></pre></td>
-<td class=lntd>
-<pre tabindex=0 class=chroma><code class=language-json data-lang=json><span class=p>{</span>
-    <span class=nt>&#34;run_type&#34;</span><span class=p>:</span> <span class=s2>&#34;forward&#34;</span><span class=p>,</span>
-    <span class=nt>&#34;local_addr&#34;</span><span class=p>:</span> <span class=s2>&#34;127.0.0.1&#34;</span><span class=p>,</span>
-    <span class=nt>&#34;local_port&#34;</span><span class=p>:</span> <span class=mi>1080</span><span class=p>,</span>
-    <span class=nt>&#34;remote_addr&#34;</span><span class=p>:</span> <span class=s2>&#34;$DOMAIN_NAME&#34;</span><span class=p>,</span>
-    <span class=nt>&#34;remote_port&#34;</span><span class=p>:</span> <span class=mi>443</span><span class=p>,</span>
-    <span class=nt>&#34;target_addr&#34;</span><span class=p>:</span> <span class=s2>&#34;$DOMAIN_NAME&#34;</span><span class=p>,</span>
-    <span class=nt>&#34;target_port&#34;</span><span class=p>:</span> <span class=mi>443</span><span class=p>,</span>
-    <span class=nt>&#34;password&#34;</span><span class=p>:</span> <span class=p>[</span>
-        <span class=s2>&#34;$PASSWORD&#34;</span>
-    <span class=p>],</span>
-    <span class=nt>&#34;log_level&#34;</span><span class=p>:</span> <span class=mi>1</span><span class=p>,</span>
-    <span class=nt>&#34;ssl&#34;</span><span class=p>:</span> <span class=p>{</span>
-        <span class=nt>&#34;verify&#34;</span><span class=p>:</span> <span class=kc>true</span><span class=p>,</span>
-        <span class=nt>&#34;verify_hostname&#34;</span><span class=p>:</span> <span class=kc>true</span><span class=p>,</span>
-        <span class=nt>&#34;sni&#34;</span><span class=p>:</span> <span class=s2>&#34;&#34;</span><span class=p>,</span>
-        <span class=nt>&#34;alpn&#34;</span><span class=p>:</span> <span class=p>[</span>
-            <span class=s2>&#34;h2&#34;</span><span class=p>,</span>
-            <span class=s2>&#34;http/1.1&#34;</span>
-        <span class=p>],</span>
-        <span class=nt>&#34;reuse_session&#34;</span><span class=p>:</span> <span class=kc>true</span><span class=p>,</span>
-        <span class=nt>&#34;session_ticket&#34;</span><span class=p>:</span> <span class=kc>false</span>
-    <span class=p>},</span>
-    <span class=nt>&#34;tcp&#34;</span><span class=p>:</span> <span class=p>{</span>
-        <span class=nt>&#34;no_delay&#34;</span><span class=p>:</span> <span class=kc>true</span><span class=p>,</span>
-        <span class=nt>&#34;keep_alive&#34;</span><span class=p>:</span> <span class=kc>true</span><span class=p>,</span>
-        <span class=nt>&#34;reuse_port&#34;</span><span class=p>:</span> <span class=kc>true</span><span class=p>,</span>
-        <span class=nt>&#34;fast_open&#34;</span><span class=p>:</span> <span class=kc>false</span>
-    <span class=p>}</span>
-<span class=p>}</span>
-</code></pre></td></tr></table>
-</div>
-</div><p>注意<code>run_type</code>必须是<code>forward</code>，不然路由包无法被正确识别并处理。</p>
+<div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-json data-lang=json>{
+    &#34;run_type&#34;: <span style=color:#a31515>&#34;forward&#34;</span>,
+    &#34;local_addr&#34;: <span style=color:#a31515>&#34;127.0.0.1&#34;</span>,
+    &#34;local_port&#34;: 1080,
+    &#34;remote_addr&#34;: <span style=color:#a31515>&#34;$DOMAIN_NAME&#34;</span>,
+    &#34;remote_port&#34;: 443,
+    &#34;target_addr&#34;: <span style=color:#a31515>&#34;$DOMAIN_NAME&#34;</span>,
+    &#34;target_port&#34;: 443,
+    &#34;password&#34;: [
+        <span style=color:#a31515>&#34;$PASSWORD&#34;</span>
+    ],
+    &#34;log_level&#34;: 1,
+    &#34;ssl&#34;: {
+        &#34;verify&#34;: <span style=color:#00f>true</span>,
+        &#34;verify_hostname&#34;: <span style=color:#00f>true</span>,
+        &#34;sni&#34;: <span style=color:#a31515>&#34;&#34;</span>,
+        &#34;alpn&#34;: [
+            <span style=color:#a31515>&#34;h2&#34;</span>,
+            <span style=color:#a31515>&#34;http/1.1&#34;</span>
+        ],
+        &#34;reuse_session&#34;: <span style=color:#00f>true</span>,
+        &#34;session_ticket&#34;: <span style=color:#00f>false</span>
+    },
+    &#34;tcp&#34;: {
+        &#34;no_delay&#34;: <span style=color:#00f>true</span>,
+        &#34;keep_alive&#34;: <span style=color:#00f>true</span>,
+        &#34;reuse_port&#34;: <span style=color:#00f>true</span>,
+        &#34;fast_open&#34;: <span style=color:#00f>false</span>
+    }
+}
+</code></pre></div><p>注意<code>run_type</code>必须是<code>forward</code>，不然路由包无法被正确识别并处理。</p>
 <p>其他的按照自己的配置填写即可，<code>forward.json</code>用的是域名解析方式来连接Trojan server，也可以使用IP + SNI的模式，具体参考<a href=https://trojan-gfw.github.io/trojan/config>trojan/config</a>。</p>
 <p>最后运行<code>trojan</code>即可完成整个组网。</p>
-<div class=highlight><div class=chroma>
-<table class=lntable><tr><td class=lntd>
-<pre tabindex=0 class=chroma><code><span class=lnt>1
-</span></code></pre></td>
-<td class=lntd>
-<pre tabindex=0 class=chroma><code class=language-bash data-lang=bash>./trojan -c forward.json
-</code></pre></td></tr></table>
-</div>
-</div><p>然后就可以在终端设备上（比如手机）测试了。</p>
+<div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>./trojan -c forward.json
+</code></pre></div><p>然后就可以在终端设备上（比如手机）测试了。</p>
 <p>至此也就完成了整个组网的过程啦。</p>
 <p> </p>
 <h2 id=为远程办公赋能>为远程办公赋能</h2>
@@ -331,72 +229,36 @@ tar xf frp_<span class=si>${</span><span class=nv>V2</span><span class=si>}</spa
 <p>（以下操作均在NAT device端完成）</p>
 <p>第一步需要设置DNS转发，以正确解析公司内部服务的地址。</p>
 <p>将以下配置追加到 <code>frpc-trojan.ini</code>：</p>
-<div class=highlight><div class=chroma>
-<table class=lntable><tr><td class=lntd>
-<pre tabindex=0 class=chroma><code><span class=lnt> 1
-</span><span class=lnt> 2
-</span><span class=lnt> 3
-</span><span class=lnt> 4
-</span><span class=lnt> 5
-</span><span class=lnt> 6
-</span><span class=lnt> 7
-</span><span class=lnt> 8
-</span><span class=lnt> 9
-</span><span class=lnt>10
-</span><span class=lnt>11
-</span></code></pre></td>
-<td class=lntd>
-<pre tabindex=0 class=chroma><code class=language-ini data-lang=ini><span class=k>[dns-tcp]</span>
-<span class=na>type</span> <span class=o>=</span> <span class=s>tcp</span>
-<span class=na>remote_port</span> <span class=o>=</span> <span class=s>5353</span>
-<span class=na>local_ip</span> <span class=o>=</span> <span class=s>127.0.0.53</span>
-<span class=na>local_port</span> <span class=o>=</span> <span class=s>53</span>
+<div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-ini data-lang=ini><span style=color:#00f>[dns-tcp]</span>
+type = <span style=color:#a31515>tcp</span>
+remote_port = <span style=color:#a31515>5353</span>
+local_ip = <span style=color:#a31515>127.0.0.53</span>
+local_port = <span style=color:#a31515>53</span>
 
-<span class=k>[dns-udp]</span>
-<span class=na>type</span> <span class=o>=</span> <span class=s>udp</span>
-<span class=na>remote_port</span> <span class=o>=</span> <span class=s>5353</span>
-<span class=na>local_ip</span> <span class=o>=</span> <span class=s>127.0.0.53</span>
-<span class=na>local_port</span> <span class=o>=</span> <span class=s>53</span>
-</code></pre></td></tr></table>
-</div>
-</div><p>如果使用的是Debian/Ubuntu的话，<code>127.0.0.53:53</code>是由<a href=https://help.ubuntu.com/community/NetworkManager>NetworkManager</a>生成的聚合DNS地址，可以自动识别到上游真实的DNS，而不需要显式地填入多个地址。</p>
+<span style=color:#00f>[dns-udp]</span>
+type = <span style=color:#a31515>udp</span>
+remote_port = <span style=color:#a31515>5353</span>
+local_ip = <span style=color:#a31515>127.0.0.53</span>
+local_port = <span style=color:#a31515>53</span>
+</code></pre></div><p>如果使用的是Debian/Ubuntu的话，<code>127.0.0.53:53</code>是由<a href=https://help.ubuntu.com/community/NetworkManager>NetworkManager</a>生成的聚合DNS地址，可以自动识别到上游真实的DNS，而不需要显式地填入多个地址。</p>
 <p>如果不是这种情况的话，请参考<code>/etc/resolv.conf</code>里面给出的值。</p>
 <p>第二步是在公司的机器上配置代理服务器，比如<code>ss/trojan/v2</code> server。</p>
 <p>这样公司的服务器就作为了代理的响应者，也就是由公司的网络负责响应你的网络请求。</p>
 <p>然后在<code>frpc-trojan.ini</code>追加Proxy server信息：</p>
-<div class=highlight><div class=chroma>
-<table class=lntable><tr><td class=lntd>
-<pre tabindex=0 class=chroma><code><span class=lnt> 1
-</span><span class=lnt> 2
-</span><span class=lnt> 3
-</span><span class=lnt> 4
-</span><span class=lnt> 5
-</span><span class=lnt> 6
-</span><span class=lnt> 7
-</span><span class=lnt> 8
-</span><span class=lnt> 9
-</span><span class=lnt>10
-</span><span class=lnt>11
-</span><span class=lnt>12
-</span><span class=lnt>13
-</span></code></pre></td>
-<td class=lntd>
-<pre tabindex=0 class=chroma><code class=language-ini data-lang=ini><span class=k>[company-proxy-tcp]</span>
-<span class=na>type</span> <span class=o>=</span> <span class=s>tcp</span>
-<span class=na>local_ip</span> <span class=o>=</span> <span class=s>127.0.0.1</span>
-<span class=na>local_port</span> <span class=o>=</span> <span class=s>...</span>
-<span class=na>remote_port</span> <span class=o>=</span> <span class=s>...</span>
-<span class=na>...</span>
+<div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-ini data-lang=ini><span style=color:#00f>[company-proxy-tcp]</span>
+type = <span style=color:#a31515>tcp</span>
+local_ip = <span style=color:#a31515>127.0.0.1</span>
+local_port = <span style=color:#a31515>...</span>
+remote_port = <span style=color:#a31515>...</span>
+...
 
-<span class=k>[company-proxy-udp]</span>
-<span class=na>type</span> <span class=o>=</span> <span class=s>udp</span>
-<span class=na>local_ip</span> <span class=o>=</span> <span class=s>127.0.0.1</span>
-<span class=na>local_port</span> <span class=o>=</span> <span class=s>...</span>
-<span class=na>remote_port</span> <span class=o>=</span> <span class=s>...</span>
-<span class=na>...</span>
-</code></pre></td></tr></table>
-</div>
-</div><p>然后配置下家庭网络，就可以为远程办公赋能啦。🌚</p>
+<span style=color:#00f>[company-proxy-udp]</span>
+type = <span style=color:#a31515>udp</span>
+local_ip = <span style=color:#a31515>127.0.0.1</span>
+local_port = <span style=color:#a31515>...</span>
+remote_port = <span style=color:#a31515>...</span>
+...
+</code></pre></div><p>然后配置下家庭网络，就可以为远程办公赋能啦。🌚</p>
 <p>需要注意的是针对以TLS流量为载体的proxy，域名需要绑定NAT VPS的IP，然后利用frp穿透转发到内网(公司/家庭)网络，然后内网的proxy再去验证证书的有效性。</p>
 <p>针对透明代理，需要操作<code>iptables</code>，将家庭网络所有请求公司内部网络(LAN)的网段开启NAT转发。</p>
 <p> </p>
@@ -469,17 +331,22 @@ tar xf frp_<span class=si>${</span><span class=nv>V2</span><span class=si>}</spa
 <p><a href=https://gofrp.org/docs/>文档 | frp</a></p>
 <p><a href=https://trojan-gfw.github.io/trojan/config>Config | trojan</a></p>
 </blockquote>
-<script src=https://utteranc.es/client.js repo=leiless/blog issue-term=pathname label=comment theme=github-light crossorigin=anonymous async></script>
-</article>
-<footer>
-<p>
-<a href=https://leiless.me/>一个程序员的辩白</a> <span style=color:gray>&copy;</span> 2017 - 2021. Proudly made with <a href=https://gohugo.io/ target=_blank>Hugo</a> and <a href=https://tailwindcss.com/ target=_blank>TailwindCSS</a>.
-</p>
-<p style=margin-top:-15px;font-size:10px>Released under <a href=https://creativecommons.org/licenses/by-nc-sa/4.0/>CC BY-NC-SA 4.0</a> license.</p>
-</footer>
 </div>
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-RMJ7KLHXH8"></script>
-<script>var doNotTrack=!1;if(!doNotTrack){window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag('js',new Date),gtag('config','G-RMJ7KLHXH8',{anonymize_ip:!1})}</script>
-<script>(function(a,c,d,e){if(typeof a.webpushr!='undefined')return;a.webpushr=a.webpushr||function(){(a.webpushr.q=a.webpushr.q||[]).push(arguments)};var b,f=c.getElementsByTagName(d)[0];b=c.createElement(d),b.id=e,b.async=1,b.src="https://cdn.webpushr.com/app.min.js",f.parentNode.appendChild(b)})(window,document,'script','webpushr-jssdk'),webpushr('setup',{key:'BJji5mvLAV3k-EncfEEH_CtK_CdcXWnXc-fvhs7uY1jfOG4xX_RsBmoWvTD0OTyq6TOEB5G5_uFE6Ylpxj5MKEQ'})</script>
+<div class=tags>
+<ul class=flat>
+<li><a href=/tags/frp>frp</a></li>
+<li><a href=/tags/trojan>trojan</a></li>
+<li><a href=/tags/proxy>proxy</a></li>
+</ul>
+</div></div>
+</div>
+<div class="footer wrapper">
+<nav class=nav>
+<div>2021 Released under <a href=https://creativecommons.org/licenses/by-nc-sa/4.0/>CC BY-NC-SA 4.0</a> license | <a href=https://github.com/knadh/hugo-ink>Ink</a> theme on <a href=https://gohugo.io>Hugo</a></div>
+</nav>
+</div>
+<script type=application/javascript>var doNotTrack=!1;doNotTrack||(window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)},ga.l=+new Date,ga('create','G-RMJ7KLHXH8','auto'),ga('send','pageview'))</script>
+<script async src=https://www.google-analytics.com/analytics.js></script>
+<script>feather.replace()</script>
 </body>
 </html>

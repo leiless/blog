@@ -1,47 +1,64 @@
-<!doctype html><html lang>
+<!doctype html><html>
 <head>
 <meta charset=utf-8>
-<meta name=generator content="Hugo 0.87.0">
-<meta http-equiv=x-ua-compatible content="IE=edge">
-<meta name=viewport content="width=device-width,initial-scale=1,shrink-to-fit=no">
-<meta name=twitter:card content="summary">
-<meta name=twitter:title content="Tracking down a XNU printf() precision modifier panic bug - 一个程序员的辩白">
-<meta name=twitter:description content="Background I&amp;rsquo;m a maintainer of the kernel extension in a project of our company, at the development stage, I noticed that the kernel extension can panic occasionally.
-In this article, I&amp;rsquo;ll analyze the kernel panic and find its root cause. Hopefully, as a kernel extension writer, give you hints of HOWTO analyze a kernel panic report.
+<meta http-equiv=x-ua-compatible content="IE=edge"><title>Tracking down a XNU printf() precision modifier panic bug - 一个程序员的辩白</title><meta name=viewport content="width=device-width,initial-scale=1">
+<meta itemprop=name content="Tracking down a XNU printf() precision modifier panic bug">
+<meta itemprop=description content="Background I&rsquo;m a maintainer of the kernel extension in a project of our company, at the development stage, I noticed that the kernel extension can panic occasionally.
+In this article, I&rsquo;ll analyze the kernel panic and find its root cause. Hopefully, as a kernel extension writer, give you hints of HOWTO analyze a kernel panic report.
+Kernel panic info The original kernel panic report is missing, I wrote a kernel panic validation program to verify the kernel bug."><meta itemprop=datePublished content="2019-02-04T00:00:00+00:00">
+<meta itemprop=dateModified content="2019-02-04T00:00:00+00:00">
+<meta itemprop=wordCount content="2246">
+<meta itemprop=keywords content><meta property="og:title" content="Tracking down a XNU printf() precision modifier panic bug">
+<meta property="og:description" content="Background I&rsquo;m a maintainer of the kernel extension in a project of our company, at the development stage, I noticed that the kernel extension can panic occasionally.
+In this article, I&rsquo;ll analyze the kernel panic and find its root cause. Hopefully, as a kernel extension writer, give you hints of HOWTO analyze a kernel panic report.
 Kernel panic info The original kernel panic report is missing, I wrote a kernel panic validation program to verify the kernel bug.">
-<meta name=twitter:site content="https://leiless.me/">
-<meta name=twitter:creator content>
-<meta name=twitter:image content="https://leiless.me/avatar.jpg">
-<meta property="og:locale" content>
 <meta property="og:type" content="article">
-<meta property="og:title" content="Tracking down a XNU printf() precision modifier panic bug - 一个程序员的辩白">
-<meta property="og:description" content="Background I&amp;rsquo;m a maintainer of the kernel extension in a project of our company, at the development stage, I noticed that the kernel extension can panic occasionally.
-In this article, I&amp;rsquo;ll analyze the kernel panic and find its root cause. Hopefully, as a kernel extension writer, give you hints of HOWTO analyze a kernel panic report.
+<meta property="og:url" content="https://leiless.me/posts/xnu-printf-precision-panic-bug/"><meta property="article:section" content="posts">
+<meta property="article:published_time" content="2019-02-04T00:00:00+00:00">
+<meta property="article:modified_time" content="2019-02-04T00:00:00+00:00">
+<meta name=twitter:card content="summary">
+<meta name=twitter:title content="Tracking down a XNU printf() precision modifier panic bug">
+<meta name=twitter:description content="Background I&rsquo;m a maintainer of the kernel extension in a project of our company, at the development stage, I noticed that the kernel extension can panic occasionally.
+In this article, I&rsquo;ll analyze the kernel panic and find its root cause. Hopefully, as a kernel extension writer, give you hints of HOWTO analyze a kernel panic report.
 Kernel panic info The original kernel panic report is missing, I wrote a kernel panic validation program to verify the kernel bug.">
-<meta property="og:url" content="https://leiless.me/posts/xnu-printf-precision-panic-bug/">
-<meta property="og:site_name" content="一个程序员的辩白">
-<meta property="og:image" content="https://leiless.me/avatar.jpg">
-<title>Tracking down a XNU printf() precision modifier panic bug - 一个程序员的辩白</title>
-<meta name=author content="Fishbone">
-<meta name=description content="Background I&amp;rsquo;m a maintainer of the kernel extension in a project of our company, at the development stage, I noticed that the kernel extension can panic occasionally.
-In this article, I&amp;rsquo;ll analyze the kernel panic and find its root cause. Hopefully, as a kernel extension writer, give you hints of HOWTO analyze a kernel panic report.
-Kernel panic info The original kernel panic report is missing, I wrote a kernel panic validation program to verify the kernel bug.">
-<link rel=stylesheet href="https://fonts.googleapis.com/css?family=Source+Code+Pro|Arvo:400,700">
-<link rel=stylesheet href=https://leiless.me/css/theme.css>
-<link rel=stylesheet href=https://leiless.me/css/chroma.dracula.css>
+<link href="https://fonts.googleapis.com/css?family=Playfair+Display:700" rel=stylesheet type=text/css>
+<link rel=stylesheet type=text/css media=screen href=https://leiless.me/css/normalize.css>
+<link rel=stylesheet type=text/css media=screen href=https://leiless.me/css/main.css>
+<link id=dark-scheme rel=stylesheet type=text/css href=https://leiless.me/css/dark.css>
+<script src=https://leiless.me/js/feather.min.js></script>
+<script src=https://leiless.me/js/main.js></script>
 </head>
-<body class="font-serif bg-gray-200 border-t-4 border-blue-500 antialiased">
-<div class="w-full p-6 md:w-2/3 md:px-0 md:mx-auto xl:w-2/5">
-<header class=mb-6>
-<div class="mb-6 md:flex md:items-center">
-<div>
-<a class="text-lg mb-8 inline-block" href=/>&larr; Back Home</a>
-<h1 class="text-4xl font-bold">Tracking down a XNU printf() precision modifier panic bug</h1>
-<time datetime="2019-02-04 00:00:00 UTC">04 Feb 2019</time>
+<body>
+<div class="container wrapper">
+<div class=header>
+<div class=avatar>
+<a href=https://leiless.me/>
+<img src=../../avatar.jpg alt=一个程序员的辩白>
+</a>
+</div>
+<h1 class=site-title><a href=https://leiless.me/>一个程序员的辩白</a></h1>
+<div class=site-description><p>关注分布式系统，DBMS，CI/CD，Deterministic Simulation。</p><nav class="nav social">
+<ul class=flat><li><a href=https://github.com/leiless title=GitHub><i data-feather=github></i></a></li><li><a href=https://twitter.com/funky_fishbone title=Twitter><i data-feather=twitter></i></a></li><li><a href=/index.xml title=RSS><i data-feather=rss></i></a></li><li><a href=# class=scheme-toggle id=scheme-toggle></a></li></ul>
+</nav>
+</div>
+<nav class=nav>
+<ul class=flat>
+</ul>
+</nav>
+</div>
+<div class=post>
+<div class=post-header>
+<div class=meta>
+<div class=date>
+<span class=day>04</span>
+<span class=rest>Feb 2019</span>
 </div>
 </div>
-</header>
-<article class=mb-12>
+<div class=matter>
+<h1 class=title>Tracking down a XNU printf() precision modifier panic bug</h1>
+</div>
+</div>
+<div class=markdown>
 <h2 id=background>Background</h2>
 <p>I&rsquo;m a maintainer of the kernel extension in a project of our company, at the development stage, I noticed that the kernel extension can panic occasionally.</p>
 <p>In this article, I&rsquo;ll analyze the kernel panic and find its root cause. Hopefully, as a kernel extension writer, give you hints of HOWTO analyze a kernel panic report.</p>
@@ -50,91 +67,17 @@ Kernel panic info The original kernel panic report is missing, I wrote a kernel 
 <blockquote>
 <p>System info</p>
 </blockquote>
-<div class=highlight><div class=chroma>
-<table class=lntable><tr><td class=lntd>
-<pre tabindex=0 class=chroma><code><span class=lnt>1
-</span><span class=lnt>2
-</span><span class=lnt>3
-</span><span class=lnt>4
-</span><span class=lnt>5
-</span><span class=lnt>6
-</span><span class=lnt>7
-</span></code></pre></td>
-<td class=lntd>
-<pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback>$ sw_vers
+<div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>$ sw_vers
 ProductName:	Mac OS X
 ProductVersion:	10.13.6
 BuildVersion:	17G65
 
 $ uname -a
 Darwin lynnl.local 17.7.0 Darwin Kernel Version 17.7.0: Thu Jun 21 22:53:14 PDT 2018; root:xnu-4570.71.2~1/RELEASE_X86_64 x86_64
-</code></pre></td></tr></table>
-</div>
-</div><blockquote>
+</code></pre></div><blockquote>
 <p><a href=https://gist.github.com/leiless/79da3a4ab5cd06dea5ceaaff7bfb2be0>Panic report</a></p>
 </blockquote>
-<div class=highlight><div class=chroma>
-<table class=lntable><tr><td class=lntd>
-<pre tabindex=0 class=chroma><code><span class=lnt> 1
-</span><span class=lnt> 2
-</span><span class=lnt> 3
-</span><span class=lnt> 4
-</span><span class=lnt> 5
-</span><span class=lnt> 6
-</span><span class=lnt> 7
-</span><span class=lnt> 8
-</span><span class=lnt> 9
-</span><span class=lnt>10
-</span><span class=lnt>11
-</span><span class=lnt>12
-</span><span class=lnt>13
-</span><span class=lnt>14
-</span><span class=lnt>15
-</span><span class=lnt>16
-</span><span class=lnt>17
-</span><span class=lnt>18
-</span><span class=lnt>19
-</span><span class=lnt>20
-</span><span class=lnt>21
-</span><span class=lnt>22
-</span><span class=lnt>23
-</span><span class=lnt>24
-</span><span class=lnt>25
-</span><span class=lnt>26
-</span><span class=lnt>27
-</span><span class=lnt>28
-</span><span class=lnt>29
-</span><span class=lnt>30
-</span><span class=lnt>31
-</span><span class=lnt>32
-</span><span class=lnt>33
-</span><span class=lnt>34
-</span><span class=lnt>35
-</span><span class=lnt>36
-</span><span class=lnt>37
-</span><span class=lnt>38
-</span><span class=lnt>39
-</span><span class=lnt>40
-</span><span class=lnt>41
-</span><span class=lnt>42
-</span><span class=lnt>43
-</span><span class=lnt>44
-</span><span class=lnt>45
-</span><span class=lnt>46
-</span><span class=lnt>47
-</span><span class=lnt>48
-</span><span class=lnt>49
-</span><span class=lnt>50
-</span><span class=lnt>51
-</span><span class=lnt>52
-</span><span class=lnt>53
-</span><span class=lnt>54
-</span><span class=lnt>55
-</span><span class=lnt>56
-</span><span class=lnt>57
-</span></code></pre></td>
-<td class=lntd>
-<pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback>Anonymous UUID:       ACB34763-3BB9-ECBA-9615-D786D1C65C95
+<div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>Anonymous UUID:       ACB34763-3BB9-ECBA-9615-D786D1C65C95
 
 Tue Feb 12 20:23:26 2019
 
@@ -191,48 +134,16 @@ com.vmware.kext.vmmemctl	0806.83.93
 com.vmware.kext.VMwareGfx	0806.83.93
 com.apple.driver.AudioAUUC	1.70
 ...
-</code></pre></td></tr></table>
-</div>
-</div><h2 id=analyze-the-kernel-panic-report>Analyze the kernel panic report</h2>
+</code></pre></div><h2 id=analyze-the-kernel-panic-report>Analyze the kernel panic report</h2>
 <p>The heading <code>Anonymous UUID</code> seems used to identify each unique kernel panic(need confirmation).</p>
 <p>The kernel trapped at address <code>0xffffff801f78776f </code>, and trap type is 14(page fault), such fault usually indicate an invalid read/write of an unmapped page of memory, i.e. memory access violation.</p>
 <p>Next, the registers and their values are given when kernel panicking.</p>
 <p>Amongst those, the <code>RIP</code>(program counter) register holds <code>0xffffff801f746340</code>, which is the faulting instruction.</p>
 <p>The <a href=https://en.wikipedia.org/wiki/Control_register#CR2><code>CR2</code></a> register contains the address the program attempted to access when a page fault occurs.</p>
-<div class=highlight><div class=chroma>
-<table class=lntable><tr><td class=lntd>
-<pre tabindex=0 class=chroma><code><span class=lnt>1
-</span></code></pre></td>
-<td class=lntd>
-<pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback>Fault CR2: 0xffffff8031990000, Error code: 0x0000000000000000, Fault CPU: 0x1 VMM, PL: 0, VF: 1
-</code></pre></td></tr></table>
-</div>
-</div>
+<div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>Fault CR2: 0xffffff8031990000, Error code: 0x0000000000000000, Fault CPU: 0x1 VMM, PL: 0, VF: 1
+</code></pre></div>
 <p>The kernel backtrace allows us to determine function call path, it&rsquo;s essential for finding the root cause of the panic.</p>
-<div class=highlight><div class=chroma>
-<table class=lntable><tr><td class=lntd>
-<pre tabindex=0 class=chroma><code><span class=lnt> 1
-</span><span class=lnt> 2
-</span><span class=lnt> 3
-</span><span class=lnt> 4
-</span><span class=lnt> 5
-</span><span class=lnt> 6
-</span><span class=lnt> 7
-</span><span class=lnt> 8
-</span><span class=lnt> 9
-</span><span class=lnt>10
-</span><span class=lnt>11
-</span><span class=lnt>12
-</span><span class=lnt>13
-</span><span class=lnt>14
-</span><span class=lnt>15
-</span><span class=lnt>16
-</span><span class=lnt>17
-</span><span class=lnt>18
-</span><span class=lnt>19
-</span></code></pre></td>
-<td class=lntd>
-<pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback>Backtrace (CPU 1), Frame : Return Address
+<div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>Backtrace (CPU 1), Frame : Return Address
 0xffffff80b771b330 : 0xffffff801f66c1c6
 0xffffff80b771b380 : 0xffffff801f795274
 0xffffff80b771b3c0 : 0xffffff801f787544
@@ -251,31 +162,12 @@ com.apple.driver.AudioAUUC	1.70
 0xffffff80b771bfa0 : 0xffffff801f61d557
       Kernel Extensions in backtrace:
          cn.junkman.kext.xnu_printf_prec_panic(0.0.1)[F2B9A806-51AA-3ADE-903C-1A8DD67EE4A6]@0xffffff7fa1c27000-&gt;0xffffff7fa1c29fff
-</code></pre></td></tr></table>
-</div>
-</div><p>Walking thru the backtrace, the validation kext is inside, it loaded at <code>0xffffff7fa1c27000 </code>, ends at <code>0xffffff7fa1c29fff</code>(inclusive), and its wired size is <code>0x3000</code></p>
+</code></pre></div><p>Walking thru the backtrace, the validation kext is inside, it loaded at <code>0xffffff7fa1c27000 </code>, ends at <code>0xffffff7fa1c29fff</code>(inclusive), and its wired size is <code>0x3000</code></p>
 <p><code>0x3000 = (0xffffff7fa1c29fff - 0xffffff7fa1c27000 + 1)</code></p>
 <p>Bundle identifier: <code>cn.junkman.kext.xnu_printf_prec_panic</code></p>
 <p>Version: <code>0.0.1</code></p>
 <p>Kext executable Mach-O UUID: <code>F2B9A806-51AA-3ADE-903C-1A8DD67EE4A6</code>(from <a href=https://github.com/leiless/xnu_printf_prec_panic/tree/v0000.00.01>v0000.00.01</a> tag, debug build)</p>
-<div class=highlight><div class=chroma>
-<table class=lntable><tr><td class=lntd>
-<pre tabindex=0 class=chroma><code><span class=lnt> 1
-</span><span class=lnt> 2
-</span><span class=lnt> 3
-</span><span class=lnt> 4
-</span><span class=lnt> 5
-</span><span class=lnt> 6
-</span><span class=lnt> 7
-</span><span class=lnt> 8
-</span><span class=lnt> 9
-</span><span class=lnt>10
-</span><span class=lnt>11
-</span><span class=lnt>12
-</span><span class=lnt>13
-</span></code></pre></td>
-<td class=lntd>
-<pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback>BSD process name corresponding to current thread: kernel_task
+<div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>BSD process name corresponding to current thread: kernel_task
 Boot args: -v
 
 Mac OS version:
@@ -288,33 +180,10 @@ Kernel slide:     0x000000001f400000
 Kernel text base: 0xffffff801f600000
 __HIB  text base: 0xffffff801f500000
 System model name: VMware7,1 (Mac-E43C1C25D4880AD6)
-</code></pre></td></tr></table>
-</div>
-</div><p>The kernel image file located at <code>/System/Library/Kernels/kernel</code></p>
+</code></pre></div><p>The kernel image file located at <code>/System/Library/Kernels/kernel</code></p>
 <p><code>Kernel slide: 0x000000001f400000</code> <em>is of importance as it contains the delta the kernel image was shifted in memory due to <a href=https://en.wikipedia.org/wiki/Address_space_layout_randomization#macOS>kASLR</a></em></p>
 <p><code>Kernel text base: 0xffffff801f600000</code> is the beginning of the kernel TEXT code, if you use <a href=x-man-page://1/otool>otool(1)</a> to grep <code>LC_SEGMENT_64</code>(64 for 64-bits kernel) of <code>/System/Library/Kernels/kernel</code>, you could see a fixed virtual address of kernel TEXT code:</p>
-<div class=highlight><div class=chroma>
-<table class=lntable><tr><td class=lntd>
-<pre tabindex=0 class=chroma><code><span class=lnt> 1
-</span><span class=lnt> 2
-</span><span class=lnt> 3
-</span><span class=lnt> 4
-</span><span class=lnt> 5
-</span><span class=lnt> 6
-</span><span class=lnt> 7
-</span><span class=lnt> 8
-</span><span class=lnt> 9
-</span><span class=lnt>10
-</span><span class=lnt>11
-</span><span class=lnt>12
-</span><span class=lnt>13
-</span><span class=lnt>14
-</span><span class=lnt>15
-</span><span class=lnt>16
-</span><span class=lnt>17
-</span></code></pre></td>
-<td class=lntd>
-<pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback>$ otool -l /System/Library/Kernels/kernel | less
+<div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>$ otool -l /System/Library/Kernels/kernel | less
 Mach header
       magic cputype cpusubtype  caps    filetype ncmds sizeofcmds      flags
  0xfeedfacf 16777223          3  0x00           2    23       4792 0x00200001
@@ -331,9 +200,7 @@ Load command 0
    nsects 4
     flags 0x0
 ...
-</code></pre></td></tr></table>
-</div>
-</div><p><code>0xffffff801f600000 - 0x000000001f400000 = 0xffffff8000200000</code></p>
+</code></pre></div><p><code>0xffffff801f600000 - 0x000000001f400000 = 0xffffff8000200000</code></p>
 <p>The <a href=http://xr.anadoxin.org/source/xref/macos-10.13.6-highsierra/xnu-4570.71.2/osfmk/x86_64/pmap.c#931><code>__HIB</code></a> is also <strong>kASLR</strong>ed, it contains hibernation status(need confirmation).</p>
 <h2 id=track-down-the-kernel-panic>Track down the kernel panic</h2>
 <p>Use given info above, we can now track down the kernel backtrace, to find the root cause of the panic.</p>
@@ -352,58 +219,7 @@ Load command 0
 <p><img src=../../images/disasm-thread-runloop.png alt></p>
 <p>Here again, the <code>call _printf_prec_panic_test</code> at <code>0xffffff7fa1c27abd</code> causes the kernel panic.</p>
 <p>Continually follow up frames in backtraces, we would finally get an annotated backtrace:</p>
-<div class=highlight><div class=chroma>
-<table class=lntable><tr><td class=lntd>
-<pre tabindex=0 class=chroma><code><span class=lnt> 1
-</span><span class=lnt> 2
-</span><span class=lnt> 3
-</span><span class=lnt> 4
-</span><span class=lnt> 5
-</span><span class=lnt> 6
-</span><span class=lnt> 7
-</span><span class=lnt> 8
-</span><span class=lnt> 9
-</span><span class=lnt>10
-</span><span class=lnt>11
-</span><span class=lnt>12
-</span><span class=lnt>13
-</span><span class=lnt>14
-</span><span class=lnt>15
-</span><span class=lnt>16
-</span><span class=lnt>17
-</span><span class=lnt>18
-</span><span class=lnt>19
-</span><span class=lnt>20
-</span><span class=lnt>21
-</span><span class=lnt>22
-</span><span class=lnt>23
-</span><span class=lnt>24
-</span><span class=lnt>25
-</span><span class=lnt>26
-</span><span class=lnt>27
-</span><span class=lnt>28
-</span><span class=lnt>29
-</span><span class=lnt>30
-</span><span class=lnt>31
-</span><span class=lnt>32
-</span><span class=lnt>33
-</span><span class=lnt>34
-</span><span class=lnt>35
-</span><span class=lnt>36
-</span><span class=lnt>37
-</span><span class=lnt>38
-</span><span class=lnt>39
-</span><span class=lnt>40
-</span><span class=lnt>41
-</span><span class=lnt>42
-</span><span class=lnt>43
-</span><span class=lnt>44
-</span><span class=lnt>45
-</span><span class=lnt>46
-</span><span class=lnt>47
-</span></code></pre></td>
-<td class=lntd>
-<pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback>Framee #0: kernel call_continuation + 0x15
+<div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>Framee #0: kernel call_continuation + 0x15
 	0xffffff801f61d555: call rcx
 
 Framee #1: xnu_printf_prec_panic _thread_runloop + 0x1d
@@ -450,61 +266,20 @@ Framee #14: kernel _kdp_i386_trap + 0x114
 
 Framee #15: kernel _handle_debugger_trap + 0x4c1
 	0xffffff801f66c1c1: call _SavePanicInfo
-</code></pre></td></tr></table>
-</div>
-</div>
+</code></pre></div>
 <p>You&rsquo;ll notice there&rsquo;re three unnamed procedures:</p>
-<div class=highlight><div class=chroma>
-<table class=lntable><tr><td class=lntd>
-<pre tabindex=0 class=chroma><code><span class=lnt>1
-</span><span class=lnt>2
-</span><span class=lnt>3
-</span></code></pre></td>
-<td class=lntd>
-<pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback>sub_ffffff800027fd20
+<div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>sub_ffffff800027fd20
 sub_ffffff801fc3ef70
 sub_ffffff801fc40460
-</code></pre></td></tr></table>
-</div>
-</div><p>Since the kernel is release build, thus the compiler may do heavy optimization jobs to speed up code execution, in short, those functions are inlined.</p>
+</code></pre></div><p>Since the kernel is release build, thus the compiler may do heavy optimization jobs to speed up code execution, in short, those functions are inlined.</p>
 <p>If you dive into XNU kernel source, and <a href=http://xr.anadoxin.org/source/xref/macos-10.13.6-highsierra/xnu-4570.71.2/osfmk/kern/printf.c#821>seek around</a>, you&rsquo;ll find <code>sub_ffffff800027fd20</code> is inlined <code>vprintf_internal</code></p>
 <p>Use the same technique, we get:</p>
-<div class=highlight><div class=chroma>
-<table class=lntable><tr><td class=lntd>
-<pre tabindex=0 class=chroma><code><span class=lnt>1
-</span><span class=lnt>2
-</span><span class=lnt>3
-</span></code></pre></td>
-<td class=lntd>
-<pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback>sub_ffffff800027fd20 (inlined vprintf_internal)
+<div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>sub_ffffff800027fd20 (inlined vprintf_internal)
 sub_ffffff801fc3ef70 (inlined _os_log_to_log_internal)
 sub_ffffff801fc40460 (inlined _encode_data)
-</code></pre></td></tr></table>
-</div>
-</div>
+</code></pre></div>
 <p>From the kext&rsquo;s perspective, it&rsquo;s the <code>call 0xffffff7f43851028</code> instruction at <code>0xffffff7fa1c27d56</code> leads up the kernel panic:</p>
-<div class=highlight><div class=chroma>
-<table class=lntable><tr><td class=lntd>
-<pre tabindex=0 class=chroma><code><span class=lnt> 1
-</span><span class=lnt> 2
-</span><span class=lnt> 3
-</span><span class=lnt> 4
-</span><span class=lnt> 5
-</span><span class=lnt> 6
-</span><span class=lnt> 7
-</span><span class=lnt> 8
-</span><span class=lnt> 9
-</span><span class=lnt>10
-</span><span class=lnt>11
-</span><span class=lnt>12
-</span><span class=lnt>13
-</span><span class=lnt>14
-</span><span class=lnt>15
-</span><span class=lnt>16
-</span><span class=lnt>17
-</span></code></pre></td>
-<td class=lntd>
-<pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback>                     loc_ffffff7fa1c27d19:
+<div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>                     loc_ffffff7fa1c27d19:
 ffffff7fa1c27d19         lea        rdi, qword [aXnuprintfprecp_fc8]            ; argument &#34;format&#34; for method _printf, &#34;xnu_printf_prec_panic: [DBG] %llu: %.*s\\n&#34;, CODE XREF=_printf_prec_panic_test+220
 ffffff7fa1c27d20         mov        rax, qword [rbp+var_10]
 ffffff7fa1c27d24         movsxd     rcx, dword [_printf_prec_panic_test.fixed]  ; _printf_prec_panic_test.fixed
@@ -521,31 +296,11 @@ ffffff7fa1c27d50         mov        rcx, qword [rbp+var_10]
 ffffff7fa1c27d54         mov        al, 0x0
 ffffff7fa1c27d56         call       0xffffff7f43851028                          ; _printf
 ffffff7fa1c27d5b         mov        dword [rbp+var_20], eax
-</code></pre></td></tr></table>
-</div>
-</div><p><code>printf</code>&rsquo;s prototype is <code>int printf(const char *fmt, ...);</code>, and its <code>fmt</code> is <code>"xnu_printf_prec_panic: [DBG] %llu: %.*s\n"</code>, so, there&rsquo;re extra three arguments.</p>
+</code></pre></div><p><code>printf</code>&rsquo;s prototype is <code>int printf(const char *fmt, ...);</code>, and its <code>fmt</code> is <code>"xnu_printf_prec_panic: [DBG] %llu: %.*s\n"</code>, so, there&rsquo;re extra three arguments.</p>
 <p>According to <a href=https://www.systutorials.com/240986/x86-64-calling-convention-by-gcc>x86-64 calling convention</a>, <em>the registers RDI, RSI, RDX, RCX, R8, and R9 are used for integer and memory address arguments</em>.</p>
 <p><code>_printf_prec_panic_test.i</code> and <code>_printf_prec_panic_test.fixed</code> stay in <a href=https://en.wikipedia.org/wiki/.bss>.bss section</a>, they&rsquo;re static variables, it indicates that the panic happened when formatting the <code>fmt</code> string.</p>
 <p>Actually, use <code>kernel.development</code> can produce verbose backtrace since the kernel isn&rsquo;t compiled with aggressive optimizations:</p>
-<div class=highlight><div class=chroma>
-<table class=lntable><tr><td class=lntd>
-<pre tabindex=0 class=chroma><code><span class=lnt> 1
-</span><span class=lnt> 2
-</span><span class=lnt> 3
-</span><span class=lnt> 4
-</span><span class=lnt> 5
-</span><span class=lnt> 6
-</span><span class=lnt> 7
-</span><span class=lnt> 8
-</span><span class=lnt> 9
-</span><span class=lnt>10
-</span><span class=lnt>11
-</span><span class=lnt>12
-</span><span class=lnt>13
-</span><span class=lnt>14
-</span></code></pre></td>
-<td class=lntd>
-<pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback>* thread #2, name = &#39;0xffffff80338f1650&#39;, queue = &#39;0x0&#39;, stop reason = signal SIGSTOP
+<div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>* thread #2, name = &#39;0xffffff80338f1650&#39;, queue = &#39;0x0&#39;, stop reason = signal SIGSTOP
   * frame #0: 0xffffff801aef81b6 kernel.debug`strlcpy(dst=&#34;0x352be8a0&#34;, src=&#34;0x352be8a0&gt;&gt;ﾭ?&#34;..., siz=11) at subrs.c:566
     frame #1: 0xffffff801aef8659 kernel.debug`__strlcpy_chk(dst=&#34;0x352be8a0&#34;, src=&#34;0x352be8a0&gt;&gt;ﾭ?&#34;..., s=11, chk_size=18446744073709551615) at subrs.c:698
     frame #2: 0xffffff801b77a76f kernel.debug`_encode_data(content=0xffffff82f8d63bda, arg=0xffffff80352be8a0, arg_len=11, context=0xffffff82f8d63a20) at log_encode.h:64
@@ -559,263 +314,132 @@ ffffff7fa1c27d5b         mov        dword [rbp+var_20], eax
     frame #10: 0xffffff7f9d742c7c xnu_printf_prec_panic`thread_runloop [inlined] printf_prec_panic_test at xnu_printf_prec_panic.c:51 [opt]
     frame #11: 0xffffff7f9d742bbe xnu_printf_prec_panic`thread_runloop(arg=&lt;unavailable&gt;, wres=&lt;unavailable&gt;) at xnu_printf_prec_panic.c:82 [opt]
     frame #12: 0xffffff801af59307 kernel.debug`call_continuation + 23
-</code></pre></td></tr></table>
-</div>
-</div><p>Above verbose backtrace give us root cause of why the kernel panicked, when <code>printf</code> format <code>"%[.precision]s"</code>, in such case, it&rsquo;s <code>%.*s</code>.</p>
+</code></pre></div><p>Above verbose backtrace give us root cause of why the kernel panicked, when <code>printf</code> format <code>"%[.precision]s"</code>, in such case, it&rsquo;s <code>%.*s</code>.</p>
 <p>Its call tree:</p>
-<div class=highlight><div class=chroma>
-<table class=lntable><tr><td class=lntd>
-<pre tabindex=0 class=chroma><code><span class=lnt> 1
-</span><span class=lnt> 2
-</span><span class=lnt> 3
-</span><span class=lnt> 4
-</span><span class=lnt> 5
-</span><span class=lnt> 6
-</span><span class=lnt> 7
-</span><span class=lnt> 8
-</span><span class=lnt> 9
-</span><span class=lnt>10
-</span><span class=lnt>11
-</span><span class=lnt>12
-</span><span class=lnt>13
-</span><span class=lnt>14
-</span><span class=lnt>15
-</span><span class=lnt>16
-</span><span class=lnt>17
-</span><span class=lnt>18
-</span><span class=lnt>19
-</span><span class=lnt>20
-</span><span class=lnt>21
-</span><span class=lnt>22
-</span><span class=lnt>23
-</span><span class=lnt>24
-</span><span class=lnt>25
-</span><span class=lnt>26
-</span><span class=lnt>27
-</span><span class=lnt>28
-</span><span class=lnt>29
-</span><span class=lnt>30
-</span><span class=lnt>31
-</span><span class=lnt>32
-</span><span class=lnt>33
-</span><span class=lnt>34
-</span><span class=lnt>35
-</span><span class=lnt>36
-</span><span class=lnt>37
-</span><span class=lnt>38
-</span><span class=lnt>39
-</span><span class=lnt>40
-</span><span class=lnt>41
-</span><span class=lnt>42
-</span><span class=lnt>43
-</span><span class=lnt>44
-</span><span class=lnt>45
-</span><span class=lnt>46
-</span><span class=lnt>47
-</span><span class=lnt>48
-</span><span class=lnt>49
-</span><span class=lnt>50
-</span><span class=lnt>51
-</span><span class=lnt>52
-</span><span class=lnt>53
-</span><span class=lnt>54
-</span><span class=lnt>55
-</span><span class=lnt>56
-</span><span class=lnt>57
-</span><span class=lnt>58
-</span><span class=lnt>59
-</span><span class=lnt>60
-</span><span class=lnt>61
-</span><span class=lnt>62
-</span><span class=lnt>63
-</span><span class=lnt>64
-</span><span class=lnt>65
-</span><span class=lnt>66
-</span><span class=lnt>67
-</span><span class=lnt>68
-</span><span class=lnt>69
-</span><span class=lnt>70
-</span><span class=lnt>71
-</span><span class=lnt>72
-</span><span class=lnt>73
-</span><span class=lnt>74
-</span><span class=lnt>75
-</span><span class=lnt>76
-</span><span class=lnt>77
-</span><span class=lnt>78
-</span><span class=lnt>79
-</span></code></pre></td>
-<td class=lntd>
-<pre tabindex=0 class=chroma><code class=language-c data-lang=c><span class=n>_os_log_encode</span><span class=p>()</span>
-<span class=p>{</span>
-<span class=p>...</span>
-    <span class=k>case</span> <span class=sc>&#39;s&#39;</span><span class=o>:</span> <span class=c1>// string
-</span><span class=c1></span>        <span class=n>value</span><span class=p>.</span><span class=n>type</span><span class=p>.</span><span class=n>pch</span> <span class=o>=</span> <span class=n>va_arg</span><span class=p>(</span><span class=n>args</span><span class=p>,</span> <span class=kt>char</span> <span class=o>*</span><span class=p>);</span>
-        <span class=k>if</span> <span class=p>(</span><span class=o>!</span><span class=n>prec</span> <span class=o>&amp;&amp;</span> <span class=n>value</span><span class=p>.</span><span class=n>type</span><span class=p>.</span><span class=n>pch</span> <span class=o>!=</span> <span class=nb>NULL</span><span class=p>)</span> <span class=p>{</span>
-            <span class=n>prec</span> <span class=o>=</span> <span class=p>(</span><span class=kt>int</span><span class=p>)</span> <span class=n>strlen</span><span class=p>(</span><span class=n>value</span><span class=p>.</span><span class=n>type</span><span class=p>.</span><span class=n>pch</span><span class=p>)</span> <span class=o>+</span> <span class=mi>1</span><span class=p>;</span>
-        <span class=p>}</span>
+<div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-c data-lang=c>_os_log_encode()
+{
+...
+    <span style=color:#00f>case</span> <span style=color:#a31515>&#39;s&#39;</span>: <span style=color:green>// string
+</span><span style=color:green></span>        value.type.pch = va_arg(args, <span style=color:#2b91af>char</span> *);
+        <span style=color:#00f>if</span> (!prec &amp;&amp; value.type.pch != NULL) {
+            prec = (<span style=color:#2b91af>int</span>) strlen(value.type.pch) + 1;
+        }
 
-<span class=cp>#ifndef KERNEL
-</span><span class=cp></span>        <span class=c1>// capture the string pointer to generate a symptom
-</span><span class=c1></span>        <span class=k>if</span> <span class=p>(</span><span class=n>context</span><span class=o>-&gt;</span><span class=n>log</span> <span class=o>&amp;&amp;</span> <span class=n>context</span><span class=o>-&gt;</span><span class=n>log</span><span class=o>-&gt;</span><span class=n>generate_symptoms</span> <span class=o>&amp;&amp;</span> <span class=n>context</span><span class=o>-&gt;</span><span class=n>arg_idx</span> <span class=o>==</span> <span class=mi>0</span> <span class=o>&amp;&amp;</span> <span class=n>value</span><span class=p>.</span><span class=n>type</span><span class=p>.</span><span class=n>pch</span><span class=p>)</span> <span class=p>{</span>
-            <span class=n>context</span><span class=o>-&gt;</span><span class=n>symptom_str</span> <span class=o>=</span> <span class=n>value</span><span class=p>.</span><span class=n>type</span><span class=p>.</span><span class=n>pch</span><span class=p>;</span>
-        <span class=p>}</span>
-<span class=cp>#endif
-</span><span class=cp></span>
-        <span class=n>context</span><span class=o>-&gt;</span><span class=n>buffer</span><span class=o>-&gt;</span><span class=n>flags</span> <span class=o>|=</span> <span class=n>OS_LOG_BUFFER_HAS_NON_SCALAR</span><span class=p>;</span>
-        <span class=n>_os_log_encode_arg</span><span class=p>(</span><span class=n>value</span><span class=p>.</span><span class=n>type</span><span class=p>.</span><span class=n>pch</span><span class=p>,</span> <span class=n>prec</span><span class=p>,</span> <span class=n>OS_LOG_BUFFER_VALUE_TYPE_STRING</span><span class=p>,</span> <span class=nb>false</span><span class=p>,</span> <span class=n>context</span><span class=p>);</span>
-        <span class=n>prec</span> <span class=o>=</span> <span class=mi>0</span><span class=p>;</span>
-        <span class=n>done</span> <span class=o>=</span> <span class=nb>true</span><span class=p>;</span>
-        <span class=k>break</span><span class=p>;</span>
-<span class=p>...</span>
-<span class=p>}</span>
+<span style=color:#00f>#ifndef KERNEL
+</span><span style=color:#00f></span>        <span style=color:green>// capture the string pointer to generate a symptom
+</span><span style=color:green></span>        <span style=color:#00f>if</span> (context-&gt;log &amp;&amp; context-&gt;log-&gt;generate_symptoms &amp;&amp; context-&gt;arg_idx == 0 &amp;&amp; value.type.pch) {
+            context-&gt;symptom_str = value.type.pch;
+        }
+<span style=color:#00f>#endif
+</span><span style=color:#00f></span>
+        context-&gt;buffer-&gt;flags |= OS_LOG_BUFFER_HAS_NON_SCALAR;
+        _os_log_encode_arg(value.type.pch, prec, OS_LOG_BUFFER_VALUE_TYPE_STRING, false, context);
+        prec = 0;
+        done = true;
+        <span style=color:#00f>break</span>;
+...
+}
 
-<span class=n>_os_log_encode_arg</span><span class=p>()</span>
-<span class=p>{</span>
-<span class=p>...</span>
-    <span class=k>case</span> <span class=nl>OS_LOG_BUFFER_VALUE_TYPE_STRING</span><span class=p>:</span>
-        <span class=n>context</span><span class=o>-&gt;</span><span class=n>buffer</span><span class=o>-&gt;</span><span class=n>flags</span> <span class=o>|=</span> <span class=n>OS_LOG_BUFFER_HAS_NON_SCALAR</span><span class=p>;</span>
-        <span class=k>if</span> <span class=p>(</span><span class=n>_os_log_string_is_public</span><span class=p>(</span><span class=n>arg</span><span class=p>))</span> <span class=p>{</span>
-            <span class=n>content</span><span class=o>-&gt;</span><span class=n>flags</span> <span class=o>&amp;=</span> <span class=o>~</span><span class=n>OS_LOG_CONTENT_FLAG_PRIVATE</span><span class=p>;</span>
-        <span class=p>}</span>
+_os_log_encode_arg()
+{
+...
+    <span style=color:#00f>case</span> OS_LOG_BUFFER_VALUE_TYPE_STRING:
+        context-&gt;buffer-&gt;flags |= OS_LOG_BUFFER_HAS_NON_SCALAR;
+        <span style=color:#00f>if</span> (_os_log_string_is_public(arg)) {
+            content-&gt;flags &amp;= ~OS_LOG_CONTENT_FLAG_PRIVATE;
+        }
 
-        <span class=n>_encode_data</span><span class=p>(</span><span class=n>content</span><span class=p>,</span> <span class=n>arg</span><span class=p>,</span> <span class=n>arg_len</span><span class=p>,</span> <span class=n>context</span><span class=p>);</span>
-        <span class=k>break</span><span class=p>;</span>
-<span class=p>...</span>
-<span class=p>}</span>
+        _encode_data(content, arg, arg_len, context);
+        <span style=color:#00f>break</span>;
+...
+}
 
-<span class=n>_encode_data</span><span class=p>()</span>
-<span class=p>{</span>
-<span class=p>...</span>
-    <span class=k>if</span> <span class=p>(</span><span class=n>arginfo</span><span class=p>.</span><span class=n>length</span><span class=p>)</span> <span class=p>{</span>
-        <span class=k>if</span> <span class=p>(</span><span class=n>content</span><span class=o>-&gt;</span><span class=n>type</span> <span class=o>==</span> <span class=n>OS_LOG_BUFFER_VALUE_TYPE_STRING</span>
-<span class=cp>#ifndef KERNEL
-</span><span class=cp></span>            <span class=o>||</span> <span class=n>content</span><span class=o>-&gt;</span><span class=n>type</span> <span class=o>==</span> <span class=n>OS_LOG_BUFFER_VALUE_TYPE_OBJECT</span>
-<span class=cp>#endif
-</span><span class=cp></span>            <span class=p>)</span> <span class=p>{</span>
-            <span class=n>strlcpy</span><span class=p>(</span><span class=n>databuf</span><span class=p>,</span> <span class=n>arg</span><span class=p>,</span> <span class=n>arginfo</span><span class=p>.</span><span class=n>length</span><span class=p>);</span>
-        <span class=p>}</span> <span class=k>else</span> <span class=p>{</span>
-            <span class=n>memcpy</span><span class=p>(</span><span class=n>databuf</span><span class=p>,</span> <span class=n>arg</span><span class=p>,</span> <span class=n>arginfo</span><span class=p>.</span><span class=n>length</span><span class=p>);</span>
-        <span class=p>}</span>
-    <span class=p>}</span>
-<span class=p>...</span>
-<span class=p>}</span>
+_encode_data()
+{
+...
+    <span style=color:#00f>if</span> (arginfo.length) {
+        <span style=color:#00f>if</span> (content-&gt;type == OS_LOG_BUFFER_VALUE_TYPE_STRING
+<span style=color:#00f>#ifndef KERNEL
+</span><span style=color:#00f></span>            || content-&gt;type == OS_LOG_BUFFER_VALUE_TYPE_OBJECT
+<span style=color:#00f>#endif
+</span><span style=color:#00f></span>            ) {
+            strlcpy(databuf, arg, arginfo.length);
+        } <span style=color:#00f>else</span> {
+            memcpy(databuf, arg, arginfo.length);
+        }
+    }
+...
+}
 
-<span class=n>size_t</span> <span class=n>strlcpy</span><span class=p>(</span><span class=kt>char</span> <span class=o>*</span><span class=n>dst</span><span class=p>,</span> <span class=k>const</span> <span class=kt>char</span> <span class=o>*</span><span class=n>src</span><span class=p>,</span> <span class=n>size_t</span> <span class=n>siz</span><span class=p>)</span>
-<span class=p>{</span>
-	<span class=kt>char</span> <span class=o>*</span><span class=n>d</span> <span class=o>=</span> <span class=n>dst</span><span class=p>;</span>
-	<span class=k>const</span> <span class=kt>char</span> <span class=o>*</span><span class=n>s</span> <span class=o>=</span> <span class=n>src</span><span class=p>;</span>
-	<span class=n>size_t</span> <span class=n>n</span> <span class=o>=</span> <span class=n>siz</span><span class=p>;</span>
+size_t strlcpy(<span style=color:#2b91af>char</span> *dst, <span style=color:#00f>const</span> <span style=color:#2b91af>char</span> *src, size_t siz)
+{
+	<span style=color:#2b91af>char</span> *d = dst;
+	<span style=color:#00f>const</span> <span style=color:#2b91af>char</span> *s = src;
+	size_t n = siz;
 
-	<span class=cm>/* Copy as many bytes as will fit */</span>
-	<span class=k>if</span> <span class=p>(</span><span class=n>n</span> <span class=o>!=</span> <span class=mi>0</span> <span class=o>&amp;&amp;</span> <span class=o>--</span><span class=n>n</span> <span class=o>!=</span> <span class=mi>0</span><span class=p>)</span> <span class=p>{</span>
-		<span class=k>do</span> <span class=p>{</span>
-			<span class=k>if</span> <span class=p>((</span><span class=o>*</span><span class=n>d</span><span class=o>++</span> <span class=o>=</span> <span class=o>*</span><span class=n>s</span><span class=o>++</span><span class=p>)</span> <span class=o>==</span> <span class=mi>0</span><span class=p>)</span>
-				<span class=k>break</span><span class=p>;</span>
-		<span class=p>}</span> <span class=k>while</span> <span class=p>(</span><span class=o>--</span><span class=n>n</span> <span class=o>!=</span> <span class=mi>0</span><span class=p>);</span>
-	<span class=p>}</span>
+	<span style=color:green>/* Copy as many bytes as will fit */</span>
+	<span style=color:#00f>if</span> (n != 0 &amp;&amp; --n != 0) {
+		<span style=color:#00f>do</span> {
+			<span style=color:#00f>if</span> ((*d++ = *s++) == 0)
+				<span style=color:#00f>break</span>;
+		} <span style=color:#00f>while</span> (--n != 0);
+	}
 
-	<span class=cm>/* Not enough room in dst, add NUL and traverse rest of src */</span>
-	<span class=k>if</span> <span class=p>(</span><span class=n>n</span> <span class=o>==</span> <span class=mi>0</span><span class=p>)</span> <span class=p>{</span>
-		<span class=k>if</span> <span class=p>(</span><span class=n>siz</span> <span class=o>!=</span> <span class=mi>0</span><span class=p>)</span>
-			<span class=o>*</span><span class=n>d</span> <span class=o>=</span> <span class=sc>&#39;\0&#39;</span><span class=p>;</span>		<span class=cm>/* NUL-terminate dst */</span>
-		<span class=k>while</span> <span class=p>(</span><span class=o>*</span><span class=n>s</span><span class=o>++</span><span class=p>)</span>        <span class=cm>/* XXX: causes the kernel panic */</span>
-			<span class=p>;</span>
-	<span class=p>}</span>
+	<span style=color:green>/* Not enough room in dst, add NUL and traverse rest of src */</span>
+	<span style=color:#00f>if</span> (n == 0) {
+		<span style=color:#00f>if</span> (siz != 0)
+			*d = <span style=color:#a31515>&#39;\0&#39;</span>;		<span style=color:green>/* NUL-terminate dst */</span>
+		<span style=color:#00f>while</span> (*s++)        <span style=color:green>/* XXX: causes the kernel panic */</span>
+			;
+	}
 
-	<span class=k>return</span><span class=p>(</span><span class=n>s</span> <span class=o>-</span> <span class=n>src</span> <span class=o>-</span> <span class=mi>1</span><span class=p>);</span>	<span class=cm>/* count does not include NUL */</span>
-<span class=p>}</span>
-</code></pre></td></tr></table>
-</div>
-</div><p><code>_encode_data</code> assume when <code>content->type</code> is <code>OS_LOG_BUFFER_VALUE_TYPE_STRING</code>, the given string <code>arg</code> is NUL-terminated.</p>
+	<span style=color:#00f>return</span>(s - src - 1);	<span style=color:green>/* count does not include NUL */</span>
+}
+</code></pre></div><p><code>_encode_data</code> assume when <code>content->type</code> is <code>OS_LOG_BUFFER_VALUE_TYPE_STRING</code>, the given string <code>arg</code> is NUL-terminated.</p>
 <p>It calls down to <code>strlcpy</code>, which requires its argument <code>src</code> is NUL-terminated, yet it&rsquo;s not the case, thus triggered memory access violation.</p>
 <p><code>_os_log_encode</code> not deal such special case when user give a string format with a precision modifier.</p>
 <h2 id=dive-into-xnu_printf_prec_panic>Dive into <code>xnu_printf_prec_panic</code></h2>
 <p>We haven&rsquo;t talk thoroughly about <a href=https://github.com/leiless/xnu_printf_prec_panic/blob/kthread>xnu_printf_prec_panic</a> kext, it&rsquo;s a validation kext to reproduce the panic bug.</p>
 <p>The <a href=https://github.com/leiless/xnu_printf_prec_panic/blob/kthread/src/xnu_printf_prec_panic.c#L30>core code</a> listed below:</p>
-<div class=highlight><div class=chroma>
-<table class=lntable><tr><td class=lntd>
-<pre tabindex=0 class=chroma><code><span class=lnt> 1
-</span><span class=lnt> 2
-</span><span class=lnt> 3
-</span><span class=lnt> 4
-</span><span class=lnt> 5
-</span><span class=lnt> 6
-</span><span class=lnt> 7
-</span><span class=lnt> 8
-</span><span class=lnt> 9
-</span><span class=lnt>10
-</span><span class=lnt>11
-</span><span class=lnt>12
-</span><span class=lnt>13
-</span><span class=lnt>14
-</span><span class=lnt>15
-</span><span class=lnt>16
-</span><span class=lnt>17
-</span><span class=lnt>18
-</span><span class=lnt>19
-</span><span class=lnt>20
-</span><span class=lnt>21
-</span><span class=lnt>22
-</span><span class=lnt>23
-</span><span class=lnt>24
-</span><span class=lnt>25
-</span><span class=lnt>26
-</span><span class=lnt>27
-</span><span class=lnt>28
-</span><span class=lnt>29
-</span><span class=lnt>30
-</span><span class=lnt>31
-</span><span class=lnt>32
-</span><span class=lnt>33
-</span><span class=lnt>34
-</span><span class=lnt>35
-</span><span class=lnt>36
-</span><span class=lnt>37
-</span><span class=lnt>38
-</span></code></pre></td>
-<td class=lntd>
-<pre tabindex=0 class=chroma><code class=language-c data-lang=c><span class=cp>#define PANIC_QUICKLY       1
-</span><span class=cp></span>
-<span class=cm>/**
-</span><span class=cm> * Do printf() precision print panic test
-</span><span class=cm> */</span>
-<span class=k>static</span> <span class=kt>void</span> <span class=nf>printf_prec_panic_test</span><span class=p>(</span><span class=kt>void</span><span class=p>)</span>
-<span class=p>{</span>
-    <span class=k>static</span> <span class=k>volatile</span> <span class=kt>uint64_t</span> <span class=n>i</span> <span class=o>=</span> <span class=mi>0</span><span class=p>;</span>
-    <span class=k>static</span> <span class=kt>int</span> <span class=n>fixed</span> <span class=o>=</span> <span class=mi>10</span><span class=p>;</span>
-    <span class=kt>int</span> <span class=n>sz</span> <span class=o>=</span> <span class=n>fixed</span> <span class=o>+</span> <span class=mi>2</span><span class=p>;</span>
-    <span class=kt>char</span> <span class=o>*</span><span class=n>p</span> <span class=o>=</span> <span class=n>_MALLOC</span><span class=p>(</span><span class=n>sz</span><span class=p>,</span> <span class=n>M_TEMP</span><span class=p>,</span> <span class=n>M_NOWAIT</span><span class=p>);</span>
-    <span class=kt>int</span> <span class=n>n</span><span class=p>;</span>
+<div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-c data-lang=c><span style=color:#00f>#define PANIC_QUICKLY       1
+</span><span style=color:#00f></span>
+<span style=color:green>/**
+</span><span style=color:green> * Do printf() precision print panic test
+</span><span style=color:green> */</span>
+<span style=color:#00f>static</span> <span style=color:#2b91af>void</span> printf_prec_panic_test(<span style=color:#2b91af>void</span>)
+{
+    <span style=color:#00f>static</span> <span style=color:#00f>volatile</span> <span style=color:#2b91af>uint64_t</span> i = 0;
+    <span style=color:#00f>static</span> <span style=color:#2b91af>int</span> fixed = 10;
+    <span style=color:#2b91af>int</span> sz = fixed + 2;
+    <span style=color:#2b91af>char</span> *p = _MALLOC(sz, M_TEMP, M_NOWAIT);
+    <span style=color:#2b91af>int</span> n;
 
-    <span class=n>i</span><span class=o>++</span><span class=p>;</span>
-    <span class=k>if</span> <span class=p>(</span><span class=n>p</span> <span class=o>==</span> <span class=nb>NULL</span><span class=p>)</span> <span class=p>{</span>
-        <span class=n>LOG_ERR</span><span class=p>(</span><span class=s>&#34;_MALLOC() fail due to OOM  i: %llu&#34;</span><span class=p>,</span> <span class=n>i</span><span class=p>);</span>
-        <span class=k>return</span><span class=p>;</span>
-    <span class=p>}</span>
+    i++;
+    <span style=color:#00f>if</span> (p == NULL) {
+        LOG_ERR(<span style=color:#a31515>&#34;_MALLOC() fail due to OOM  i: %llu&#34;</span>, i);
+        <span style=color:#00f>return</span>;
+    }
 
-    <span class=n>n</span> <span class=o>=</span> <span class=n>snprintf</span><span class=p>(</span><span class=n>p</span><span class=p>,</span> <span class=n>sz</span><span class=p>,</span> <span class=s>&#34;%#010x&#34;</span><span class=p>,</span> <span class=p>(</span><span class=kt>uint32_t</span><span class=p>)</span> <span class=n>p</span><span class=p>);</span>
-    <span class=n>kassertf</span><span class=p>(</span><span class=n>n</span> <span class=o>==</span> <span class=n>fixed</span><span class=p>,</span> <span class=s>&#34;n is %d&#34;</span><span class=p>,</span> <span class=n>n</span><span class=p>);</span>
-    <span class=n>kassertf</span><span class=p>(</span><span class=n>p</span><span class=p>[</span><span class=n>fixed</span><span class=p>]</span> <span class=o>==</span> <span class=sc>&#39;\0&#39;</span><span class=p>,</span> <span class=s>&#34;p[%d] is %#x&#34;</span><span class=p>,</span> <span class=n>fixed</span><span class=p>,</span> <span class=n>p</span><span class=p>[</span><span class=n>fixed</span><span class=p>]);</span>
-    <span class=cm>/* Manually clear the EOS to test printf() precision print */</span>
-    <span class=n>p</span><span class=p>[</span><span class=n>fixed</span><span class=p>]</span> <span class=o>=</span> <span class=sc>&#39;&gt;&#39;</span><span class=p>;</span>
-    <span class=n>p</span><span class=p>[</span><span class=n>fixed</span><span class=o>+</span><span class=mi>1</span><span class=p>]</span> <span class=o>=</span> <span class=sc>&#39;&gt;&#39;</span><span class=p>;</span>
+    n = snprintf(p, sz, <span style=color:#a31515>&#34;%#010x&#34;</span>, (<span style=color:#2b91af>uint32_t</span>) p);
+    kassertf(n == fixed, <span style=color:#a31515>&#34;n is %d&#34;</span>, n);
+    kassertf(p[fixed] == <span style=color:#a31515>&#39;\0&#39;</span>, <span style=color:#a31515>&#34;p[%d] is %#x&#34;</span>, fixed, p[fixed]);
+    <span style=color:green>/* Manually clear the EOS to test printf() precision print */</span>
+    p[fixed] = <span style=color:#a31515>&#39;&gt;&#39;</span>;
+    p[fixed+1] = <span style=color:#a31515>&#39;&gt;&#39;</span>;
 
-    <span class=n>LOG_DBG</span><span class=p>(</span><span class=s>&#34;%llu: %.*s&#34;</span><span class=p>,</span> <span class=n>i</span><span class=p>,</span> <span class=n>sz</span><span class=o>-</span><span class=mi>1</span><span class=p>,</span> <span class=n>p</span><span class=p>);</span>
+    LOG_DBG(<span style=color:#a31515>&#34;%llu: %.*s&#34;</span>, i, sz-1, p);
 
-<span class=cp>#if PANIC_QUICKLY
-</span><span class=cp></span>    <span class=cm>/**
-</span><span class=cm>     * Won&#39;t free `p&#39;
-</span><span class=cm>     * This memleak used to increase kernel address entropy
-</span><span class=cm>     *  so the kernel can panic quickly
-</span><span class=cm>     */</span>
-<span class=cp>#else
-</span><span class=cp></span>    <span class=n>_FREE</span><span class=p>(</span><span class=n>p</span><span class=p>,</span> <span class=n>M_TEMP</span><span class=p>);</span>
-<span class=cp>#endif
-</span><span class=cp></span><span class=p>}</span>
-</code></pre></td></tr></table>
-</div>
-</div><p>Its behaviour just like aforementioned, if you define <code>PANIC_QUICKLY</code> to <code>0</code>, i.e. without any memory leakage, the panic bug isn&rsquo;t reproducible stably, since when you <code>_FREE</code> an address, the address will be recycled(duh), in next <code>_MALLOC</code>, you may have a chance to get recently recycled address, i.e. the addresses in last recent <code>_FREE</code> calls, in such case, if previous addresses not cause kernel panic, it likely won&rsquo;t cause panic as before.</p>
+<span style=color:#00f>#if PANIC_QUICKLY
+</span><span style=color:#00f></span>    <span style=color:green>/**
+</span><span style=color:green>     * Won&#39;t free `p&#39;
+</span><span style=color:green>     * This memleak used to increase kernel address entropy
+</span><span style=color:green>     *  so the kernel can panic quickly
+</span><span style=color:green>     */</span>
+<span style=color:#00f>#else
+</span><span style=color:#00f></span>    _FREE(p, M_TEMP);
+<span style=color:#00f>#endif
+</span><span style=color:#00f></span>}
+</code></pre></div><p>Its behaviour just like aforementioned, if you define <code>PANIC_QUICKLY</code> to <code>0</code>, i.e. without any memory leakage, the panic bug isn&rsquo;t reproducible stably, since when you <code>_FREE</code> an address, the address will be recycled(duh), in next <code>_MALLOC</code>, you may have a chance to get recently recycled address, i.e. the addresses in last recent <code>_FREE</code> calls, in such case, if previous addresses not cause kernel panic, it likely won&rsquo;t cause panic as before.</p>
 <p>Thus when we don&rsquo;t free the memory(will causes memory leakage, it won&rsquo;t lead to panic), we can increase free memory poll address entropy, thus the kernel can panic quickly.</p>
 <h2 id=severity>Severity</h2>
 <p>This bug can be reproduce steadily in macOS which uses <a href=x-man-page://1/log>log(1)</a> as its primary logging system.</p>
@@ -831,17 +455,17 @@ ffffff7fa1c27d5b         mov        dword [rbp+var_20], eax
 <p><a href=https://objective-see.com/blog/blog_0x27.html>An Unpatched Kernel Bug, apple&rsquo;s AMDRadeonX4150 kext triggered a kernel panic&mldr;why?</a></p>
 <p><a href=https://www.systutorials.com/240986/x86-64-calling-convention-by-gcc>x86-64 calling convention by gcc</a></p>
 </blockquote>
-<script src=https://utteranc.es/client.js repo=leiless/blog issue-term=pathname label=comment theme=github-light crossorigin=anonymous async></script>
-</article>
-<footer>
-<p>
-<a href=https://leiless.me/>一个程序员的辩白</a> <span style=color:gray>&copy;</span> 2017 - 2021. Proudly made with <a href=https://gohugo.io/ target=_blank>Hugo</a> and <a href=https://tailwindcss.com/ target=_blank>TailwindCSS</a>.
-</p>
-<p style=margin-top:-15px;font-size:10px>Released under <a href=https://creativecommons.org/licenses/by-nc-sa/4.0/>CC BY-NC-SA 4.0</a> license.</p>
-</footer>
 </div>
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-RMJ7KLHXH8"></script>
-<script>var doNotTrack=!1;if(!doNotTrack){window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag('js',new Date),gtag('config','G-RMJ7KLHXH8',{anonymize_ip:!1})}</script>
-<script>(function(a,c,d,e){if(typeof a.webpushr!='undefined')return;a.webpushr=a.webpushr||function(){(a.webpushr.q=a.webpushr.q||[]).push(arguments)};var b,f=c.getElementsByTagName(d)[0];b=c.createElement(d),b.id=e,b.async=1,b.src="https://cdn.webpushr.com/app.min.js",f.parentNode.appendChild(b)})(window,document,'script','webpushr-jssdk'),webpushr('setup',{key:'BJji5mvLAV3k-EncfEEH_CtK_CdcXWnXc-fvhs7uY1jfOG4xX_RsBmoWvTD0OTyq6TOEB5G5_uFE6Ylpxj5MKEQ'})</script>
+<div class=tags>
+</div></div>
+</div>
+<div class="footer wrapper">
+<nav class=nav>
+<div>2021 Released under <a href=https://creativecommons.org/licenses/by-nc-sa/4.0/>CC BY-NC-SA 4.0</a> license | <a href=https://github.com/knadh/hugo-ink>Ink</a> theme on <a href=https://gohugo.io>Hugo</a></div>
+</nav>
+</div>
+<script type=application/javascript>var doNotTrack=!1;doNotTrack||(window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)},ga.l=+new Date,ga('create','G-RMJ7KLHXH8','auto'),ga('send','pageview'))</script>
+<script async src=https://www.google-analytics.com/analytics.js></script>
+<script>feather.replace()</script>
 </body>
 </html>

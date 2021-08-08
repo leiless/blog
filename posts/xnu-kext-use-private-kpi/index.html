@@ -1,128 +1,95 @@
-<!doctype html><html lang>
+<!doctype html><html>
 <head>
 <meta charset=utf-8>
-<meta name=generator content="Hugo 0.87.0">
-<meta http-equiv=x-ua-compatible content="IE=edge">
-<meta name=viewport content="width=device-width,initial-scale=1,shrink-to-fit=no">
-<meta name=twitter:card content="summary">
-<meta name=twitter:title content="HOWTO use private KPIs in kernel extension - 一个程序员的辩白">
-<meta name=twitter:description content="grep(1) kpi upon kextstat(8), you will find a special kernel extension named com.apple.kpi.private:
-1 2 3 4 5 6 7 8  $ kextstat | grep kpi 1 106 0xffffff7f80a00000 0x9e30 0x9e30 com.apple.kpi.bsd (17.7.0) 8CF59A67-A723-4FB8-A127-09A4B32E1874 2 10 0xffffff7f80f16000 0x3990 0x3990 com.apple.kpi.dsep (17.7.0) E085363B-71AD-4ED8-A63E-3EEC4F643ED9 3 134 0xffffff7f80a29000 0x21150 0x21150 com.apple.kpi.iokit (17.7.0) 695D2CC5-AB90-4CD4-9862-2C50A3A989B8 4 140 0xffffff7f80a0a000 0xd430 0xd430 com.apple.kpi.libkern (17.7.0) 26F1FC40-6578-4254-AF12-3D397814B5CB 5 126 0xffffff7f80a18000 0x3f60 0x3f60 com.apple.kpi.mach (17.7.0) 05B0DB8B-BF52-4A99-B18A-BE623583B448 6 81 0xffffff7f80a1c000 0xce70 0xce70 com.">
-<meta name=twitter:site content="https://leiless.me/">
-<meta name=twitter:creator content>
-<meta name=twitter:image content="https://leiless.me/avatar.jpg">
-<meta property="og:locale" content>
-<meta property="og:type" content="article">
-<meta property="og:title" content="HOWTO use private KPIs in kernel extension - 一个程序员的辩白">
+<meta http-equiv=x-ua-compatible content="IE=edge"><title>HOWTO use private KPIs in kernel extension - 一个程序员的辩白</title><meta name=viewport content="width=device-width,initial-scale=1">
+<meta itemprop=name content="HOWTO use private KPIs in kernel extension">
+<meta itemprop=description content="grep(1) kpi upon kextstat(8), you will find a special kernel extension named com.apple.kpi.private:
+$ kextstat | grep kpi 1 106 0xffffff7f80a00000 0x9e30 0x9e30 com.apple.kpi.bsd (17.7.0) 8CF59A67-A723-4FB8-A127-09A4B32E1874 2 10 0xffffff7f80f16000 0x3990 0x3990 com.apple.kpi.dsep (17.7.0) E085363B-71AD-4ED8-A63E-3EEC4F643ED9 3 134 0xffffff7f80a29000 0x21150 0x21150 com.apple.kpi.iokit (17.7.0) 695D2CC5-AB90-4CD4-9862-2C50A3A989B8 4 140 0xffffff7f80a0a000 0xd430 0xd430 com.apple.kpi.libkern (17.7.0) 26F1FC40-6578-4254-AF12-3D397814B5CB 5 126 0xffffff7f80a18000 0x3f60 0x3f60 com.apple.kpi.mach (17.7.0) 05B0DB8B-BF52-4A99-B18A-BE623583B448 6 81 0xffffff7f80a1c000 0xce70 0xce70 com.apple.kpi.private (17.7.0) 409868DB-B2D5-4249-A98A-3C2BC6E7A754 7 82 0xffffff7f80a8e000 0x5ea0 0x5ea0 com."><meta itemprop=datePublished content="2018-09-07T00:00:00+00:00">
+<meta itemprop=dateModified content="2018-09-07T00:00:00+00:00">
+<meta itemprop=wordCount content="792">
+<meta itemprop=keywords content><meta property="og:title" content="HOWTO use private KPIs in kernel extension">
 <meta property="og:description" content="grep(1) kpi upon kextstat(8), you will find a special kernel extension named com.apple.kpi.private:
-1 2 3 4 5 6 7 8  $ kextstat | grep kpi 1 106 0xffffff7f80a00000 0x9e30 0x9e30 com.apple.kpi.bsd (17.7.0) 8CF59A67-A723-4FB8-A127-09A4B32E1874 2 10 0xffffff7f80f16000 0x3990 0x3990 com.apple.kpi.dsep (17.7.0) E085363B-71AD-4ED8-A63E-3EEC4F643ED9 3 134 0xffffff7f80a29000 0x21150 0x21150 com.apple.kpi.iokit (17.7.0) 695D2CC5-AB90-4CD4-9862-2C50A3A989B8 4 140 0xffffff7f80a0a000 0xd430 0xd430 com.apple.kpi.libkern (17.7.0) 26F1FC40-6578-4254-AF12-3D397814B5CB 5 126 0xffffff7f80a18000 0x3f60 0x3f60 com.apple.kpi.mach (17.7.0) 05B0DB8B-BF52-4A99-B18A-BE623583B448 6 81 0xffffff7f80a1c000 0xce70 0xce70 com.">
-<meta property="og:url" content="https://leiless.me/posts/xnu-kext-use-private-kpi/">
-<meta property="og:site_name" content="一个程序员的辩白">
-<meta property="og:image" content="https://leiless.me/avatar.jpg">
-<title>HOWTO use private KPIs in kernel extension - 一个程序员的辩白</title>
-<meta name=author content="Fishbone">
-<meta name=description content="grep(1) kpi upon kextstat(8), you will find a special kernel extension named com.apple.kpi.private:
-1 2 3 4 5 6 7 8  $ kextstat | grep kpi 1 106 0xffffff7f80a00000 0x9e30 0x9e30 com.apple.kpi.bsd (17.7.0) 8CF59A67-A723-4FB8-A127-09A4B32E1874 2 10 0xffffff7f80f16000 0x3990 0x3990 com.apple.kpi.dsep (17.7.0) E085363B-71AD-4ED8-A63E-3EEC4F643ED9 3 134 0xffffff7f80a29000 0x21150 0x21150 com.apple.kpi.iokit (17.7.0) 695D2CC5-AB90-4CD4-9862-2C50A3A989B8 4 140 0xffffff7f80a0a000 0xd430 0xd430 com.apple.kpi.libkern (17.7.0) 26F1FC40-6578-4254-AF12-3D397814B5CB 5 126 0xffffff7f80a18000 0x3f60 0x3f60 com.apple.kpi.mach (17.7.0) 05B0DB8B-BF52-4A99-B18A-BE623583B448 6 81 0xffffff7f80a1c000 0xce70 0xce70 com.">
-<link rel=stylesheet href="https://fonts.googleapis.com/css?family=Source+Code+Pro|Arvo:400,700">
-<link rel=stylesheet href=https://leiless.me/css/theme.css>
-<link rel=stylesheet href=https://leiless.me/css/chroma.dracula.css>
+$ kextstat | grep kpi 1 106 0xffffff7f80a00000 0x9e30 0x9e30 com.apple.kpi.bsd (17.7.0) 8CF59A67-A723-4FB8-A127-09A4B32E1874 2 10 0xffffff7f80f16000 0x3990 0x3990 com.apple.kpi.dsep (17.7.0) E085363B-71AD-4ED8-A63E-3EEC4F643ED9 3 134 0xffffff7f80a29000 0x21150 0x21150 com.apple.kpi.iokit (17.7.0) 695D2CC5-AB90-4CD4-9862-2C50A3A989B8 4 140 0xffffff7f80a0a000 0xd430 0xd430 com.apple.kpi.libkern (17.7.0) 26F1FC40-6578-4254-AF12-3D397814B5CB 5 126 0xffffff7f80a18000 0x3f60 0x3f60 com.apple.kpi.mach (17.7.0) 05B0DB8B-BF52-4A99-B18A-BE623583B448 6 81 0xffffff7f80a1c000 0xce70 0xce70 com.apple.kpi.private (17.7.0) 409868DB-B2D5-4249-A98A-3C2BC6E7A754 7 82 0xffffff7f80a8e000 0x5ea0 0x5ea0 com.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://leiless.me/posts/xnu-kext-use-private-kpi/"><meta property="article:section" content="posts">
+<meta property="article:published_time" content="2018-09-07T00:00:00+00:00">
+<meta property="article:modified_time" content="2018-09-07T00:00:00+00:00">
+<meta name=twitter:card content="summary">
+<meta name=twitter:title content="HOWTO use private KPIs in kernel extension">
+<meta name=twitter:description content="grep(1) kpi upon kextstat(8), you will find a special kernel extension named com.apple.kpi.private:
+$ kextstat | grep kpi 1 106 0xffffff7f80a00000 0x9e30 0x9e30 com.apple.kpi.bsd (17.7.0) 8CF59A67-A723-4FB8-A127-09A4B32E1874 2 10 0xffffff7f80f16000 0x3990 0x3990 com.apple.kpi.dsep (17.7.0) E085363B-71AD-4ED8-A63E-3EEC4F643ED9 3 134 0xffffff7f80a29000 0x21150 0x21150 com.apple.kpi.iokit (17.7.0) 695D2CC5-AB90-4CD4-9862-2C50A3A989B8 4 140 0xffffff7f80a0a000 0xd430 0xd430 com.apple.kpi.libkern (17.7.0) 26F1FC40-6578-4254-AF12-3D397814B5CB 5 126 0xffffff7f80a18000 0x3f60 0x3f60 com.apple.kpi.mach (17.7.0) 05B0DB8B-BF52-4A99-B18A-BE623583B448 6 81 0xffffff7f80a1c000 0xce70 0xce70 com.apple.kpi.private (17.7.0) 409868DB-B2D5-4249-A98A-3C2BC6E7A754 7 82 0xffffff7f80a8e000 0x5ea0 0x5ea0 com.">
+<link href="https://fonts.googleapis.com/css?family=Playfair+Display:700" rel=stylesheet type=text/css>
+<link rel=stylesheet type=text/css media=screen href=https://leiless.me/css/normalize.css>
+<link rel=stylesheet type=text/css media=screen href=https://leiless.me/css/main.css>
+<link id=dark-scheme rel=stylesheet type=text/css href=https://leiless.me/css/dark.css>
+<script src=https://leiless.me/js/feather.min.js></script>
+<script src=https://leiless.me/js/main.js></script>
 </head>
-<body class="font-serif bg-gray-200 border-t-4 border-blue-500 antialiased">
-<div class="w-full p-6 md:w-2/3 md:px-0 md:mx-auto xl:w-2/5">
-<header class=mb-6>
-<div class="mb-6 md:flex md:items-center">
-<div>
-<a class="text-lg mb-8 inline-block" href=/>&larr; Back Home</a>
-<h1 class="text-4xl font-bold">HOWTO use private KPIs in kernel extension</h1>
-<time datetime="2018-09-07 00:00:00 UTC">07 Sep 2018</time>
+<body>
+<div class="container wrapper">
+<div class=header>
+<div class=avatar>
+<a href=https://leiless.me/>
+<img src=../../avatar.jpg alt=一个程序员的辩白>
+</a>
+</div>
+<h1 class=site-title><a href=https://leiless.me/>一个程序员的辩白</a></h1>
+<div class=site-description><p>关注分布式系统，DBMS，CI/CD，Deterministic Simulation。</p><nav class="nav social">
+<ul class=flat><li><a href=https://github.com/leiless title=GitHub><i data-feather=github></i></a></li><li><a href=https://twitter.com/funky_fishbone title=Twitter><i data-feather=twitter></i></a></li><li><a href=/index.xml title=RSS><i data-feather=rss></i></a></li><li><a href=# class=scheme-toggle id=scheme-toggle></a></li></ul>
+</nav>
+</div>
+<nav class=nav>
+<ul class=flat>
+</ul>
+</nav>
+</div>
+<div class=post>
+<div class=post-header>
+<div class=meta>
+<div class=date>
+<span class=day>07</span>
+<span class=rest>Sep 2018</span>
 </div>
 </div>
-</header>
-<article class=mb-12>
+<div class=matter>
+<h1 class=title>HOWTO use private KPIs in kernel extension</h1>
+</div>
+</div>
+<div class=markdown>
 <p><a href=x-man-page://1/grep>grep(1)</a> <em>kpi</em> upon <a href=x-man-page://8/kextstat>kextstat(8)</a>, you will find a special kernel extension named <code>com.apple.kpi.private</code>:</p>
-<div class=highlight><div class=chroma>
-<table class=lntable><tr><td class=lntd>
-<pre tabindex=0 class=chroma><code><span class=lnt>1
-</span><span class=lnt>2
-</span><span class=lnt>3
-</span><span class=lnt>4
-</span><span class=lnt>5
-</span><span class=lnt>6
-</span><span class=lnt>7
-</span><span class=lnt>8
-</span></code></pre></td>
-<td class=lntd>
-<pre tabindex=0 class=chroma><code class=language-shell data-lang=shell>$ kextstat <span class=p>|</span> grep kpi
-    <span class=m>1</span>  <span class=m>106</span> 0xffffff7f80a00000 0x9e30     0x9e30     com.apple.kpi.bsd <span class=o>(</span>17.7.0<span class=o>)</span> 8CF59A67-A723-4FB8-A127-09A4B32E1874
-    <span class=m>2</span>   <span class=m>10</span> 0xffffff7f80f16000 0x3990     0x3990     com.apple.kpi.dsep <span class=o>(</span>17.7.0<span class=o>)</span> E085363B-71AD-4ED8-A63E-3EEC4F643ED9
-    <span class=m>3</span>  <span class=m>134</span> 0xffffff7f80a29000 0x21150    0x21150    com.apple.kpi.iokit <span class=o>(</span>17.7.0<span class=o>)</span> 695D2CC5-AB90-4CD4-9862-2C50A3A989B8
-    <span class=m>4</span>  <span class=m>140</span> 0xffffff7f80a0a000 0xd430     0xd430     com.apple.kpi.libkern <span class=o>(</span>17.7.0<span class=o>)</span> 26F1FC40-6578-4254-AF12-3D397814B5CB
-    <span class=m>5</span>  <span class=m>126</span> 0xffffff7f80a18000 0x3f60     0x3f60     com.apple.kpi.mach <span class=o>(</span>17.7.0<span class=o>)</span> 05B0DB8B-BF52-4A99-B18A-BE623583B448
-    <span class=m>6</span>   <span class=m>81</span> 0xffffff7f80a1c000 0xce70     0xce70     com.apple.kpi.private <span class=o>(</span>17.7.0<span class=o>)</span> 409868DB-B2D5-4249-A98A-3C2BC6E7A754
-    <span class=m>7</span>   <span class=m>82</span> 0xffffff7f80a8e000 0x5ea0     0x5ea0     com.apple.kpi.unsupported <span class=o>(</span>17.7.0<span class=o>)</span> 37241BAB-747F-4D47-BBD5-C01F3577D845
-</code></pre></td></tr></table>
-</div>
-</div><p>Unlike <em>com.apple.kpi.unsupported</em>, <em>com.apple.kpi.private</em> is used solely by Apple itself.</p>
+<div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell>$ kextstat | grep kpi
+    1  106 0xffffff7f80a00000 0x9e30     0x9e30     com.apple.kpi.bsd (17.7.0) 8CF59A67-A723-4FB8-A127-09A4B32E1874
+    2   10 0xffffff7f80f16000 0x3990     0x3990     com.apple.kpi.dsep (17.7.0) E085363B-71AD-4ED8-A63E-3EEC4F643ED9
+    3  134 0xffffff7f80a29000 0x21150    0x21150    com.apple.kpi.iokit (17.7.0) 695D2CC5-AB90-4CD4-9862-2C50A3A989B8
+    4  140 0xffffff7f80a0a000 0xd430     0xd430     com.apple.kpi.libkern (17.7.0) 26F1FC40-6578-4254-AF12-3D397814B5CB
+    5  126 0xffffff7f80a18000 0x3f60     0x3f60     com.apple.kpi.mach (17.7.0) 05B0DB8B-BF52-4A99-B18A-BE623583B448
+    6   81 0xffffff7f80a1c000 0xce70     0xce70     com.apple.kpi.private (17.7.0) 409868DB-B2D5-4249-A98A-3C2BC6E7A754
+    7   82 0xffffff7f80a8e000 0x5ea0     0x5ea0     com.apple.kpi.unsupported (17.7.0) 37241BAB-747F-4D47-BBD5-C01F3577D845
+</code></pre></div><p>Unlike <em>com.apple.kpi.unsupported</em>, <em>com.apple.kpi.private</em> is used solely by Apple itself.</p>
 <p>It located at <em>/System/Library/Extensions/System.kext/PlugIns/Private.kext</em>, you can <a href=x-man-page://1/nm><em>nm(1)</em></a> it to check its symbol table.</p>
 <p> </p>
 <p>Taking <a href=http://xr.anadoxin.org/source/xref/macos-10.12.6-sierra/xnu-3789.70.16/osfmk/device/subrs.c#574>strnstr</a> as an example, to show how you can use this private KPI function.</p>
 <p>It&rsquo;s OK to compile the following kext listing:</p>
-<div class=highlight><div class=chroma>
-<table class=lntable><tr><td class=lntd>
-<pre tabindex=0 class=chroma><code><span class=lnt> 1
-</span><span class=lnt> 2
-</span><span class=lnt> 3
-</span><span class=lnt> 4
-</span><span class=lnt> 5
-</span><span class=lnt> 6
-</span><span class=lnt> 7
-</span><span class=lnt> 8
-</span><span class=lnt> 9
-</span><span class=lnt>10
-</span><span class=lnt>11
-</span><span class=lnt>12
-</span><span class=lnt>13
-</span><span class=lnt>14
-</span><span class=lnt>15
-</span><span class=lnt>16
-</span><span class=lnt>17
-</span><span class=lnt>18
-</span></code></pre></td>
-<td class=lntd>
-<pre tabindex=0 class=chroma><code class=language-c data-lang=c><span class=cp>#include</span> <span class=cpf>&lt;mach/mach_types.h&gt;</span><span class=cp>
-</span><span class=cp>#include</span> <span class=cpf>&lt;mach/kmod.h&gt;</span><span class=cp>
-</span><span class=cp>#include</span> <span class=cpf>&lt;libkern/libkern.h&gt;</span><span class=cp>
-</span><span class=cp>#include</span> <span class=cpf>&lt;string.h&gt;             /* strnstr is exported */</span><span class=cp>
-</span><span class=cp></span>
-<span class=n>kern_return_t</span> <span class=nf>kext_null_start</span><span class=p>(</span><span class=n>kmod_info_t</span> <span class=o>*</span><span class=n>ki</span><span class=p>,</span> <span class=kt>void</span> <span class=o>*</span><span class=n>d</span><span class=p>)</span>
-<span class=p>{</span>
-    <span class=kt>char</span> <span class=o>*</span><span class=n>name</span> <span class=o>=</span> <span class=n>strnstr</span><span class=p>(</span><span class=n>ki</span><span class=o>-&gt;</span><span class=n>name</span><span class=p>,</span> <span class=s>&#34;&#34;</span><span class=p>,</span> <span class=n>KMOD_MAX_NAME</span><span class=p>);</span>
-    <span class=kt>char</span> <span class=o>*</span><span class=n>ver</span> <span class=o>=</span> <span class=n>strnstr</span><span class=p>(</span><span class=n>ki</span><span class=o>-&gt;</span><span class=n>version</span><span class=p>,</span> <span class=s>&#34;&#34;</span><span class=p>,</span> <span class=n>KMOD_MAX_NAME</span><span class=p>);</span>
-    <span class=n>printf</span><span class=p>(</span><span class=s>&#34;&gt;&gt; %s %s</span><span class=se>\n</span><span class=s>&#34;</span><span class=p>,</span> <span class=n>name</span><span class=p>,</span> <span class=n>ver</span><span class=p>);</span>
-    <span class=k>return</span> <span class=n>KERN_SUCCESS</span><span class=p>;</span>
-<span class=p>}</span>
+<div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-c data-lang=c><span style=color:#00f>#include</span> <span style=color:#00f>&lt;mach/mach_types.h&gt;</span><span style=color:#00f>
+</span><span style=color:#00f>#include</span> <span style=color:#00f>&lt;mach/kmod.h&gt;</span><span style=color:#00f>
+</span><span style=color:#00f>#include</span> <span style=color:#00f>&lt;libkern/libkern.h&gt;</span><span style=color:#00f>
+</span><span style=color:#00f>#include</span> <span style=color:#00f>&lt;string.h&gt;             /* strnstr is exported */</span><span style=color:#00f>
+</span><span style=color:#00f></span>
+kern_return_t kext_null_start(kmod_info_t *ki, <span style=color:#2b91af>void</span> *d)
+{
+    <span style=color:#2b91af>char</span> *name = strnstr(ki-&gt;name, <span style=color:#a31515>&#34;&#34;</span>, KMOD_MAX_NAME);
+    <span style=color:#2b91af>char</span> *ver = strnstr(ki-&gt;version, <span style=color:#a31515>&#34;&#34;</span>, KMOD_MAX_NAME);
+    printf(<span style=color:#a31515>&#34;&gt;&gt; %s %s</span><span style=color:#a31515>\n</span><span style=color:#a31515>&#34;</span>, name, ver);
+    <span style=color:#00f>return</span> KERN_SUCCESS;
+}
 
-<span class=n>kern_return_t</span> <span class=nf>kext_null_stop</span><span class=p>(</span><span class=n>kmod_info_t</span> <span class=o>*</span><span class=n>ki</span><span class=p>,</span> <span class=kt>void</span> <span class=o>*</span><span class=n>d</span><span class=p>)</span>
-<span class=p>{</span>
-    <span class=k>return</span> <span class=n>KERN_SUCCESS</span><span class=p>;</span>
-<span class=p>}</span>
+kern_return_t kext_null_stop(kmod_info_t *ki, <span style=color:#2b91af>void</span> *d)
+{
+    <span style=color:#00f>return</span> KERN_SUCCESS;
+}
 
-</code></pre></td></tr></table>
-</div>
-</div><p>Use <a href=x-man-page://8/kextlibs><em>kextlibs(8)</em></a> check its dependencies, it output:</p>
-<div class=highlight><div class=chroma>
-<table class=lntable><tr><td class=lntd>
-<pre tabindex=0 class=chroma><code><span class=lnt>1
-</span><span class=lnt>2
-</span><span class=lnt>3
-</span><span class=lnt>4
-</span><span class=lnt>5
-</span><span class=lnt>6
-</span><span class=lnt>7
-</span><span class=lnt>8
-</span></code></pre></td>
-<td class=lntd>
-<pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback>$ kextlibs -c -xml -unsupported kext-null.kext
+</code></pre></div><p>Use <a href=x-man-page://8/kextlibs><em>kextlibs(8)</em></a> check its dependencies, it output:</p>
+<div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>$ kextlibs -c -xml -unsupported kext-null.kext
 	&lt;key&gt;OSBundleLibraries&lt;/key&gt;
 	&lt;dict&gt;
 		&lt;key&gt;com.apple.kpi.libkern&lt;/key&gt;
@@ -130,24 +97,9 @@
 		&lt;key&gt;com.apple.kpi.private&lt;/key&gt;
 		&lt;string&gt;8.0b1&lt;/string&gt;
 	&lt;/dict&gt;
-</code></pre></td></tr></table>
-</div>
-</div><p>Which for sure <em>strnstr</em> exported by <em>com.apple.kpi.private</em>.</p>
+</code></pre></div><p>Which for sure <em>strnstr</em> exported by <em>com.apple.kpi.private</em>.</p>
 <p>When you load them via <a href=x-man-page://8/kextload><em>kextload(8)</em></a> or <a href=x-man-page://8/kextutil><em>kextutil(8)</em></a>, the <a href=x-man-page://8/kextd><em>kextd(8)</em></a>(kext backing daemon) will prompts you:</p>
-<div class=highlight><div class=chroma>
-<table class=lntable><tr><td class=lntd>
-<pre tabindex=0 class=chroma><code><span class=lnt>1
-</span><span class=lnt>2
-</span><span class=lnt>3
-</span><span class=lnt>4
-</span><span class=lnt>5
-</span><span class=lnt>6
-</span><span class=lnt>7
-</span><span class=lnt>8
-</span><span class=lnt>9
-</span></code></pre></td>
-<td class=lntd>
-<pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback>$ sudo kextload kext-null.kext
+<div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>$ sudo kextload kext-null.kext
 /private/tmp/kext-null.kext failed to load - (libkern/kext) dependency load failed; check the system/kernel logs for errors or try kextutil(8).
 
 # System log
@@ -156,112 +108,57 @@ default	13:12:04.352316 +0800	kextd	Kext with invalid signatured (-67050) allowe
 default	13:12:04.396342 +0800	kextd	/private/tmp/kext-null.kext has an Apple prefix but no copyright.
 default	13:12:04.396376 +0800	kextd	cn.junkman.kext-null&#39;s dependencies failed security checks; failing.
 ...
-</code></pre></td></tr></table>
-</div>
-</div><p>Apple certainly don&rsquo;t want developers use the <em>com.apple.kpi.private</em>, yet still ways to jailbreak it.</p>
+</code></pre></div><p>Apple certainly don&rsquo;t want developers use the <em>com.apple.kpi.private</em>, yet still ways to jailbreak it.</p>
 <p> </p>
 <p>If you dive deep into Apple source code and search upon the string &ldquo;has an Apple prefix but no copyright&rdquo;, you&rsquo;ll find <a href=https://opensource.apple.com/source/IOKitUser/IOKitUser-1445.40.1/kext.subproj/OSKext.c.auto.html>IOKitUser/IOKitUser/kext.subproj/OSKext.c</a>&rsquo;s <em>__OSKextResolveDependencies</em> snippet:</p>
-<div class=highlight><div class=chroma>
-<table class=lntable><tr><td class=lntd>
-<pre tabindex=0 class=chroma><code><span class=lnt> 1
-</span><span class=lnt> 2
-</span><span class=lnt> 3
-</span><span class=lnt> 4
-</span><span class=lnt> 5
-</span><span class=lnt> 6
-</span><span class=lnt> 7
-</span><span class=lnt> 8
-</span><span class=lnt> 9
-</span><span class=lnt>10
-</span><span class=lnt>11
-</span><span class=lnt>12
-</span><span class=lnt>13
-</span><span class=lnt>14
-</span><span class=lnt>15
-</span><span class=lnt>16
-</span><span class=lnt>17
-</span><span class=lnt>18
-</span><span class=lnt>19
-</span><span class=lnt>20
-</span><span class=lnt>21
-</span><span class=lnt>22
-</span><span class=lnt>23
-</span><span class=lnt>24
-</span><span class=lnt>25
-</span><span class=lnt>26
-</span><span class=lnt>27
-</span><span class=lnt>28
-</span><span class=lnt>29
-</span><span class=lnt>30
-</span><span class=lnt>31
-</span><span class=lnt>32
-</span><span class=lnt>33
-</span><span class=lnt>34
-</span><span class=lnt>35
-</span><span class=lnt>36
-</span><span class=lnt>37
-</span><span class=lnt>38
-</span><span class=lnt>39
-</span><span class=lnt>40
-</span><span class=lnt>41
-</span><span class=lnt>42
-</span><span class=lnt>43
-</span><span class=lnt>44
-</span><span class=lnt>45
-</span><span class=lnt>46
-</span><span class=lnt>47
-</span></code></pre></td>
-<td class=lntd>
-<pre tabindex=0 class=chroma><code class=language-c data-lang=c><span class=cp>#ifndef IOKIT_EMBEDDED
-</span><span class=cp></span>    <span class=cm>/* If the kext links against the private KPI, we want to make an effort
-</span><span class=cm>     * to ensure they are Apple-internal kexts.  We do this by verifying that
-</span><span class=cm>     * the kext&#39;s bundle identifier begins with &#34;com.apple.&#34;, and by making
-</span><span class=cm>     * sure the kext&#39;s info dictionary contains an Apple copyright string
-</span><span class=cm>     * in either CFBundleGetInfoString (obsolete) or NSHumanReadableCopyright.
-</span><span class=cm>     */</span>
+<div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-c data-lang=c><span style=color:#00f>#ifndef IOKIT_EMBEDDED
+</span><span style=color:#00f></span>    <span style=color:green>/* If the kext links against the private KPI, we want to make an effort
+</span><span style=color:green>     * to ensure they are Apple-internal kexts.  We do this by verifying that
+</span><span style=color:green>     * the kext&#39;s bundle identifier begins with &#34;com.apple.&#34;, and by making
+</span><span style=color:green>     * sure the kext&#39;s info dictionary contains an Apple copyright string
+</span><span style=color:green>     * in either CFBundleGetInfoString (obsolete) or NSHumanReadableCopyright.
+</span><span style=color:green>     */</span>
 
-    <span class=k>if</span> <span class=p>(</span><span class=n>aKext</span><span class=o>-&gt;</span><span class=n>loadInfo</span><span class=o>-&gt;</span><span class=n>flags</span><span class=p>.</span><span class=n>hasPrivateKPIDependency</span><span class=p>)</span>
-    <span class=p>{</span>
-        <span class=n>CFStringRef</span>     <span class=n>infoString</span>                  <span class=o>=</span> <span class=nb>NULL</span><span class=p>;</span>  <span class=c1>// do not release
-</span><span class=c1></span>        <span class=n>CFStringRef</span>     <span class=n>readableString</span>              <span class=o>=</span> <span class=nb>NULL</span><span class=p>;</span>  <span class=c1>// do not release
-</span><span class=c1></span>        <span class=n>Boolean</span>         <span class=n>hasApplePrefix</span>              <span class=o>=</span> <span class=nb>false</span><span class=p>;</span>
-        <span class=n>Boolean</span>         <span class=n>infoCopyrightIsValid</span>        <span class=o>=</span> <span class=nb>false</span><span class=p>;</span>
-        <span class=n>Boolean</span>         <span class=n>readableCopyrightIsValid</span>    <span class=o>=</span> <span class=nb>false</span><span class=p>;</span>
+    <span style=color:#00f>if</span> (aKext-&gt;loadInfo-&gt;flags.hasPrivateKPIDependency)
+    {
+        CFStringRef     infoString                  = NULL;  <span style=color:green>// do not release
+</span><span style=color:green></span>        CFStringRef     readableString              = NULL;  <span style=color:green>// do not release
+</span><span style=color:green></span>        Boolean         hasApplePrefix              = false;
+        Boolean         infoCopyrightIsValid        = false;
+        Boolean         readableCopyrightIsValid    = false;
 
-        <span class=n>hasApplePrefix</span> <span class=o>=</span> <span class=n>CFStringHasPrefix</span><span class=p>(</span><span class=n>aKext</span><span class=o>-&gt;</span><span class=n>bundleID</span><span class=p>,</span> <span class=n>__kOSKextApplePrefix</span><span class=p>);</span>
+        hasApplePrefix = CFStringHasPrefix(aKext-&gt;bundleID, __kOSKextApplePrefix);
 
-        <span class=n>infoString</span> <span class=o>=</span> <span class=p>(</span><span class=n>CFStringRef</span><span class=p>)</span> <span class=n>OSKextGetValueForInfoDictionaryKey</span><span class=p>(</span><span class=n>aKext</span><span class=p>,</span>
-            <span class=n>CFSTR</span><span class=p>(</span><span class=s>&#34;CFBundleGetInfoString&#34;</span><span class=p>));</span>
-        <span class=k>if</span> <span class=p>(</span><span class=n>infoString</span><span class=p>)</span> <span class=p>{</span>
-            <span class=kt>char</span> <span class=o>*</span><span class=n>infoCString</span> <span class=o>=</span> <span class=n>createUTF8CStringForCFString</span><span class=p>(</span><span class=n>infoString</span><span class=p>);</span>
-            <span class=n>infoCopyrightIsValid</span> <span class=o>=</span> <span class=n>kxld_validate_copyright_string</span><span class=p>(</span><span class=n>infoCString</span><span class=p>);</span>
-            <span class=n>SAFE_FREE</span><span class=p>(</span><span class=n>infoCString</span><span class=p>);</span>
-        <span class=p>}</span>
+        infoString = (CFStringRef) OSKextGetValueForInfoDictionaryKey(aKext,
+            CFSTR(<span style=color:#a31515>&#34;CFBundleGetInfoString&#34;</span>));
+        <span style=color:#00f>if</span> (infoString) {
+            <span style=color:#2b91af>char</span> *infoCString = createUTF8CStringForCFString(infoString);
+            infoCopyrightIsValid = kxld_validate_copyright_string(infoCString);
+            SAFE_FREE(infoCString);
+        }
 
-        <span class=n>readableString</span> <span class=o>=</span> <span class=p>(</span><span class=n>CFStringRef</span><span class=p>)</span> <span class=n>OSKextGetValueForInfoDictionaryKey</span><span class=p>(</span><span class=n>aKext</span><span class=p>,</span>
-            <span class=n>CFSTR</span><span class=p>(</span><span class=s>&#34;NSHumanReadableCopyright&#34;</span><span class=p>));</span>
-        <span class=k>if</span> <span class=p>(</span><span class=n>readableString</span><span class=p>)</span> <span class=p>{</span>
-            <span class=kt>char</span> <span class=o>*</span><span class=n>readableCString</span> <span class=o>=</span> <span class=n>createUTF8CStringForCFString</span><span class=p>(</span><span class=n>readableString</span><span class=p>);</span>
-            <span class=n>readableCopyrightIsValid</span> <span class=o>=</span> 
-                <span class=n>kxld_validate_copyright_string</span><span class=p>(</span><span class=n>readableCString</span><span class=p>);</span>
-            <span class=n>SAFE_FREE</span><span class=p>(</span><span class=n>readableCString</span><span class=p>);</span>
-        <span class=p>}</span>
+        readableString = (CFStringRef) OSKextGetValueForInfoDictionaryKey(aKext,
+            CFSTR(<span style=color:#a31515>&#34;NSHumanReadableCopyright&#34;</span>));
+        <span style=color:#00f>if</span> (readableString) {
+            <span style=color:#2b91af>char</span> *readableCString = createUTF8CStringForCFString(readableString);
+            readableCopyrightIsValid = 
+                kxld_validate_copyright_string(readableCString);
+            SAFE_FREE(readableCString);
+        }
 
-        <span class=k>if</span> <span class=p>(</span><span class=o>!</span><span class=n>hasApplePrefix</span> <span class=o>||</span> <span class=p>(</span><span class=o>!</span><span class=n>infoCopyrightIsValid</span> <span class=o>&amp;&amp;</span> <span class=o>!</span><span class=n>readableCopyrightIsValid</span><span class=p>))</span> <span class=p>{</span>
+        <span style=color:#00f>if</span> (!hasApplePrefix || (!infoCopyrightIsValid &amp;&amp; !readableCopyrightIsValid)) {
 
-            <span class=n>OSKextLog</span><span class=p>(</span><span class=n>aKext</span><span class=p>,</span> <span class=n>kOSKextLogErrorLevel</span> <span class=o>|</span> <span class=n>kOSKextLogDependenciesFlag</span><span class=p>,</span>
-                <span class=s>&#34;%s has an Apple prefix but no copyright.&#34;</span><span class=p>,</span> <span class=n>kextPath</span><span class=p>);</span>
+            OSKextLog(aKext, kOSKextLogErrorLevel | kOSKextLogDependenciesFlag,
+                <span style=color:#a31515>&#34;%s has an Apple prefix but no copyright.&#34;</span>, kextPath);
 
-            <span class=n>__OSKextSetDiagnostic</span><span class=p>(</span><span class=n>aKext</span><span class=p>,</span> <span class=n>kOSKextDiagnosticsFlagDependencies</span><span class=p>,</span>
-                <span class=n>kOSKextDiagnosticNonAppleKextDeclaresPrivateKPIDependencyKey</span><span class=p>);</span>
-            <span class=n>result</span> <span class=o>=</span> <span class=nb>false</span><span class=p>;</span>
-            <span class=k>goto</span> <span class=n>finish</span><span class=p>;</span>
-        <span class=p>}</span>
-    <span class=p>}</span>
-<span class=cp>#endif </span><span class=cm>/* !IOKIT_EMBEDDED */</span><span class=cp>
-</span></code></pre></td></tr></table>
-</div>
-</div><p>So it takes two criterions to load a private-dependent kext:</p>
+            __OSKextSetDiagnostic(aKext, kOSKextDiagnosticsFlagDependencies,
+                kOSKextDiagnosticNonAppleKextDeclaresPrivateKPIDependencyKey);
+            result = false;
+            <span style=color:#00f>goto</span> finish;
+        }
+    }
+<span style=color:#00f>#endif </span><span style=color:green>/* !IOKIT_EMBEDDED */</span><span style=color:#00f>
+</span></code></pre></div><p>So it takes two criterions to load a private-dependent kext:</p>
 <blockquote>
 <p>If the kext links against the private KPI, we want to make an effort to ensure they are Apple-internal kexts. We do this by verifying that the kext&rsquo;s bundle identifier begins with &ldquo;com.apple.&rdquo;, and by making sure the kext&rsquo;s info dictionary contains an Apple copyright string in either CFBundleGetInfoString (obsolete) or NSHumanReadableCopyright.</p>
 </blockquote>
@@ -276,121 +173,63 @@ default	13:12:04.396376 +0800	kextd	cn.junkman.kext-null&#39;s dependencies fail
 </ol>
 <p> </p>
 <p>After change those properties in kext&rsquo;s Info.plist, you can use private KPIs for sure.</p>
-<div class=highlight><div class=chroma>
-<table class=lntable><tr><td class=lntd>
-<pre tabindex=0 class=chroma><code><span class=lnt> 1
-</span><span class=lnt> 2
-</span><span class=lnt> 3
-</span><span class=lnt> 4
-</span><span class=lnt> 5
-</span><span class=lnt> 6
-</span><span class=lnt> 7
-</span><span class=lnt> 8
-</span><span class=lnt> 9
-</span><span class=lnt>10
-</span><span class=lnt>11
-</span><span class=lnt>12
-</span><span class=lnt>13
-</span></code></pre></td>
-<td class=lntd>
-<pre tabindex=0 class=chroma><code class=language-shell data-lang=shell>$ cat Info.plist <span class=p>|</span> grep -E <span class=s2>&#34;CFBundleIdentifier|NSHumanReadableCopyright&#34;</span> -A <span class=m>1</span>
+<div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell>$ cat Info.plist | grep -E <span style=color:#a31515>&#34;CFBundleIdentifier|NSHumanReadableCopyright&#34;</span> -A 1
 	&lt;key&gt;CFBundleIdentifier&lt;/key&gt;
 	&lt;string&gt;com.apple.kext.3rd.kext-null&lt;/string&gt;
 --
 	&lt;key&gt;NSHumanReadableCopyright&lt;/key&gt;
-	&lt;string&gt;Copyright © <span class=m>0000</span> Apple Inc. All rights reserved.&lt;/string&gt;
+	&lt;string&gt;Copyright © 0000 Apple Inc. All rights reserved.&lt;/string&gt;
 
 $ sudo kextload kext-null.kext
-$ kextstat <span class=p>|</span> grep kext-null
-  <span class=m>188</span>    <span class=m>0</span> 0xffffff7f83705000 0x2000     0x2000     com.apple.kext.3rd.kext-null <span class=o>(</span>1<span class=o>)</span> 927FE5AE-4720-36EC-897C-2675A0FE8913 &lt;<span class=m>6</span> 4&gt;
+$ kextstat | grep kext-null
+  188    0 0xffffff7f83705000 0x2000     0x2000     com.apple.kext.3rd.kext-null (1) 927FE5AE-4720-36EC-897C-2675A0FE8913 &lt;6 4&gt;
 
-$ sudo dmesg <span class=p>|</span> grep <span class=s2>&#34;&gt;&gt;&#34;</span>
-&gt;&gt; com.apple.kext.3rd.kext-null <span class=m>1</span>
-</code></pre></td></tr></table>
-</div>
-</div><p> </p>
+$ sudo dmesg | grep <span style=color:#a31515>&#34;&gt;&gt;&#34;</span>
+&gt;&gt; com.apple.kext.3rd.kext-null 1
+</code></pre></div><p> </p>
 <p>Yet, not all symbols exported by Apple, for example, <a href=http://xr.anadoxin.org/source/xref/macos-10.12.6-sierra/xnu-3789.70.16/bsd/vfs/kpi_vfs.c#1873><em>vnode_isautocandidate</em></a> is exported in Kernel.framework&rsquo;s <em>sys/vnode.h</em>, yet <a href=http://xr.anadoxin.org/source/xref/macos-10.12.6-sierra/xnu-3789.70.16/bsd/vfs/vfs_subr.c#4535><em>vnode_usecount</em></a> and <a href=http://xr.anadoxin.org/source/xref/macos-10.12.6-sierra/xnu-3789.70.16/bsd/vfs/vfs_subr.c#4540><em>vnode_iocount</em></a> not exported.</p>
 <p>In such cases, you can simply extern it, it will link against <em>com.apple.kpi.private</em> naturally:</p>
-<div class=highlight><div class=chroma>
-<table class=lntable><tr><td class=lntd>
-<pre tabindex=0 class=chroma><code><span class=lnt> 1
-</span><span class=lnt> 2
-</span><span class=lnt> 3
-</span><span class=lnt> 4
-</span><span class=lnt> 5
-</span><span class=lnt> 6
-</span><span class=lnt> 7
-</span><span class=lnt> 8
-</span><span class=lnt> 9
-</span><span class=lnt>10
-</span><span class=lnt>11
-</span><span class=lnt>12
-</span><span class=lnt>13
-</span><span class=lnt>14
-</span><span class=lnt>15
-</span><span class=lnt>16
-</span><span class=lnt>17
-</span><span class=lnt>18
-</span><span class=lnt>19
-</span><span class=lnt>20
-</span><span class=lnt>21
-</span><span class=lnt>22
-</span></code></pre></td>
-<td class=lntd>
-<pre tabindex=0 class=chroma><code class=language-c data-lang=c><span class=cp>#include</span> <span class=cpf>&lt;mach/mach_types.h&gt;</span><span class=cp>
-</span><span class=cp>#include</span> <span class=cpf>&lt;libkern/libkern.h&gt;</span><span class=cp>
-</span><span class=cp>#include</span> <span class=cpf>&lt;sys/vnode.h&gt;</span><span class=cp>
-</span><span class=cp></span>
-<span class=cm>/* Those symbols not exported by Kernel.framework */</span>
-<span class=k>extern</span> <span class=kt>int</span> <span class=n>hz</span><span class=p>;</span>
-<span class=k>extern</span> <span class=k>struct</span> <span class=n>vnode</span> <span class=o>*</span><span class=n>rootvp</span><span class=p>;</span>
-<span class=k>extern</span> <span class=kt>int</span> <span class=nf>vnode_usecount</span><span class=p>(</span><span class=n>vnode_t</span> <span class=n>vp</span><span class=p>);</span>
-<span class=k>extern</span> <span class=kt>int</span> <span class=nf>vnode_iocount</span><span class=p>(</span><span class=n>vnode_t</span> <span class=n>vp</span><span class=p>);</span>
+<div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-c data-lang=c><span style=color:#00f>#include</span> <span style=color:#00f>&lt;mach/mach_types.h&gt;</span><span style=color:#00f>
+</span><span style=color:#00f>#include</span> <span style=color:#00f>&lt;libkern/libkern.h&gt;</span><span style=color:#00f>
+</span><span style=color:#00f>#include</span> <span style=color:#00f>&lt;sys/vnode.h&gt;</span><span style=color:#00f>
+</span><span style=color:#00f></span>
+<span style=color:green>/* Those symbols not exported by Kernel.framework */</span>
+<span style=color:#00f>extern</span> <span style=color:#2b91af>int</span> hz;
+<span style=color:#00f>extern</span> <span style=color:#00f>struct</span> vnode *rootvp;
+<span style=color:#00f>extern</span> <span style=color:#2b91af>int</span> vnode_usecount(vnode_t vp);
+<span style=color:#00f>extern</span> <span style=color:#2b91af>int</span> vnode_iocount(vnode_t vp);
 
-<span class=n>kern_return_t</span> <span class=nf>kext_null_start</span><span class=p>(</span><span class=n>kmod_info_t</span> <span class=o>*</span><span class=n>ki</span><span class=p>,</span> <span class=kt>void</span> <span class=o>*</span><span class=n>d</span><span class=p>)</span>
-<span class=p>{</span>
-    <span class=n>printf</span><span class=p>(</span><span class=s>&#34;&gt;&gt; %s %s</span><span class=se>\n</span><span class=s>&#34;</span><span class=p>,</span> <span class=n>ki</span><span class=o>-&gt;</span><span class=n>name</span><span class=p>,</span> <span class=n>ki</span><span class=o>-&gt;</span><span class=n>version</span><span class=p>);</span>
-    <span class=n>printf</span><span class=p>(</span><span class=s>&#34;&gt;&gt; hz: %d</span><span class=se>\n</span><span class=s>&#34;</span><span class=p>,</span> <span class=n>hz</span><span class=p>);</span>
-    <span class=n>printf</span><span class=p>(</span><span class=s>&#34;&gt;&gt; rootvp: %p use: %d io: %d</span><span class=se>\n</span><span class=s>&#34;</span><span class=p>,</span>
-            <span class=n>rootvp</span><span class=p>,</span> <span class=n>vnode_usecount</span><span class=p>(</span><span class=n>rootvp</span><span class=p>),</span> <span class=n>vnode_iocount</span><span class=p>(</span><span class=n>rootvp</span><span class=p>));</span>
-<span class=p>}</span>
+kern_return_t kext_null_start(kmod_info_t *ki, <span style=color:#2b91af>void</span> *d)
+{
+    printf(<span style=color:#a31515>&#34;&gt;&gt; %s %s</span><span style=color:#a31515>\n</span><span style=color:#a31515>&#34;</span>, ki-&gt;name, ki-&gt;version);
+    printf(<span style=color:#a31515>&#34;&gt;&gt; hz: %d</span><span style=color:#a31515>\n</span><span style=color:#a31515>&#34;</span>, hz);
+    printf(<span style=color:#a31515>&#34;&gt;&gt; rootvp: %p use: %d io: %d</span><span style=color:#a31515>\n</span><span style=color:#a31515>&#34;</span>,
+            rootvp, vnode_usecount(rootvp), vnode_iocount(rootvp));
+}
 
-<span class=n>kern_return_t</span> <span class=nf>kext_null_stop</span><span class=p>(</span><span class=n>kmod_info_t</span> <span class=o>*</span><span class=n>ki</span><span class=p>,</span> <span class=kt>void</span> <span class=o>*</span><span class=n>d</span><span class=p>)</span>
-<span class=p>{</span>
-    <span class=k>return</span> <span class=n>KERN_SUCCESS</span><span class=p>;</span>
-<span class=p>}</span>
-</code></pre></td></tr></table>
-</div>
-</div><div class=highlight><div class=chroma>
-<table class=lntable><tr><td class=lntd>
-<pre tabindex=0 class=chroma><code><span class=lnt>1
-</span><span class=lnt>2
-</span><span class=lnt>3
-</span><span class=lnt>4
-</span><span class=lnt>5
-</span></code></pre></td>
-<td class=lntd>
-<pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback>$ sudo kextload kext-null.kext
+kern_return_t kext_null_stop(kmod_info_t *ki, <span style=color:#2b91af>void</span> *d)
+{
+    <span style=color:#00f>return</span> KERN_SUCCESS;
+}
+</code></pre></div><div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>$ sudo kextload kext-null.kext
 $ sudo dmesg | grep &#34;&gt;&gt;&#34;
 &gt;&gt; com.apple.kext.3rd.kext-null 1
 &gt;&gt; hz: 100
 &gt;&gt; rootvp: &lt;ptr&gt; use: 2 io: 0
-</code></pre></td></tr></table>
-</div>
-</div><p> </p>
+</code></pre></div><p> </p>
 <p>Though it takes no effort to jailbreak such restriction, I personally still not recommend you guys do this. Basically it for Apple internal use.</p>
 <p>In an incoming article(If I&rsquo;m free), I&rsquo;ll illustrate HOWTO resolve kernel symbols even if they&rsquo;re missing in KPIs.</p>
-<script src=https://utteranc.es/client.js repo=leiless/blog issue-term=pathname label=comment theme=github-light crossorigin=anonymous async></script>
-</article>
-<footer>
-<p>
-<a href=https://leiless.me/>一个程序员的辩白</a> <span style=color:gray>&copy;</span> 2017 - 2021. Proudly made with <a href=https://gohugo.io/ target=_blank>Hugo</a> and <a href=https://tailwindcss.com/ target=_blank>TailwindCSS</a>.
-</p>
-<p style=margin-top:-15px;font-size:10px>Released under <a href=https://creativecommons.org/licenses/by-nc-sa/4.0/>CC BY-NC-SA 4.0</a> license.</p>
-</footer>
 </div>
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-RMJ7KLHXH8"></script>
-<script>var doNotTrack=!1;if(!doNotTrack){window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag('js',new Date),gtag('config','G-RMJ7KLHXH8',{anonymize_ip:!1})}</script>
-<script>(function(a,c,d,e){if(typeof a.webpushr!='undefined')return;a.webpushr=a.webpushr||function(){(a.webpushr.q=a.webpushr.q||[]).push(arguments)};var b,f=c.getElementsByTagName(d)[0];b=c.createElement(d),b.id=e,b.async=1,b.src="https://cdn.webpushr.com/app.min.js",f.parentNode.appendChild(b)})(window,document,'script','webpushr-jssdk'),webpushr('setup',{key:'BJji5mvLAV3k-EncfEEH_CtK_CdcXWnXc-fvhs7uY1jfOG4xX_RsBmoWvTD0OTyq6TOEB5G5_uFE6Ylpxj5MKEQ'})</script>
+<div class=tags>
+</div></div>
+</div>
+<div class="footer wrapper">
+<nav class=nav>
+<div>2021 Released under <a href=https://creativecommons.org/licenses/by-nc-sa/4.0/>CC BY-NC-SA 4.0</a> license | <a href=https://github.com/knadh/hugo-ink>Ink</a> theme on <a href=https://gohugo.io>Hugo</a></div>
+</nav>
+</div>
+<script type=application/javascript>var doNotTrack=!1;doNotTrack||(window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)},ga.l=+new Date,ga('create','G-RMJ7KLHXH8','auto'),ga('send','pageview'))</script>
+<script async src=https://www.google-analytics.com/analytics.js></script>
+<script>feather.replace()</script>
 </body>
 </html>

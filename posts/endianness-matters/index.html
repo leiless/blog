@@ -1,50 +1,67 @@
-<!doctype html><html lang>
+<!doctype html><html>
 <head>
 <meta charset=utf-8>
-<meta name=generator content="Hugo 0.87.0">
-<meta http-equiv=x-ua-compatible content="IE=edge">
-<meta name=viewport content="width=device-width,initial-scale=1,shrink-to-fit=no">
-<meta name=twitter:card content="summary">
-<meta name=twitter:title content="Endianness Matters - 一个程序员的辩白">
-<meta name=twitter:description content="Things happen rarely if you&amp;rsquo;re in an application-level development and want to write endian-independant code.
-Occasionally, you need to consider about endian in low-level view, but that might confusing and even erroneous if you don&amp;rsquo;t fully understand it.
+<meta http-equiv=x-ua-compatible content="IE=edge"><title>Endianness Matters - 一个程序员的辩白</title><meta name=viewport content="width=device-width,initial-scale=1">
+<meta itemprop=name content="Endianness Matters">
+<meta itemprop=description content="Things happen rarely if you&rsquo;re in an application-level development and want to write endian-independant code.
+Occasionally, you need to consider about endian in low-level view, but that might confusing and even erroneous if you don&rsquo;t fully understand it.
  Before we begin to talking about why endian matters, a brief introduction of endian is needed.
- Endian for short, is the physical organization schema of the sequential stream. Note that it&amp;rsquo;s not exclusive only to computer science field.">
-<meta name=twitter:site content="https://leiless.me/">
-<meta name=twitter:creator content>
-<meta name=twitter:image content="https://leiless.me/avatar.jpg">
-<meta property="og:locale" content>
+ Endian for short, is the physical organization schema of the sequential stream. Note that it&rsquo;s not exclusive only to computer science field."><meta itemprop=datePublished content="2017-07-22T00:00:00+00:00">
+<meta itemprop=dateModified content="2017-07-22T00:00:00+00:00">
+<meta itemprop=wordCount content="1396">
+<meta itemprop=keywords content><meta property="og:title" content="Endianness Matters">
+<meta property="og:description" content="Things happen rarely if you&rsquo;re in an application-level development and want to write endian-independant code.
+Occasionally, you need to consider about endian in low-level view, but that might confusing and even erroneous if you don&rsquo;t fully understand it.
+ Before we begin to talking about why endian matters, a brief introduction of endian is needed.
+ Endian for short, is the physical organization schema of the sequential stream. Note that it&rsquo;s not exclusive only to computer science field.">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Endianness Matters - 一个程序员的辩白">
-<meta property="og:description" content="Things happen rarely if you&amp;rsquo;re in an application-level development and want to write endian-independant code.
-Occasionally, you need to consider about endian in low-level view, but that might confusing and even erroneous if you don&amp;rsquo;t fully understand it.
+<meta property="og:url" content="https://leiless.me/posts/endianness-matters/"><meta property="article:section" content="posts">
+<meta property="article:published_time" content="2017-07-22T00:00:00+00:00">
+<meta property="article:modified_time" content="2017-07-22T00:00:00+00:00">
+<meta name=twitter:card content="summary">
+<meta name=twitter:title content="Endianness Matters">
+<meta name=twitter:description content="Things happen rarely if you&rsquo;re in an application-level development and want to write endian-independant code.
+Occasionally, you need to consider about endian in low-level view, but that might confusing and even erroneous if you don&rsquo;t fully understand it.
  Before we begin to talking about why endian matters, a brief introduction of endian is needed.
- Endian for short, is the physical organization schema of the sequential stream. Note that it&amp;rsquo;s not exclusive only to computer science field.">
-<meta property="og:url" content="https://leiless.me/posts/endianness-matters/">
-<meta property="og:site_name" content="一个程序员的辩白">
-<meta property="og:image" content="https://leiless.me/avatar.jpg">
-<title>Endianness Matters - 一个程序员的辩白</title>
-<meta name=author content="Fishbone">
-<meta name=description content="Things happen rarely if you&amp;rsquo;re in an application-level development and want to write endian-independant code.
-Occasionally, you need to consider about endian in low-level view, but that might confusing and even erroneous if you don&amp;rsquo;t fully understand it.
- Before we begin to talking about why endian matters, a brief introduction of endian is needed.
- Endian for short, is the physical organization schema of the sequential stream. Note that it&amp;rsquo;s not exclusive only to computer science field.">
-<link rel=stylesheet href="https://fonts.googleapis.com/css?family=Source+Code+Pro|Arvo:400,700">
-<link rel=stylesheet href=https://leiless.me/css/theme.css>
-<link rel=stylesheet href=https://leiless.me/css/chroma.dracula.css>
+ Endian for short, is the physical organization schema of the sequential stream. Note that it&rsquo;s not exclusive only to computer science field.">
+<link href="https://fonts.googleapis.com/css?family=Playfair+Display:700" rel=stylesheet type=text/css>
+<link rel=stylesheet type=text/css media=screen href=https://leiless.me/css/normalize.css>
+<link rel=stylesheet type=text/css media=screen href=https://leiless.me/css/main.css>
+<link id=dark-scheme rel=stylesheet type=text/css href=https://leiless.me/css/dark.css>
+<script src=https://leiless.me/js/feather.min.js></script>
+<script src=https://leiless.me/js/main.js></script>
 </head>
-<body class="font-serif bg-gray-200 border-t-4 border-blue-500 antialiased">
-<div class="w-full p-6 md:w-2/3 md:px-0 md:mx-auto xl:w-2/5">
-<header class=mb-6>
-<div class="mb-6 md:flex md:items-center">
-<div>
-<a class="text-lg mb-8 inline-block" href=/>&larr; Back Home</a>
-<h1 class="text-4xl font-bold">Endianness Matters</h1>
-<time datetime="2017-07-22 00:00:00 UTC">22 Jul 2017</time>
+<body>
+<div class="container wrapper">
+<div class=header>
+<div class=avatar>
+<a href=https://leiless.me/>
+<img src=../../avatar.jpg alt=一个程序员的辩白>
+</a>
+</div>
+<h1 class=site-title><a href=https://leiless.me/>一个程序员的辩白</a></h1>
+<div class=site-description><p>关注分布式系统，DBMS，CI/CD，Deterministic Simulation。</p><nav class="nav social">
+<ul class=flat><li><a href=https://github.com/leiless title=GitHub><i data-feather=github></i></a></li><li><a href=https://twitter.com/funky_fishbone title=Twitter><i data-feather=twitter></i></a></li><li><a href=/index.xml title=RSS><i data-feather=rss></i></a></li><li><a href=# class=scheme-toggle id=scheme-toggle></a></li></ul>
+</nav>
+</div>
+<nav class=nav>
+<ul class=flat>
+</ul>
+</nav>
+</div>
+<div class=post>
+<div class=post-header>
+<div class=meta>
+<div class=date>
+<span class=day>22</span>
+<span class=rest>Jul 2017</span>
 </div>
 </div>
-</header>
-<article class=mb-12>
+<div class=matter>
+<h1 class=title>Endianness Matters</h1>
+</div>
+</div>
+<div class=markdown>
 <p>Things happen rarely if you&rsquo;re in an application-level development and want to write endian-independant code.</p>
 <p>Occasionally, you need to consider about endian in low-level view, but that might confusing and even erroneous if you don&rsquo;t fully understand it.</p>
 <p> </p>
@@ -153,147 +170,63 @@ Occasionally, you need to consider about endian in low-level view, but that migh
 <p> </p>
 <p>First I&rsquo;ll show you how position-dependent bit operations affects the result:</p>
 <p>Now let&rsquo;s look how reading/writing integers affects the result:</p>
-<div class=highlight><div class=chroma>
-<table class=lntable><tr><td class=lntd>
-<pre tabindex=0 class=chroma><code><span class=lnt> 1
-</span><span class=lnt> 2
-</span><span class=lnt> 3
-</span><span class=lnt> 4
-</span><span class=lnt> 5
-</span><span class=lnt> 6
-</span><span class=lnt> 7
-</span><span class=lnt> 8
-</span><span class=lnt> 9
-</span><span class=lnt>10
-</span><span class=lnt>11
-</span><span class=lnt>12
-</span><span class=lnt>13
-</span><span class=lnt>14
-</span><span class=lnt>15
-</span><span class=lnt>16
-</span><span class=lnt>17
-</span><span class=lnt>18
-</span><span class=lnt>19
-</span><span class=lnt>20
-</span><span class=lnt>21
-</span><span class=lnt>22
-</span><span class=lnt>23
-</span><span class=lnt>24
-</span><span class=lnt>25
-</span><span class=lnt>26
-</span><span class=lnt>27
-</span><span class=lnt>28
-</span></code></pre></td>
-<td class=lntd>
-<pre tabindex=0 class=chroma><code class=language-c data-lang=c><span class=cp>#include</span> <span class=cpf>&lt;stdio.h&gt;</span><span class=cp>
-</span><span class=cp>#include</span> <span class=cpf>&lt;string.h&gt;</span><span class=cp>
-</span><span class=cp></span> 
-<span class=kt>int</span> <span class=nf>main</span> <span class=p>(</span><span class=kt>void</span><span class=p>)</span>
-<span class=p>{</span>
-    <span class=n>FILE</span><span class=o>*</span> <span class=n>fp</span><span class=p>;</span>
+<div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-c data-lang=c><span style=color:#00f>#include</span> <span style=color:#00f>&lt;stdio.h&gt;</span><span style=color:#00f>
+</span><span style=color:#00f>#include</span> <span style=color:#00f>&lt;string.h&gt;</span><span style=color:#00f>
+</span><span style=color:#00f></span> 
+<span style=color:#2b91af>int</span> main (<span style=color:#2b91af>void</span>)
+{
+    FILE* fp;
  
-    <span class=cm>/* Our example data structure */</span>
-    <span class=k>struct</span> <span class=p>{</span>
-        <span class=kt>char</span> <span class=n>one</span><span class=p>[</span><span class=mi>4</span><span class=p>];</span>
-        <span class=kt>int</span>  <span class=n>two</span><span class=p>;</span>
-        <span class=kt>char</span> <span class=n>three</span><span class=p>[</span><span class=mi>4</span><span class=p>];</span>
-    <span class=p>}</span> <span class=n>data</span><span class=p>;</span>
+    <span style=color:green>/* Our example data structure */</span>
+    <span style=color:#00f>struct</span> {
+        <span style=color:#2b91af>char</span> one[4];
+        <span style=color:#2b91af>int</span>  two;
+        <span style=color:#2b91af>char</span> three[4];
+    } data;
  
-    <span class=cm>/* Fill our structure with data */</span>
-    <span class=n>strcpy</span><span class=p>(</span><span class=n>data</span><span class=p>.</span><span class=n>one</span><span class=p>,</span> <span class=s>&#34;foo&#34;</span><span class=p>);</span>
-    <span class=n>data</span><span class=p>.</span><span class=n>two</span> <span class=o>=</span> <span class=mh>0x0a0b0c0d</span><span class=p>;</span>
-    <span class=n>strcpy</span><span class=p>(</span><span class=n>data</span><span class=p>.</span><span class=n>three</span><span class=p>,</span> <span class=s>&#34;bar&#34;</span><span class=p>);</span>
+    <span style=color:green>/* Fill our structure with data */</span>
+    strcpy(data.one, <span style=color:#a31515>&#34;foo&#34;</span>);
+    data.two = 0x0a0b0c0d;
+    strcpy(data.three, <span style=color:#a31515>&#34;bar&#34;</span>);
  
-    <span class=cm>/* Write it to a file */</span>
-    <span class=n>fp</span> <span class=o>=</span> <span class=n>fopen</span><span class=p>(</span><span class=s>&#34;output&#34;</span><span class=p>,</span> <span class=s>&#34;wb&#34;</span><span class=p>);</span>
-    <span class=k>if</span> <span class=p>(</span><span class=n>fp</span><span class=p>)</span> <span class=p>{</span>
-        <span class=n>fwrite</span><span class=p>(</span><span class=o>&amp;</span><span class=n>data</span><span class=p>,</span> <span class=k>sizeof</span><span class=p>(</span><span class=n>data</span><span class=p>),</span> <span class=mi>1</span><span class=p>,</span> <span class=n>fp</span><span class=p>);</span>
-        <span class=n>fclose</span><span class=p>(</span><span class=n>fp</span><span class=p>);</span>
-    <span class=p>}</span>
+    <span style=color:green>/* Write it to a file */</span>
+    fp = fopen(<span style=color:#a31515>&#34;output&#34;</span>, <span style=color:#a31515>&#34;wb&#34;</span>);
+    <span style=color:#00f>if</span> (fp) {
+        fwrite(&amp;data, <span style=color:#00f>sizeof</span>(data), 1, fp);
+        fclose(fp);
+    }
 
-    <span class=k>return</span> <span class=mi>0</span><span class=p>;</span>
-<span class=p>}</span>
-</code></pre></td></tr></table>
-</div>
-</div><p>If you compile above code, contents of file <code>output</code> varies(Using <code>hexdump</code> utilities to show the result, with argument <code>-C</code>):</p>
+    <span style=color:#00f>return</span> 0;
+}
+</code></pre></div><p>If you compile above code, contents of file <code>output</code> varies(Using <code>hexdump</code> utilities to show the result, with argument <code>-C</code>):</p>
 <p>Little endianness:</p>
-<div class=highlight><div class=chroma>
-<table class=lntable><tr><td class=lntd>
-<pre tabindex=0 class=chroma><code><span class=lnt>1
-</span><span class=lnt>2
-</span></code></pre></td>
-<td class=lntd>
-<pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback>00000000  66 6f 6f 00 0d 0c 0b 0a  62 61 72 00              |foo.....bar.|
+<div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>00000000  66 6f 6f 00 0d 0c 0b 0a  62 61 72 00              |foo.....bar.|
 0000000c
-</code></pre></td></tr></table>
-</div>
-</div><p>Big endianness:</p>
-<div class=highlight><div class=chroma>
-<table class=lntable><tr><td class=lntd>
-<pre tabindex=0 class=chroma><code><span class=lnt>1
-</span><span class=lnt>2
-</span></code></pre></td>
-<td class=lntd>
-<pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback>00000000  66 6f 6f 00 0a 0b 0c 0d  62 61 72 00              |foo.....bar.|
+</code></pre></div><p>Big endianness:</p>
+<div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>00000000  66 6f 6f 00 0a 0b 0c 0d  62 61 72 00              |foo.....bar.|
 0000000c
-</code></pre></td></tr></table>
-</div>
-</div><p>Middle endianness:</p>
-<div class=highlight><div class=chroma>
-<table class=lntable><tr><td class=lntd>
-<pre tabindex=0 class=chroma><code><span class=lnt>1
-</span><span class=lnt>2
-</span></code></pre></td>
-<td class=lntd>
-<pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback>00000000  66 6f 6f 00 0b 0a 0d 0c  62 61 72 00              |foo.....bar.|
+</code></pre></div><p>Middle endianness:</p>
+<div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>00000000  66 6f 6f 00 0b 0a 0d 0c  62 61 72 00              |foo.....bar.|
 0000000c
-</code></pre></td></tr></table>
-</div>
-</div><p>The byte between offset 4 to 7 varies in different architectures. If you want to read/write the <code>data.two</code> in a correct way, you may need to add an extra field to indicate the endianness when writing to the file <code>output</code>, like:</p>
-<div class=highlight><div class=chroma>
-<table class=lntable><tr><td class=lntd>
-<pre tabindex=0 class=chroma><code><span class=lnt>1
-</span><span class=lnt>2
-</span><span class=lnt>3
-</span><span class=lnt>4
-</span></code></pre></td>
-<td class=lntd>
-<pre tabindex=0 class=chroma><code class=language-c data-lang=c><span class=k>struct</span> <span class=p>{</span>
-    <span class=kt>char</span> <span class=n>endian</span><span class=p>;</span>    <span class=cm>/* Indicate what&#39;s endianness when writing to this struct on your machine */</span>
-    <span class=cm>/* (data fields) ... */</span>
-<span class=p>}</span> <span class=n>data</span><span class=p>;</span>
-</code></pre></td></tr></table>
-</div>
-</div><p>Or, alternatively, convert the numeric value into its corresponding string representation.</p>
+</code></pre></div><p>The byte between offset 4 to 7 varies in different architectures. If you want to read/write the <code>data.two</code> in a correct way, you may need to add an extra field to indicate the endianness when writing to the file <code>output</code>, like:</p>
+<div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-c data-lang=c><span style=color:#00f>struct</span> {
+    <span style=color:#2b91af>char</span> endian;    <span style=color:green>/* Indicate what&#39;s endianness when writing to this struct on your machine */</span>
+    <span style=color:green>/* (data fields) ... */</span>
+} data;
+</code></pre></div><p>Or, alternatively, convert the numeric value into its corresponding string representation.</p>
 <p> </p>
 <p>You can see how <a href=https://github.com/vadmium/module-init-tools/blob/master/util.c#L200><code>module-init-tools/util.c:native_endianness()</code></a> implment endianness check:</p>
-<div class=highlight><div class=chroma>
-<table class=lntable><tr><td class=lntd>
-<pre tabindex=0 class=chroma><code><span class=lnt> 1
-</span><span class=lnt> 2
-</span><span class=lnt> 3
-</span><span class=lnt> 4
-</span><span class=lnt> 5
-</span><span class=lnt> 6
-</span><span class=lnt> 7
-</span><span class=lnt> 8
-</span><span class=lnt> 9
-</span><span class=lnt>10
-</span></code></pre></td>
-<td class=lntd>
-<pre tabindex=0 class=chroma><code class=language-c data-lang=c><span class=cm>/*
-</span><span class=cm> * Get CPU endianness. 0 = unknown, 1 = ELFDATA2LSB = little, 2 = ELFDATA2MSB = big
-</span><span class=cm> */</span>
-<span class=kt>int</span> <span class=nf>__attribute__</span> <span class=p>((</span><span class=n>pure</span><span class=p>))</span> <span class=n>native_endianness</span><span class=p>()</span>
-<span class=p>{</span>
-    <span class=cm>/* Encoding the endianness enums in a string and then reading that
-</span><span class=cm>     * string as a 32-bit int, returns the correct endianness automagically.
-</span><span class=cm>     */</span>
-    <span class=k>return</span> <span class=p>(</span><span class=kt>char</span><span class=p>)</span> <span class=o>*</span><span class=p>((</span><span class=kt>uint32_t</span><span class=o>*</span><span class=p>)(</span><span class=s>&#34;</span><span class=se>\1\0\0\2</span><span class=s>&#34;</span><span class=p>));</span>
-<span class=p>}</span>
-</code></pre></td></tr></table>
-</div>
-</div><table>
+<div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-c data-lang=c><span style=color:green>/*
+</span><span style=color:green> * Get CPU endianness. 0 = unknown, 1 = ELFDATA2LSB = little, 2 = ELFDATA2MSB = big
+</span><span style=color:green> */</span>
+<span style=color:#2b91af>int</span> __attribute__ ((pure)) native_endianness()
+{
+    <span style=color:green>/* Encoding the endianness enums in a string and then reading that
+</span><span style=color:green>     * string as a 32-bit int, returns the correct endianness automagically.
+</span><span style=color:green>     */</span>
+    <span style=color:#00f>return</span> (<span style=color:#2b91af>char</span>) *((<span style=color:#2b91af>uint32_t</span>*)(<span style=color:#a31515>&#34;</span><span style=color:#a31515>\1\0\0\2</span><span style=color:#a31515>&#34;</span>));
+}
+</code></pre></div><table>
 <thead>
 <tr>
 <th>Endianness type</th>
@@ -322,135 +255,66 @@ Occasionally, you need to consider about endian in low-level view, but that migh
 <p>It&rsquo;s a concise solution indeed, the idea behind this routine is simple, making <code>"\1\0\0\2"</code> to a <code>uint32_t *</code> pointer and fetch its least significant byte. the result is the type of endianness, revealed in above table.</p>
 <p> </p>
 <p>Also, <a href=https://fossies.org/linux/ffe/src/endian.c><code>ffe-0.3.7-1/src/endian.c:check_system_endianess()</code></a> implement the check in a novel way:</p>
-<div class=highlight><div class=chroma>
-<table class=lntable><tr><td class=lntd>
-<pre tabindex=0 class=chroma><code><span class=lnt> 1
-</span><span class=lnt> 2
-</span><span class=lnt> 3
-</span><span class=lnt> 4
-</span><span class=lnt> 5
-</span><span class=lnt> 6
-</span><span class=lnt> 7
-</span><span class=lnt> 8
-</span><span class=lnt> 9
-</span><span class=lnt>10
-</span><span class=lnt>11
-</span><span class=lnt>12
-</span><span class=lnt>13
-</span><span class=lnt>14
-</span><span class=lnt>15
-</span><span class=lnt>16
-</span><span class=lnt>17
-</span><span class=lnt>18
-</span><span class=lnt>19
-</span><span class=lnt>20
-</span><span class=lnt>21
-</span><span class=lnt>22
-</span><span class=lnt>23
-</span><span class=lnt>24
-</span><span class=lnt>25
-</span><span class=lnt>26
-</span><span class=lnt>27
-</span><span class=lnt>28
-</span></code></pre></td>
-<td class=lntd>
-<pre tabindex=0 class=chroma><code class=language-c data-lang=c><span class=cp>#define F_UNKNOWN_ENDIAN 0
-</span><span class=cp>#define F_BIG_ENDIAN 1
-</span><span class=cp>#define F_LITTLE_ENDIAN 3
-</span><span class=cp></span>
-<span class=cp>#define LONG_INT 0x0a0b0c0d
-</span><span class=cp></span>
-<span class=kt>uint8_t</span> <span class=n>be</span><span class=p>[</span><span class=mi>4</span><span class=p>]</span><span class=o>=</span><span class=p>{</span><span class=mh>0x0a</span><span class=p>,</span><span class=mh>0x0b</span><span class=p>,</span><span class=mh>0x0c</span><span class=p>,</span><span class=mh>0x0d</span><span class=p>};</span>
-<span class=kt>uint8_t</span> <span class=n>le</span><span class=p>[</span><span class=mi>4</span><span class=p>]</span><span class=o>=</span><span class=p>{</span><span class=mh>0x0d</span><span class=p>,</span><span class=mh>0x0c</span><span class=p>,</span><span class=mh>0x0b</span><span class=p>,</span><span class=mh>0x0a</span><span class=p>};</span>
-<span class=kt>uint8_t</span> <span class=n>pe</span><span class=p>[</span><span class=mi>4</span><span class=p>]</span><span class=o>=</span><span class=p>{</span><span class=mh>0x0b</span><span class=p>,</span><span class=mh>0x0a</span><span class=p>,</span><span class=mh>0x0d</span><span class=p>,</span><span class=mh>0x0c</span><span class=p>};</span>
+<div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-c data-lang=c><span style=color:#00f>#define F_UNKNOWN_ENDIAN 0
+</span><span style=color:#00f>#define F_BIG_ENDIAN 1
+</span><span style=color:#00f>#define F_LITTLE_ENDIAN 3
+</span><span style=color:#00f></span>
+<span style=color:#00f>#define LONG_INT 0x0a0b0c0d
+</span><span style=color:#00f></span>
+<span style=color:#2b91af>uint8_t</span> be[4]={0x0a,0x0b,0x0c,0x0d};
+<span style=color:#2b91af>uint8_t</span> le[4]={0x0d,0x0c,0x0b,0x0a};
+<span style=color:#2b91af>uint8_t</span> pe[4]={0x0b,0x0a,0x0d,0x0c};
 
-<span class=n>size_t</span> <span class=n>target_size</span> <span class=o>=</span> <span class=mi>16</span><span class=p>;</span>
-<span class=kt>uint8_t</span> <span class=o>*</span><span class=n>target</span> <span class=o>=</span> <span class=nb>NULL</span><span class=p>;</span>
+size_t target_size = 16;
+<span style=color:#2b91af>uint8_t</span> *target = NULL;
 
-<span class=kt>int</span>
-<span class=nf>check_system_endianess</span><span class=p>()</span>
-<span class=p>{</span>
-    <span class=kt>uint32_t</span> <span class=n>l</span> <span class=o>=</span> <span class=n>LONG_INT</span><span class=p>;</span>
+<span style=color:#2b91af>int</span>
+check_system_endianess()
+{
+    <span style=color:#2b91af>uint32_t</span> l = LONG_INT;
 
-    <span class=k>if</span><span class=p>(</span><span class=n>target</span> <span class=o>==</span> <span class=nb>NULL</span><span class=p>)</span> <span class=n>target</span> <span class=o>=</span> <span class=n>xmalloc</span><span class=p>(</span><span class=n>target_size</span><span class=p>);</span> <span class=c1>// conversion buffer is reserved with malloc in order to ensure proper aligment
-</span><span class=c1></span>
-    <span class=k>if</span><span class=p>(</span><span class=n>memcmp</span><span class=p>(</span><span class=o>&amp;</span><span class=n>l</span><span class=p>,</span><span class=n>be</span><span class=p>,</span><span class=mi>4</span><span class=p>)</span> <span class=o>==</span> <span class=mi>0</span><span class=p>)</span> <span class=k>return</span> <span class=n>F_BIG_ENDIAN</span><span class=p>;</span>
-    <span class=k>if</span><span class=p>(</span><span class=n>memcmp</span><span class=p>(</span><span class=o>&amp;</span><span class=n>l</span><span class=p>,</span><span class=n>le</span><span class=p>,</span><span class=mi>4</span><span class=p>)</span> <span class=o>==</span> <span class=mi>0</span><span class=p>)</span> <span class=k>return</span> <span class=n>F_LITTLE_ENDIAN</span><span class=p>;</span>
-    <span class=k>if</span><span class=p>(</span><span class=n>memcmp</span><span class=p>(</span><span class=o>&amp;</span><span class=n>l</span><span class=p>,</span><span class=n>pe</span><span class=p>,</span><span class=mi>4</span><span class=p>)</span> <span class=o>==</span> <span class=mi>0</span><span class=p>)</span>
-    <span class=p>{</span>
-        <span class=n>fprintf</span><span class=p>(</span><span class=n>stderr</span><span class=p>,</span><span class=s>&#34;Pdp endianess is not supported&#34;</span><span class=p>);</span>
-    <span class=p>}</span>
-    <span class=k>return</span> <span class=n>F_UNKNOWN_ENDIAN</span><span class=p>;</span>
-<span class=p>}</span>
-</code></pre></td></tr></table>
-</div>
-</div><p> </p>
+    <span style=color:#00f>if</span>(target == NULL) target = xmalloc(target_size); <span style=color:green>// conversion buffer is reserved with malloc in order to ensure proper aligment
+</span><span style=color:green></span>
+    <span style=color:#00f>if</span>(memcmp(&amp;l,be,4) == 0) <span style=color:#00f>return</span> F_BIG_ENDIAN;
+    <span style=color:#00f>if</span>(memcmp(&amp;l,le,4) == 0) <span style=color:#00f>return</span> F_LITTLE_ENDIAN;
+    <span style=color:#00f>if</span>(memcmp(&amp;l,pe,4) == 0)
+    {
+        fprintf(stderr,<span style=color:#a31515>&#34;Pdp endianess is not supported&#34;</span>);
+    }
+    <span style=color:#00f>return</span> F_UNKNOWN_ENDIAN;
+}
+</code></pre></div><p> </p>
 <p>With above discussion, a more genetic check routine is given, it fixed the problem with <code>native_endianness()</code> and less tedious:</p>
-<div class=highlight><div class=chroma>
-<table class=lntable><tr><td class=lntd>
-<pre tabindex=0 class=chroma><code><span class=lnt> 1
-</span><span class=lnt> 2
-</span><span class=lnt> 3
-</span><span class=lnt> 4
-</span><span class=lnt> 5
-</span><span class=lnt> 6
-</span><span class=lnt> 7
-</span><span class=lnt> 8
-</span><span class=lnt> 9
-</span><span class=lnt>10
-</span><span class=lnt>11
-</span><span class=lnt>12
-</span><span class=lnt>13
-</span><span class=lnt>14
-</span><span class=lnt>15
-</span><span class=lnt>16
-</span><span class=lnt>17
-</span><span class=lnt>18
-</span><span class=lnt>19
-</span><span class=lnt>20
-</span><span class=lnt>21
-</span><span class=lnt>22
-</span><span class=lnt>23
-</span><span class=lnt>24
-</span><span class=lnt>25
-</span><span class=lnt>26
-</span><span class=lnt>27
-</span><span class=lnt>28
-</span><span class=lnt>29
-</span></code></pre></td>
-<td class=lntd>
-<pre tabindex=0 class=chroma><code class=language-c data-lang=c><span class=cm>/*
-</span><span class=cm> * A more generic endianness check based on module-init-tools/util.c
-</span><span class=cm> * NOTE: Assuming `unsigned int *&#39; sized 32-bit
-</span><span class=cm> *
-</span><span class=cm> * Return values(endianness types):
-</span><span class=cm> *        0x00: little
-</span><span class=cm> *        0x01: big
-</span><span class=cm> *        0x02: middle
-</span><span class=cm> *
-</span><span class=cm> *        0xff: unknown?
-</span><span class=cm> *        0x??: bug?
-</span><span class=cm> */</span>
-<span class=kt>int</span> <span class=nf>get_endian</span><span class=p>(</span><span class=kt>void</span><span class=p>)</span>
-<span class=p>{</span>
-    <span class=kt>unsigned</span> <span class=kt>int</span> <span class=n>mask</span> <span class=o>=</span> <span class=mh>0x0102ff00</span><span class=p>;</span>
-    <span class=k>return</span> <span class=p>(</span><span class=kt>char</span><span class=p>)</span> <span class=o>*</span><span class=p>((</span><span class=kt>unsigned</span> <span class=kt>int</span> <span class=o>*</span><span class=p>)</span> <span class=o>&amp;</span><span class=n>mask</span><span class=p>);</span>
-<span class=p>}</span>
+<div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-c data-lang=c><span style=color:green>/*
+</span><span style=color:green> * A more generic endianness check based on module-init-tools/util.c
+</span><span style=color:green> * NOTE: Assuming `unsigned int *&#39; sized 32-bit
+</span><span style=color:green> *
+</span><span style=color:green> * Return values(endianness types):
+</span><span style=color:green> *        0x00: little
+</span><span style=color:green> *        0x01: big
+</span><span style=color:green> *        0x02: middle
+</span><span style=color:green> *
+</span><span style=color:green> *        0xff: unknown?
+</span><span style=color:green> *        0x??: bug?
+</span><span style=color:green> */</span>
+<span style=color:#2b91af>int</span> get_endian(<span style=color:#2b91af>void</span>)
+{
+    <span style=color:#2b91af>unsigned</span> <span style=color:#2b91af>int</span> mask = 0x0102ff00;
+    <span style=color:#00f>return</span> (<span style=color:#2b91af>char</span>) *((<span style=color:#2b91af>unsigned</span> <span style=color:#2b91af>int</span> *) &amp;mask);
+}
 
-<span class=cm>/*
-</span><span class=cm> * Implement as a macro
-</span><span class=cm> * Note that it used an unnamed array, which may have portability issues
-</span><span class=cm> *
-</span><span class=cm> * 0x01 - Little endian
-</span><span class=cm> * 0x02 - Big endian
-</span><span class=cm> * 0x?? - Unknown endian
-</span><span class=cm> */</span>
-<span class=cp>#define _ENDIAN (*((char *) ((int []) {0x02080401})))
-</span><span class=cp>#define IS_LENDIAN (_ENDIAN &amp; 0x1)
-</span><span class=cp>#define IS_GENDIAN (_ENDIAN &amp; 0x2)
-</span></code></pre></td></tr></table>
-</div>
-</div><p> </p>
+<span style=color:green>/*
+</span><span style=color:green> * Implement as a macro
+</span><span style=color:green> * Note that it used an unnamed array, which may have portability issues
+</span><span style=color:green> *
+</span><span style=color:green> * 0x01 - Little endian
+</span><span style=color:green> * 0x02 - Big endian
+</span><span style=color:green> * 0x?? - Unknown endian
+</span><span style=color:green> */</span>
+<span style=color:#00f>#define _ENDIAN (*((char *) ((int []) {0x02080401})))
+</span><span style=color:#00f>#define IS_LENDIAN (_ENDIAN &amp; 0x1)
+</span><span style=color:#00f>#define IS_GENDIAN (_ENDIAN &amp; 0x2)
+</span></code></pre></div><p> </p>
 <p>Issues also happen in network layers when sending/receiving data between different machine architectures.</p>
 <blockquote>
 <p>All of the protocol layers in the Transmission Control Protocol and the Internet Protocol (TCP/IP) suite are defined to be big-endian. Any 16-bit or 32-bit value within the various layer headers (such as an IP address, a packet length, or a checksum) must be sent and received with its most significant byte first.</p>
@@ -472,25 +336,13 @@ Occasionally, you need to consider about endian in low-level view, but that migh
 <p>For other endianness types(like middle-endianness), the reorder also needed, we don&rsquo;t care now, just follow the similiar tacts.</p>
 <p> </p>
 <p>System(e.g. Linux, macOS, BSD, etc.), already provided those <a href=https://man7.org/linux/man-pages/man3/htonl.3.html>conversional functions</a>:</p>
-<div class=highlight><div class=chroma>
-<table class=lntable><tr><td class=lntd>
-<pre tabindex=0 class=chroma><code><span class=lnt>1
-</span><span class=lnt>2
-</span><span class=lnt>3
-</span><span class=lnt>4
-</span><span class=lnt>5
-</span><span class=lnt>6
-</span></code></pre></td>
-<td class=lntd>
-<pre tabindex=0 class=chroma><code class=language-c data-lang=c><span class=cp>#include</span> <span class=cpf>&lt;arpa/inet.h&gt;</span><span class=cp>
-</span><span class=cp></span>
-<span class=kt>uint32_t</span> <span class=nf>htonl</span><span class=p>(</span><span class=kt>uint32_t</span> <span class=n>hostlong</span><span class=p>);</span>
-<span class=kt>uint16_t</span> <span class=nf>htons</span><span class=p>(</span><span class=kt>uint16_t</span> <span class=n>hostshort</span><span class=p>);</span>
-<span class=kt>uint32_t</span> <span class=nf>ntohl</span><span class=p>(</span><span class=kt>uint32_t</span> <span class=n>netlong</span><span class=p>);</span>
-<span class=kt>uint16_t</span> <span class=nf>ntohs</span><span class=p>(</span><span class=kt>uint16_t</span> <span class=n>netshort</span><span class=p>);</span>
-</code></pre></td></tr></table>
-</div>
-</div><p>For the real example, you can refer to the references at bottom.</p>
+<div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-c data-lang=c><span style=color:#00f>#include</span> <span style=color:#00f>&lt;arpa/inet.h&gt;</span><span style=color:#00f>
+</span><span style=color:#00f></span>
+<span style=color:#2b91af>uint32_t</span> htonl(<span style=color:#2b91af>uint32_t</span> hostlong);
+<span style=color:#2b91af>uint16_t</span> htons(<span style=color:#2b91af>uint16_t</span> hostshort);
+<span style=color:#2b91af>uint32_t</span> ntohl(<span style=color:#2b91af>uint32_t</span> netlong);
+<span style=color:#2b91af>uint16_t</span> ntohs(<span style=color:#2b91af>uint16_t</span> netshort);
+</code></pre></div><p>For the real example, you can refer to the references at bottom.</p>
 <p>Also, if you want to convert from host byte order to other byte orders, you should use the library functions.</p>
 <p>The header file <a href=https://man7.org/linux/man-pages/man3/endian.3.html><code>endian.h</code></a> in Linux consist many byte order related functions you might use.</p>
 <p> </p>
@@ -505,17 +357,17 @@ Occasionally, you need to consider about endian in low-level view, but that migh
 <p><a href=https://en.wikipedia.org/wiki/Endianness>Endianness - Wikipedia</a></p>
 <p><a href=https://www.chessprogramming.org/Endianness>Endianness - ChessProgramming Wiki</a></p>
 </blockquote>
-<script src=https://utteranc.es/client.js repo=leiless/blog issue-term=pathname label=comment theme=github-light crossorigin=anonymous async></script>
-</article>
-<footer>
-<p>
-<a href=https://leiless.me/>一个程序员的辩白</a> <span style=color:gray>&copy;</span> 2017 - 2021. Proudly made with <a href=https://gohugo.io/ target=_blank>Hugo</a> and <a href=https://tailwindcss.com/ target=_blank>TailwindCSS</a>.
-</p>
-<p style=margin-top:-15px;font-size:10px>Released under <a href=https://creativecommons.org/licenses/by-nc-sa/4.0/>CC BY-NC-SA 4.0</a> license.</p>
-</footer>
 </div>
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-RMJ7KLHXH8"></script>
-<script>var doNotTrack=!1;if(!doNotTrack){window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag('js',new Date),gtag('config','G-RMJ7KLHXH8',{anonymize_ip:!1})}</script>
-<script>(function(a,c,d,e){if(typeof a.webpushr!='undefined')return;a.webpushr=a.webpushr||function(){(a.webpushr.q=a.webpushr.q||[]).push(arguments)};var b,f=c.getElementsByTagName(d)[0];b=c.createElement(d),b.id=e,b.async=1,b.src="https://cdn.webpushr.com/app.min.js",f.parentNode.appendChild(b)})(window,document,'script','webpushr-jssdk'),webpushr('setup',{key:'BJji5mvLAV3k-EncfEEH_CtK_CdcXWnXc-fvhs7uY1jfOG4xX_RsBmoWvTD0OTyq6TOEB5G5_uFE6Ylpxj5MKEQ'})</script>
+<div class=tags>
+</div></div>
+</div>
+<div class="footer wrapper">
+<nav class=nav>
+<div>2021 Released under <a href=https://creativecommons.org/licenses/by-nc-sa/4.0/>CC BY-NC-SA 4.0</a> license | <a href=https://github.com/knadh/hugo-ink>Ink</a> theme on <a href=https://gohugo.io>Hugo</a></div>
+</nav>
+</div>
+<script type=application/javascript>var doNotTrack=!1;doNotTrack||(window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)},ga.l=+new Date,ga('create','G-RMJ7KLHXH8','auto'),ga('send','pageview'))</script>
+<script async src=https://www.google-analytics.com/analytics.js></script>
+<script>feather.replace()</script>
 </body>
 </html>

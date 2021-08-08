@@ -1,50 +1,67 @@
-<!doctype html><html lang>
+<!doctype html><html>
 <head>
 <meta charset=utf-8>
-<meta name=generator content="Hugo 0.87.0">
-<meta http-equiv=x-ua-compatible content="IE=edge">
-<meta name=viewport content="width=device-width,initial-scale=1,shrink-to-fit=no">
-<meta name=twitter:card content="summary">
-<meta name=twitter:title content="Pseudorandom in chaos - 一个程序员的辩白">
-<meta name=twitter:description content="Randomized data is commonly used in fuzz testing, game engine, UUID, pipelines, etc.
+<meta http-equiv=x-ua-compatible content="IE=edge"><title>Pseudorandom in chaos - 一个程序员的辩白</title><meta name=viewport content="width=device-width,initial-scale=1">
+<meta itemprop=name content="Pseudorandom in chaos">
+<meta itemprop=description content="Randomized data is commonly used in fuzz testing, game engine, UUID, pipelines, etc.
 Yet due to massive historically reasons, many C programmers tends to misuse the random functionalities.
  rand(3) and srand(3) Those two first appeared in Open Group Issue 1, it may a good starting point to explain why those two are commonly used among other pseudorandom functions.
-As you examine the rand(3) implementation specification, you&amp;rsquo;ll find some caveats:">
-<meta name=twitter:site content="https://leiless.me/">
-<meta name=twitter:creator content>
-<meta name=twitter:image content="https://leiless.me/avatar.jpg">
-<meta property="og:locale" content>
-<meta property="og:type" content="article">
-<meta property="og:title" content="Pseudorandom in chaos - 一个程序员的辩白">
+As you examine the rand(3) implementation specification, you&rsquo;ll find some caveats:"><meta itemprop=datePublished content="2018-05-05T00:00:00+00:00">
+<meta itemprop=dateModified content="2018-05-05T00:00:00+00:00">
+<meta itemprop=wordCount content="1609">
+<meta itemprop=keywords content><meta property="og:title" content="Pseudorandom in chaos">
 <meta property="og:description" content="Randomized data is commonly used in fuzz testing, game engine, UUID, pipelines, etc.
 Yet due to massive historically reasons, many C programmers tends to misuse the random functionalities.
  rand(3) and srand(3) Those two first appeared in Open Group Issue 1, it may a good starting point to explain why those two are commonly used among other pseudorandom functions.
-As you examine the rand(3) implementation specification, you&amp;rsquo;ll find some caveats:">
-<meta property="og:url" content="https://leiless.me/posts/pseudo-random/">
-<meta property="og:site_name" content="一个程序员的辩白">
-<meta property="og:image" content="https://leiless.me/avatar.jpg">
-<title>Pseudorandom in chaos - 一个程序员的辩白</title>
-<meta name=author content="Fishbone">
-<meta name=description content="Randomized data is commonly used in fuzz testing, game engine, UUID, pipelines, etc.
+As you examine the rand(3) implementation specification, you&rsquo;ll find some caveats:">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://leiless.me/posts/pseudo-random/"><meta property="article:section" content="posts">
+<meta property="article:published_time" content="2018-05-05T00:00:00+00:00">
+<meta property="article:modified_time" content="2018-05-05T00:00:00+00:00">
+<meta name=twitter:card content="summary">
+<meta name=twitter:title content="Pseudorandom in chaos">
+<meta name=twitter:description content="Randomized data is commonly used in fuzz testing, game engine, UUID, pipelines, etc.
 Yet due to massive historically reasons, many C programmers tends to misuse the random functionalities.
  rand(3) and srand(3) Those two first appeared in Open Group Issue 1, it may a good starting point to explain why those two are commonly used among other pseudorandom functions.
-As you examine the rand(3) implementation specification, you&amp;rsquo;ll find some caveats:">
-<link rel=stylesheet href="https://fonts.googleapis.com/css?family=Source+Code+Pro|Arvo:400,700">
-<link rel=stylesheet href=https://leiless.me/css/theme.css>
-<link rel=stylesheet href=https://leiless.me/css/chroma.dracula.css>
+As you examine the rand(3) implementation specification, you&rsquo;ll find some caveats:">
+<link href="https://fonts.googleapis.com/css?family=Playfair+Display:700" rel=stylesheet type=text/css>
+<link rel=stylesheet type=text/css media=screen href=https://leiless.me/css/normalize.css>
+<link rel=stylesheet type=text/css media=screen href=https://leiless.me/css/main.css>
+<link id=dark-scheme rel=stylesheet type=text/css href=https://leiless.me/css/dark.css>
+<script src=https://leiless.me/js/feather.min.js></script>
+<script src=https://leiless.me/js/main.js></script>
 </head>
-<body class="font-serif bg-gray-200 border-t-4 border-blue-500 antialiased">
-<div class="w-full p-6 md:w-2/3 md:px-0 md:mx-auto xl:w-2/5">
-<header class=mb-6>
-<div class="mb-6 md:flex md:items-center">
-<div>
-<a class="text-lg mb-8 inline-block" href=/>&larr; Back Home</a>
-<h1 class="text-4xl font-bold">Pseudorandom in chaos</h1>
-<time datetime="2018-05-05 00:00:00 UTC">05 May 2018</time>
+<body>
+<div class="container wrapper">
+<div class=header>
+<div class=avatar>
+<a href=https://leiless.me/>
+<img src=../../avatar.jpg alt=一个程序员的辩白>
+</a>
+</div>
+<h1 class=site-title><a href=https://leiless.me/>一个程序员的辩白</a></h1>
+<div class=site-description><p>关注分布式系统，DBMS，CI/CD，Deterministic Simulation。</p><nav class="nav social">
+<ul class=flat><li><a href=https://github.com/leiless title=GitHub><i data-feather=github></i></a></li><li><a href=https://twitter.com/funky_fishbone title=Twitter><i data-feather=twitter></i></a></li><li><a href=/index.xml title=RSS><i data-feather=rss></i></a></li><li><a href=# class=scheme-toggle id=scheme-toggle></a></li></ul>
+</nav>
+</div>
+<nav class=nav>
+<ul class=flat>
+</ul>
+</nav>
+</div>
+<div class=post>
+<div class=post-header>
+<div class=meta>
+<div class=date>
+<span class=day>05</span>
+<span class=rest>May 2018</span>
 </div>
 </div>
-</header>
-<article class=mb-12>
+<div class=matter>
+<h1 class=title>Pseudorandom in chaos</h1>
+</div>
+</div>
+<div class=markdown>
 <p>Randomized data is commonly used in <a href=https://en.wikipedia.org/wiki/Fuzzing>fuzz testing</a>, game engine, <a href=https://en.wikipedia.org/wiki/Universally_unique_identifier>UUID</a>, pipelines, etc.</p>
 <p>Yet due to massive historically reasons, many C programmers tends to misuse the random functionalities.</p>
 <p> </p>
@@ -93,51 +110,21 @@ it may a good starting point to explain why those two are commonly used among ot
 </blockquote>
 <p>E.g. the srand() have initial seed 1 if no prior srand(3) call is made, in such case, you have no randomness at all.</p>
 <p>So you inevitably need to seed the generator, yet another common misuse of srand(3) is use</p>
-<div class=highlight><div class=chroma>
-<table class=lntable><tr><td class=lntd>
-<pre tabindex=0 class=chroma><code><span class=lnt>1
-</span><span class=lnt>2
-</span><span class=lnt>3
-</span><span class=lnt>4
-</span></code></pre></td>
-<td class=lntd>
-<pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback>#include &lt;stdio.h&gt;
+<div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>#include &lt;stdio.h&gt;
 #include &lt;time.h&gt;
 
 srand((unsigned int) time(NULL));
-</code></pre></td></tr></table>
-</div>
-</div><p>do the seeding, this turns to be a bad practice. To understand why, you may <a href=https://stackoverflow.com/questions/471248/what-is-ultimately-a-time-t-typedef-to>wrapup a test program</a> like the following:</p>
-<div class=highlight><div class=chroma>
-<table class=lntable><tr><td class=lntd>
-<pre tabindex=0 class=chroma><code><span class=lnt>1
-</span><span class=lnt>2
-</span><span class=lnt>3
-</span><span class=lnt>4
-</span><span class=lnt>5
-</span><span class=lnt>6
-</span><span class=lnt>7
-</span></code></pre></td>
-<td class=lntd>
-<pre tabindex=0 class=chroma><code class=language-c data-lang=c><span class=cp>#include</span> <span class=cpf>&lt;time.h&gt;</span><span class=cp>
-</span><span class=cp></span>
-<span class=kt>int</span> <span class=nf>main</span><span class=p>(</span><span class=kt>void</span><span class=p>)</span>
-<span class=p>{</span>
-    <span class=n>time_t</span> <span class=n>a</span><span class=p>;</span>
-    <span class=k>return</span> <span class=mi>0</span><span class=p>;</span>
-<span class=p>}</span>
-</code></pre></td></tr></table>
-</div>
-</div><p>And do the macro-expansion(replace with your favorite C compiler)</p>
-<div class=highlight><div class=chroma>
-<table class=lntable><tr><td class=lntd>
-<pre tabindex=0 class=chroma><code><span class=lnt>1
-</span></code></pre></td>
-<td class=lntd>
-<pre tabindex=0 class=chroma><code class=language-sh data-lang=sh>$ gcc -E test.c <span class=p>|</span> grep time_t
-</code></pre></td></tr></table>
-</div>
-</div><p>You would see the following output</p>
+</code></pre></div><p>do the seeding, this turns to be a bad practice. To understand why, you may <a href=https://stackoverflow.com/questions/471248/what-is-ultimately-a-time-t-typedef-to>wrapup a test program</a> like the following:</p>
+<div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-c data-lang=c><span style=color:#00f>#include</span> <span style=color:#00f>&lt;time.h&gt;</span><span style=color:#00f>
+</span><span style=color:#00f></span>
+<span style=color:#2b91af>int</span> main(<span style=color:#2b91af>void</span>)
+{
+    time_t a;
+    <span style=color:#00f>return</span> 0;
+}
+</code></pre></div><p>And do the macro-expansion(replace with your favorite C compiler)</p>
+<div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh>$ gcc -E test.c | grep time_t
+</code></pre></div><p>You would see the following output</p>
 <blockquote>
 <p>typedef long int __time_t;</p>
 </blockquote>
@@ -154,47 +141,23 @@ srand((unsigned int) time(NULL));
 <p> </p>
 <p>There&rsquo;re many ways to get a better seed</p>
 <h3 id=1-incomplete-time-hash>1. Incomplete time hash</h3>
-<div class=highlight><div class=chroma>
-<table class=lntable><tr><td class=lntd>
-<pre tabindex=0 class=chroma><code><span class=lnt> 1
-</span><span class=lnt> 2
-</span><span class=lnt> 3
-</span><span class=lnt> 4
-</span><span class=lnt> 5
-</span><span class=lnt> 6
-</span><span class=lnt> 7
-</span><span class=lnt> 8
-</span><span class=lnt> 9
-</span><span class=lnt>10
-</span><span class=lnt>11
-</span></code></pre></td>
-<td class=lntd>
-<pre tabindex=0 class=chroma><code class=language-c data-lang=c><span class=kt>unsigned</span> <span class=kt>int</span> <span class=nf>time_seed</span><span class=p>(</span><span class=kt>void</span><span class=p>)</span>
-<span class=p>{</span>
-    <span class=n>time_t</span> <span class=n>now</span> <span class=o>=</span> <span class=n>time</span><span class=p>(</span><span class=nb>NULL</span><span class=p>);</span>
-    <span class=kt>unsigned</span> <span class=kt>char</span> <span class=o>*</span><span class=n>p</span> <span class=o>=</span> <span class=p>(</span><span class=kt>unsigned</span> <span class=kt>char</span> <span class=o>*</span><span class=p>)</span> <span class=o>&amp;</span><span class=n>now</span><span class=p>;</span>
-    <span class=kt>unsigned</span> <span class=kt>int</span> <span class=n>seed</span> <span class=o>=</span> <span class=mi>0</span><span class=p>;</span>
+<div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-c data-lang=c><span style=color:#2b91af>unsigned</span> <span style=color:#2b91af>int</span> time_seed(<span style=color:#2b91af>void</span>)
+{
+    time_t now = time(NULL);
+    <span style=color:#2b91af>unsigned</span> <span style=color:#2b91af>char</span> *p = (<span style=color:#2b91af>unsigned</span> <span style=color:#2b91af>char</span> *) &amp;now;
+    <span style=color:#2b91af>unsigned</span> <span style=color:#2b91af>int</span> seed = 0;
 
-    <span class=k>for</span> <span class=p>(</span><span class=n>size_t</span> <span class=n>i</span> <span class=o>=</span> <span class=mi>0</span><span class=p>;</span> <span class=n>i</span> <span class=o>&lt;</span> <span class=k>sizeof</span><span class=p>(</span><span class=n>now</span><span class=p>);</span> <span class=n>i</span><span class=o>++</span><span class=p>)</span>
-        <span class=n>seed</span> <span class=o>=</span> <span class=n>seed</span> <span class=o>*</span> <span class=p>(</span><span class=n>UCHAR_MAX</span> <span class=o>+</span> <span class=mi>2U</span><span class=p>)</span> <span class=o>+</span> <span class=n>p</span><span class=p>[</span><span class=n>i</span><span class=p>];</span>
+    <span style=color:#00f>for</span> (size_t i = 0; i &lt; <span style=color:#00f>sizeof</span>(now); i++)
+        seed = seed * (UCHAR_MAX + 2U) + p[i];
 
-    <span class=k>return</span> <span class=n>seed</span><span class=p>;</span>
-<span class=p>}</span>
-</code></pre></td></tr></table>
-</div>
-</div><p>This solution give by <a href=http://www.eternallyconfuzzled.com/arts/jsw_art_rand.aspx>Julienne Walker</a>, yet it turns out incomplete in subsecond-level.</p>
+    <span style=color:#00f>return</span> seed;
+}
+</code></pre></div><p>This solution give by <a href=http://www.eternallyconfuzzled.com/arts/jsw_art_rand.aspx>Julienne Walker</a>, yet it turns out incomplete in subsecond-level.</p>
 <p>Still produce the same value within a second, though it&rsquo;s hashed.</p>
 <p> </p>
 <h3 id=2-predictable-entropy>2. Predictable entropy</h3>
-<div class=highlight><div class=chroma>
-<table class=lntable><tr><td class=lntd>
-<pre tabindex=0 class=chroma><code><span class=lnt>1
-</span></code></pre></td>
-<td class=lntd>
-<pre tabindex=0 class=chroma><code class=language-c data-lang=c><span class=kt>int</span> <span class=n>seed</span> <span class=o>=</span> <span class=p>(</span><span class=kt>int</span><span class=p>)</span> <span class=n>time</span><span class=p>(</span><span class=nb>NULL</span><span class=p>)</span> <span class=o>%</span> <span class=n>getpid</span><span class=p>()</span> <span class=o>+</span> <span class=n>getppid</span><span class=p>();</span>
-</code></pre></td></tr></table>
-</div>
-</div><p>This solution give by <a href=https://www.astro.umd.edu/~ricotti/NEWWEB/teaching/ASTR415/>Massimo Ricotti</a> in his Astronomy class. (awe)</p>
+<div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-c data-lang=c><span style=color:#2b91af>int</span> seed = (<span style=color:#2b91af>int</span>) time(NULL) % getpid() + getppid();
+</code></pre></div><p>This solution give by <a href=https://www.astro.umd.edu/~ricotti/NEWWEB/teaching/ASTR415/>Massimo Ricotti</a> in his Astronomy class. (awe)</p>
 <p>Still subsecond-level precision, yet it works pretty fine if you bear this in mind, especially in multithreading environment.</p>
 <p>If you scrutinize this in deep, you&rsquo;ll find the pid may restricted by system configuration.</p>
 <p>Taking Linux as an example, the default maximum pid can be found at <em>/proc/sys/kernel/pid_max</em></p>
@@ -232,154 +195,63 @@ srand((unsigned int) time(NULL));
 <p>Thus the seed is predictable in some ways.</p>
 <p> </p>
 <h3 id=3-too-much-randomness>3. Too much randomness</h3>
-<div class=highlight><div class=chroma>
-<table class=lntable><tr><td class=lntd>
-<pre tabindex=0 class=chroma><code><span class=lnt> 1
-</span><span class=lnt> 2
-</span><span class=lnt> 3
-</span><span class=lnt> 4
-</span><span class=lnt> 5
-</span><span class=lnt> 6
-</span><span class=lnt> 7
-</span><span class=lnt> 8
-</span><span class=lnt> 9
-</span><span class=lnt>10
-</span><span class=lnt>11
-</span><span class=lnt>12
-</span><span class=lnt>13
-</span></code></pre></td>
-<td class=lntd>
-<pre tabindex=0 class=chroma><code class=language-c data-lang=c><span class=cp>#include</span> <span class=cpf>&lt;time.h&gt;</span><span class=cp>
-</span><span class=cp>#include</span> <span class=cpf>&lt;unistd.h&gt;</span><span class=cp>
-</span><span class=cp>#include</span> <span class=cpf>&lt;stdlib.h&gt;</span><span class=cp>
-</span><span class=cp>#include</span> <span class=cpf>&lt;sys/time.h&gt;</span><span class=cp>
-</span><span class=cp></span>
-<span class=kt>void</span> <span class=nf>junk_srandom</span><span class=p>(</span><span class=kt>void</span><span class=p>)</span>
-<span class=p>{</span>
-    <span class=k>struct</span> <span class=n>timeval</span> <span class=n>tv</span><span class=p>;</span>
-    <span class=kt>unsigned</span> <span class=kt>long</span> <span class=n>junk</span><span class=p>;</span> <span class=cm>/* XXX left uninitialized on purpose */</span>
+<div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-c data-lang=c><span style=color:#00f>#include</span> <span style=color:#00f>&lt;time.h&gt;</span><span style=color:#00f>
+</span><span style=color:#00f>#include</span> <span style=color:#00f>&lt;unistd.h&gt;</span><span style=color:#00f>
+</span><span style=color:#00f>#include</span> <span style=color:#00f>&lt;stdlib.h&gt;</span><span style=color:#00f>
+</span><span style=color:#00f>#include</span> <span style=color:#00f>&lt;sys/time.h&gt;</span><span style=color:#00f>
+</span><span style=color:#00f></span>
+<span style=color:#2b91af>void</span> junk_srandom(<span style=color:#2b91af>void</span>)
+{
+    <span style=color:#00f>struct</span> timeval tv;
+    <span style=color:#2b91af>unsigned</span> <span style=color:#2b91af>long</span> junk; <span style=color:green>/* XXX left uninitialized on purpose */</span>
  
-    <span class=n>gettimeofday</span><span class=p>(</span><span class=o>&amp;</span><span class=n>tv</span><span class=p>,</span> <span class=nb>NULL</span><span class=p>);</span>
-    <span class=n>srandom</span><span class=p>((</span><span class=n>getpid</span><span class=p>()</span> <span class=o>&lt;&lt;</span> <span class=mi>16</span><span class=p>)</span> <span class=o>^</span> <span class=n>tv</span><span class=p>.</span><span class=n>tv_sec</span> <span class=o>^</span> <span class=n>tv</span><span class=p>.</span><span class=n>tv_usec</span> <span class=o>^</span> <span class=n>junk</span><span class=p>);</span>
-<span class=p>}</span>
-</code></pre></td></tr></table>
-</div>
-</div><p>This solution give us sub-microsecond level precision seed, sounds great!</p>
+    gettimeofday(&amp;tv, NULL);
+    srandom((getpid() &lt;&lt; 16) ^ tv.tv_sec ^ tv.tv_usec ^ junk);
+}
+</code></pre></div><p>This solution give us sub-microsecond level precision seed, sounds great!</p>
 <p>Yet it leaves undefined behaviour of using uninitialized data. Many compilers will ignored the entire translate unit(in this case, the entire expression) by default or by optimization flags.</p>
 <p>Compile above code and objdump it</p>
 <p><strong><a href=https://godbolt.org/g/HL5tTv>x86-64 gcc 7.3 -O0 flag</a></strong></p>
-<div class=highlight><div class=chroma>
-<table class=lntable><tr><td class=lntd>
-<pre tabindex=0 class=chroma><code><span class=lnt> 1
-</span><span class=lnt> 2
-</span><span class=lnt> 3
-</span><span class=lnt> 4
-</span><span class=lnt> 5
-</span><span class=lnt> 6
-</span><span class=lnt> 7
-</span><span class=lnt> 8
-</span><span class=lnt> 9
-</span><span class=lnt>10
-</span><span class=lnt>11
-</span><span class=lnt>12
-</span><span class=lnt>13
-</span><span class=lnt>14
-</span><span class=lnt>15
-</span><span class=lnt>16
-</span><span class=lnt>17
-</span><span class=lnt>18
-</span><span class=lnt>19
-</span><span class=lnt>20
-</span><span class=lnt>21
-</span><span class=lnt>22
-</span><span class=lnt>23
-</span></code></pre></td>
-<td class=lntd>
-<pre tabindex=0 class=chroma><code class=language-asm data-lang=asm><span class=nl>junk_srandom:</span>
-        <span class=nf>push</span>    <span class=no>rbp</span>
-        <span class=nf>mov</span>     <span class=no>rbp</span><span class=p>,</span> <span class=no>rsp</span>
-        <span class=nf>sub</span>     <span class=no>rsp</span><span class=p>,</span> <span class=mi>32</span>
-        <span class=nf>lea</span>     <span class=no>rax</span><span class=p>,</span> <span class=p>[</span><span class=no>rbp-32</span><span class=p>]</span>
-        <span class=nf>mov</span>     <span class=no>esi</span><span class=p>,</span> <span class=mi>0</span>
-        <span class=nf>mov</span>     <span class=no>rdi</span><span class=p>,</span> <span class=no>rax</span>
-        <span class=nf>call</span>    <span class=no>gettimeofday</span>
-        <span class=nf>call</span>    <span class=no>getpid</span>
-        <span class=nf>sal</span>     <span class=no>eax</span><span class=p>,</span> <span class=mi>16</span>
-        <span class=nf>mov</span>     <span class=no>edx</span><span class=p>,</span> <span class=no>eax</span>
-        <span class=nf>mov</span>     <span class=no>rax</span><span class=p>,</span> <span class=no>QWORD</span> <span class=no>PTR</span> <span class=p>[</span><span class=no>rbp-32</span><span class=p>]</span>     <span class=c># tv.tv_sec
-</span><span class=c></span>        <span class=no>xor</span>     <span class=no>edx</span><span class=p>,</span> <span class=no>eax</span>
-        <span class=nf>mov</span>     <span class=no>rax</span><span class=p>,</span> <span class=no>QWORD</span> <span class=no>PTR</span> <span class=p>[</span><span class=no>rbp-24</span><span class=p>]</span>     <span class=c># tv.tv_usec
-</span><span class=c></span>        <span class=no>xor</span>     <span class=no>eax</span><span class=p>,</span> <span class=no>edx</span>
-        <span class=nf>mov</span>     <span class=no>edx</span><span class=p>,</span> <span class=no>eax</span>
-        <span class=nf>mov</span>     <span class=no>rax</span><span class=p>,</span> <span class=no>QWORD</span> <span class=no>PTR</span> <span class=p>[</span><span class=no>rbp-8</span><span class=p>]</span>      <span class=c># junk
-</span><span class=c></span>        <span class=no>xor</span>     <span class=no>eax</span><span class=p>,</span> <span class=no>edx</span>
-        <span class=nf>mov</span>     <span class=no>edi</span><span class=p>,</span> <span class=no>eax</span>
-        <span class=nf>call</span>    <span class=no>srandom</span>
-        <span class=nf>nop</span>
-        <span class=nf>leave</span>
-        <span class=nf>ret</span>
-</code></pre></td></tr></table>
-</div>
-</div><p><strong><a href=https://godbolt.org/g/zG3MhF>x86-64 gcc 7.3 -O1 flag</a></strong></p>
-<div class=highlight><div class=chroma>
-<table class=lntable><tr><td class=lntd>
-<pre tabindex=0 class=chroma><code><span class=lnt> 1
-</span><span class=lnt> 2
-</span><span class=lnt> 3
-</span><span class=lnt> 4
-</span><span class=lnt> 5
-</span><span class=lnt> 6
-</span><span class=lnt> 7
-</span><span class=lnt> 8
-</span><span class=lnt> 9
-</span><span class=lnt>10
-</span><span class=lnt>11
-</span><span class=lnt>12
-</span><span class=lnt>13
-</span></code></pre></td>
-<td class=lntd>
-<pre tabindex=0 class=chroma><code class=language-asm data-lang=asm><span class=nl>junk_srandom:</span>
-        <span class=nf>sub</span>     <span class=no>rsp</span><span class=p>,</span> <span class=mi>24</span>
-        <span class=nf>mov</span>     <span class=no>esi</span><span class=p>,</span> <span class=mi>0</span>
-        <span class=nf>mov</span>     <span class=no>rdi</span><span class=p>,</span> <span class=no>rsp</span>
-        <span class=nf>call</span>    <span class=no>gettimeofday</span>
-        <span class=nf>call</span>    <span class=no>getpid</span>
-        <span class=nf>mov</span>     <span class=no>rdi</span><span class=p>,</span> <span class=no>QWORD</span> <span class=no>PTR</span> <span class=p>[</span><span class=no>rsp</span><span class=err>+</span><span class=mi>8</span><span class=p>]</span>      <span class=c># tv.tv_usec
-</span><span class=c></span>        <span class=no>xor</span>     <span class=no>edi</span><span class=p>,</span> <span class=no>DWORD</span> <span class=no>PTR</span> <span class=p>[</span><span class=no>rsp</span><span class=p>]</span>        <span class=c># tv.tv_sec
-</span><span class=c></span>        <span class=no>sal</span>     <span class=no>eax</span><span class=p>,</span> <span class=mi>16</span>
-        <span class=nf>xor</span>     <span class=no>edi</span><span class=p>,</span> <span class=no>eax</span>
-        <span class=nf>call</span>    <span class=no>srandom</span>
-        <span class=nf>add</span>     <span class=no>rsp</span><span class=p>,</span> <span class=mi>24</span>
-        <span class=nf>ret</span>
-</code></pre></td></tr></table>
-</div>
-</div><p>You&rsquo;ll notice entire <em>junk</em> variable optimized out(more specifically, the GCC threat it as zero), since its behaviour is undefined. You&rsquo;d better to avoid to use this solution, it&rsquo;s extremely dangerous.</p>
+<div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-asm data-lang=asm>junk_srandom:
+        push    rbp
+        mov     rbp, rsp
+        sub     rsp, 32
+        lea     rax, [rbp-32]
+        mov     esi, 0
+        mov     rdi, rax
+        call    gettimeofday
+        call    getpid
+        sal     eax, 16
+        mov     edx, eax
+        mov     rax, QWORD PTR [rbp-32]     <span style=color:green># tv.tv_sec
+</span><span style=color:green></span>        xor     edx, eax
+        mov     rax, QWORD PTR [rbp-24]     <span style=color:green># tv.tv_usec
+</span><span style=color:green></span>        xor     eax, edx
+        mov     edx, eax
+        mov     rax, QWORD PTR [rbp-8]      <span style=color:green># junk
+</span><span style=color:green></span>        xor     eax, edx
+        mov     edi, eax
+        call    srandom
+        nop
+        leave
+        ret
+</code></pre></div><p><strong><a href=https://godbolt.org/g/zG3MhF>x86-64 gcc 7.3 -O1 flag</a></strong></p>
+<div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-asm data-lang=asm>junk_srandom:
+        sub     rsp, 24
+        mov     esi, 0
+        mov     rdi, rsp
+        call    gettimeofday
+        call    getpid
+        mov     rdi, QWORD PTR [rsp<span>+</span>8]      <span style=color:green># tv.tv_usec
+</span><span style=color:green></span>        xor     edi, DWORD PTR [rsp]        <span style=color:green># tv.tv_sec
+</span><span style=color:green></span>        sal     eax, 16
+        xor     edi, eax
+        call    srandom
+        add     rsp, 24
+        ret
+</code></pre></div><p>You&rsquo;ll notice entire <em>junk</em> variable optimized out(more specifically, the GCC threat it as zero), since its behaviour is undefined. You&rsquo;d better to avoid to use this solution, it&rsquo;s extremely dangerous.</p>
 <p>Yet with <a href=https://godbolt.org/g/B1xkMN>minimal remedy</a>, we can bring it back to life.</p>
-<div class=highlight><div class=chroma>
-<table class=lntable><tr><td class=lntd>
-<pre tabindex=0 class=chroma><code><span class=lnt> 1
-</span><span class=lnt> 2
-</span><span class=lnt> 3
-</span><span class=lnt> 4
-</span><span class=lnt> 5
-</span><span class=lnt> 6
-</span><span class=lnt> 7
-</span><span class=lnt> 8
-</span><span class=lnt> 9
-</span><span class=lnt>10
-</span><span class=lnt>11
-</span><span class=lnt>12
-</span><span class=lnt>13
-</span><span class=lnt>14
-</span><span class=lnt>15
-</span><span class=lnt>16
-</span><span class=lnt>17
-</span><span class=lnt>18
-</span><span class=lnt>19
-</span><span class=lnt>20
-</span></code></pre></td>
-<td class=lntd>
-<pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback>#include &lt;time.h&gt;
+<div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>#include &lt;time.h&gt;
 #include &lt;unistd.h&gt;
 #include &lt;stdlib.h&gt;
 #include &lt;stdint.h&gt;
@@ -399,27 +271,15 @@ void loselose_srand(void)
      */
     srand(((getpid() + getppid()) &lt;&lt; 16) ^ tv.tv_sec ^ tv.tv_usec ^ (p &amp; 0xffff00));
 }
-</code></pre></td></tr></table>
-</div>
-</div><p>This benifits from the <a href=https://en.wikipedia.org/wiki/Address_space_layout_randomization>ASLR</a> technique, which sightly deviated from original junk_srandom().</p>
+</code></pre></div><p>This benifits from the <a href=https://en.wikipedia.org/wiki/Address_space_layout_randomization>ASLR</a> technique, which sightly deviated from original junk_srandom().</p>
 <p>If ASLR not available in your system, you may replace it with clock(3), which is processor time.</p>
 <p> </p>
 <p>Nanosecond level seeding seems overkill, pasted here in case you need it.</p>
-<div class=highlight><div class=chroma>
-<table class=lntable><tr><td class=lntd>
-<pre tabindex=0 class=chroma><code><span class=lnt>1
-</span><span class=lnt>2
-</span><span class=lnt>3
-</span><span class=lnt>4
-</span></code></pre></td>
-<td class=lntd>
-<pre tabindex=0 class=chroma><code class=language-c data-lang=c><span class=cp>#include</span> <span class=cpf>&lt;time.h&gt;</span><span class=cp>
-</span><span class=cp></span>
-<span class=k>struct</span> <span class=n>timespec</span> <span class=n>ts</span><span class=p>;</span>
-<span class=n>clock_gettime</span><span class=p>(</span><span class=n>CLOCK_REALTIME</span><span class=p>,</span> <span class=o>&amp;</span><span class=n>ts</span><span class=p>);</span>
-</code></pre></td></tr></table>
-</div>
-</div><p> </p>
+<div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-c data-lang=c><span style=color:#00f>#include</span> <span style=color:#00f>&lt;time.h&gt;</span><span style=color:#00f>
+</span><span style=color:#00f></span>
+<span style=color:#00f>struct</span> timespec ts;
+clock_gettime(CLOCK_REALTIME, &amp;ts);
+</code></pre></div><p> </p>
 <h2 id=random3-and-srandom3>random(3) and srandom(3)</h2>
 <p>This pair sourced POSIX, fixed several flaws mentioned above.</p>
 <p>As <a href=http://pubs.opengroup.org/onlinepubs/9699919799/functions/srandom.html>the specification</a> states,</p>
@@ -444,17 +304,17 @@ void loselose_srand(void)
 <p><a href=https://kqueue.org/blog/2012/06/25/more-randomness-or-less/>More randomness or less</a></p>
 <p><a href=https://godbolt.org>Compiler Explorer</a></p>
 </blockquote>
-<script src=https://utteranc.es/client.js repo=leiless/blog issue-term=pathname label=comment theme=github-light crossorigin=anonymous async></script>
-</article>
-<footer>
-<p>
-<a href=https://leiless.me/>一个程序员的辩白</a> <span style=color:gray>&copy;</span> 2017 - 2021. Proudly made with <a href=https://gohugo.io/ target=_blank>Hugo</a> and <a href=https://tailwindcss.com/ target=_blank>TailwindCSS</a>.
-</p>
-<p style=margin-top:-15px;font-size:10px>Released under <a href=https://creativecommons.org/licenses/by-nc-sa/4.0/>CC BY-NC-SA 4.0</a> license.</p>
-</footer>
 </div>
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-RMJ7KLHXH8"></script>
-<script>var doNotTrack=!1;if(!doNotTrack){window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag('js',new Date),gtag('config','G-RMJ7KLHXH8',{anonymize_ip:!1})}</script>
-<script>(function(a,c,d,e){if(typeof a.webpushr!='undefined')return;a.webpushr=a.webpushr||function(){(a.webpushr.q=a.webpushr.q||[]).push(arguments)};var b,f=c.getElementsByTagName(d)[0];b=c.createElement(d),b.id=e,b.async=1,b.src="https://cdn.webpushr.com/app.min.js",f.parentNode.appendChild(b)})(window,document,'script','webpushr-jssdk'),webpushr('setup',{key:'BJji5mvLAV3k-EncfEEH_CtK_CdcXWnXc-fvhs7uY1jfOG4xX_RsBmoWvTD0OTyq6TOEB5G5_uFE6Ylpxj5MKEQ'})</script>
+<div class=tags>
+</div></div>
+</div>
+<div class="footer wrapper">
+<nav class=nav>
+<div>2021 Released under <a href=https://creativecommons.org/licenses/by-nc-sa/4.0/>CC BY-NC-SA 4.0</a> license | <a href=https://github.com/knadh/hugo-ink>Ink</a> theme on <a href=https://gohugo.io>Hugo</a></div>
+</nav>
+</div>
+<script type=application/javascript>var doNotTrack=!1;doNotTrack||(window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)},ga.l=+new Date,ga('create','G-RMJ7KLHXH8','auto'),ga('send','pageview'))</script>
+<script async src=https://www.google-analytics.com/analytics.js></script>
+<script>feather.replace()</script>
 </body>
 </html>
