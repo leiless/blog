@@ -4,317 +4,247 @@
 <meta http-equiv=x-ua-compatible content="IE=edge"><title>Useful C tricks - 一个程序员的辩白</title><meta name=viewport content="width=device-width,initial-scale=1">
 <meta itemprop=name content="Useful C tricks">
 <meta itemprop=description content="C is undoubtedly one of my favorite programming language, as I wrote C code in recent years, I&rsquo;ve collected several useful C tricks.
-Some of &lsquo;em taken from popular open source code, you may already know, yet I still hope they can inspire you somehow.
+Some of &rsquo;em taken from popular open source code, you may already know, yet I still hope they can inspire you somehow.
 This is an incremental list from time to time, feel free to share with me if you got any.
 #1 Unused annotation /* * Space between __attribute__ and ( indicates it's not a function call * * [sic] <sys/cdefs."><meta itemprop=datePublished content="2019-02-17T00:00:00+00:00">
 <meta itemprop=dateModified content="2019-02-17T00:00:00+00:00">
 <meta itemprop=wordCount content="1252">
 <meta itemprop=keywords content><meta property="og:title" content="Useful C tricks">
 <meta property="og:description" content="C is undoubtedly one of my favorite programming language, as I wrote C code in recent years, I&rsquo;ve collected several useful C tricks.
-Some of &lsquo;em taken from popular open source code, you may already know, yet I still hope they can inspire you somehow.
+Some of &rsquo;em taken from popular open source code, you may already know, yet I still hope they can inspire you somehow.
 This is an incremental list from time to time, feel free to share with me if you got any.
 #1 Unused annotation /* * Space between __attribute__ and ( indicates it's not a function call * * [sic] <sys/cdefs.">
 <meta property="og:type" content="article">
-<meta property="og:url" content="https://leiless.me/posts/c-tricks/"><meta property="article:section" content="posts">
+<meta property="og:url" content="https://leiless.github.io/blog/posts/c-tricks/"><meta property="article:section" content="posts">
 <meta property="article:published_time" content="2019-02-17T00:00:00+00:00">
 <meta property="article:modified_time" content="2019-02-17T00:00:00+00:00">
 <meta name=twitter:card content="summary">
 <meta name=twitter:title content="Useful C tricks">
 <meta name=twitter:description content="C is undoubtedly one of my favorite programming language, as I wrote C code in recent years, I&rsquo;ve collected several useful C tricks.
-Some of &lsquo;em taken from popular open source code, you may already know, yet I still hope they can inspire you somehow.
+Some of &rsquo;em taken from popular open source code, you may already know, yet I still hope they can inspire you somehow.
 This is an incremental list from time to time, feel free to share with me if you got any.
 #1 Unused annotation /* * Space between __attribute__ and ( indicates it's not a function call * * [sic] <sys/cdefs.">
 <link href="https://fonts.googleapis.com/css?family=Playfair+Display:700" rel=stylesheet type=text/css>
-<link rel=stylesheet type=text/css media=screen href=https://leiless.me/css/normalize.css>
-<link rel=stylesheet type=text/css media=screen href=https://leiless.me/css/main.css>
-<link id=dark-scheme rel=stylesheet type=text/css href=https://leiless.me/css/dark.css>
-<script src=https://leiless.me/js/feather.min.js></script>
-<script src=https://leiless.me/js/main.js></script>
-</head>
-<body>
+<link rel=stylesheet type=text/css media=screen href=https://leiless.github.io/blog/css/normalize.css>
+<link rel=stylesheet type=text/css media=screen href=https://leiless.github.io/blog/css/main.css>
+<link id=dark-scheme rel=stylesheet type=text/css href=https://leiless.github.io/blog/css/dark.css>
+<script src=https://leiless.github.io/blog/js/feather.min.js></script>
+<script src=https://leiless.github.io/blog/js/main.js></script>
+</head><body>
 <div class="container wrapper">
 <div class=header>
 <div class=avatar>
-<a href=https://leiless.me/>
-<img src=../../avatar.jpg alt=一个程序员的辩白>
+<a href=https://leiless.github.io/blog/>
+<img src=avatar.jpg alt=一个程序员的辩白>
 </a>
-</div>
-<h1 class=site-title><a href=https://leiless.me/>一个程序员的辩白</a></h1>
-<div class=site-description><nav class="nav social">
-<ul class=flat><li><a href=https://github.com/leiless title=GitHub><i data-feather=github></i></a></li><li><a href=https://twitter.com/fake_fishbone title=Twitter><i data-feather=twitter></i></a></li><li><a href=/index.xml title=RSS><i data-feather=rss></i></a></li><li><a href=# class=scheme-toggle id=scheme-toggle></a></li></ul>
-</nav>
-</div>
-<nav class=nav>
+</div><h1 class=site-title><a href=https://leiless.github.io/blog/>一个程序员的辩白</a></h1><div class=site-description><nav class="nav social">
+<ul class=flat><li><a href=https://github.com/leiless title=GitHub><i data-feather=github></i></a></li><li><a href=https://twitter.com/space_bohemian title=Twitter><i data-feather=twitter></i></a></li><li><a href=/index.xml title=RSS><i data-feather=rss></i></a></li><li><a href=# class=scheme-toggle id=scheme-toggle></a></li></ul></nav></div><nav class=nav>
 <ul class=flat>
-</ul>
-</nav>
-</div>
-<div class=post>
+</ul></nav></div><div class=post>
 <div class=post-header>
 <div class=meta>
 <div class=date>
 <span class=day>17</span>
 <span class=rest>Feb 2019</span>
-</div>
-</div>
-<div class=matter>
-<h1 class=title>Useful C tricks</h1>
-</div>
-</div>
-<div class=markdown>
-<p><code>C</code> is undoubtedly one of my favorite programming language, as I wrote C code in recent years, I&rsquo;ve collected several useful C tricks.</p>
-<p>Some of &lsquo;em taken from popular open source code, you may already know, yet I still hope they can inspire you somehow.</p>
-<p>This is an incremental list from time to time, feel free to share with me if you got any.</p>
-<h2 id=1-unused-annotation>#1 Unused annotation</h2>
-<div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-c data-lang=c><span style=color:green>/*
-</span><span style=color:green> * Space between __attribute__ and ( indicates it&#39;s not a function call
-</span><span style=color:green> *
-</span><span style=color:green> * [sic] &lt;sys/cdefs.h&gt; (from macOS kernel module header)
-</span><span style=color:green> *  __unused denotes variables and functions that may not be used, preventing
-</span><span style=color:green> *  the compiler from warning about it if not used.
-</span><span style=color:green> */</span>
-<span style=color:#00f>#define __unused 				__attribute__ ((unused))
-</span><span style=color:#00f></span>
-<span style=color:green>/**
-</span><span style=color:green> * Example __unused usage
-</span><span style=color:green> */</span>
-<span style=color:#2b91af>void</span> foobar(<span style=color:#2b91af>int</span> v __unused)
-{
-	...
-}
-</code></pre></div><p>Yet not all C/C++ compiler support GCC-derived <code>__attribute__</code> keyword, in such case, you instead define a macro to suppress compiler unused warning:</p>
-<div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-c data-lang=c><span style=color:#00f>#define UNUSED(arg, ...)    (void) ((void) (arg), ##__VA_ARGS__)
-</span><span style=color:#00f></span>
-<span style=color:green>/**
-</span><span style=color:green> * Example UNUSED usage
-</span><span style=color:green> */</span>
-<span style=color:#2b91af>void</span> foobar(<span style=color:#2b91af>int</span> v)
-{
-	UNUSED(v);
-	...
-}
-</code></pre></div>
-<h2 id=2-compile-time-array-size>#2 Compile-time array size</h2>
-<div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-c data-lang=c><span style=color:green>/**
-</span><span style=color:green> * Use only for array type, NOT strict pointer type
-</span><span style=color:green> * @a			The fixed size array
-</span><span style=color:green> */</span>
-<span style=color:#00f>#define ARRAY_SIZE(a)       (sizeof(a) / sizeof(*a))
-</span></code></pre></div><p>This macro used widely in <a href=https://elixir.bootlin.com/linux/latest/source/include/linux/kernel.h#L72>Linux kernel</a> and <a href=https://elixir.bootlin.com/barebox/latest/source/include/linux/kernel.h#L41>barebox</a>, there&rsquo;re several known variants, listing above for simplicity.</p>
-<h2 id=3-compile-time-strlen3>#3 Compile-time strlen(3)</h2>
-<div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-c data-lang=c><span style=color:green>/**
-</span><span style=color:green> * Should only used for `char[]&#39;  NOT `char *&#39;
-</span><span style=color:green> * Assume ends with null byte(&#39;\0&#39;)
-</span><span style=color:green> */</span>
-<span style=color:#00f>#define STRLEN(s)          (ARRAY_SIZE(s) - 1)
-</span></code></pre></div><p>This macro used for a <code>char</code> array, it acts as if it called <a href=http://man7.org/linux/man-pages/man3/strlen.3.html>strlen(3)</a>, note that it isn&rsquo;t applicable if the <code>char</code> array not ends with null byte, i.e. <code>'\0'</code>.</p>
-<p>Since <code>sizeof(char)</code> always equals to 1, this macro can be further reduce into:</p>
-<div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-c data-lang=c><span style=color:green>/**
-</span><span style=color:green> * Should only used for `char[]&#39;  NOT `char *&#39;
-</span><span style=color:green> * Assume ends with null byte(&#39;\0&#39;)
-</span><span style=color:green> */</span>
-<span style=color:#00f>#define STRLEN(s)          (sizeof(s) - 1)
-</span></code></pre></div><p>Still, there is a generic <code>STRLEN</code> to deal the case aforementioned, this macro used rarely since it&rsquo;s a bit of complicated.</p>
-<div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-c data-lang=c><span style=color:green>/**
-</span><span style=color:green> * Should only used for `char[]&#39;  NOT `char *&#39;
-</span><span style=color:green> */</span>
-<span style=color:#00f>#define STRLEN(s)          (sizeof(s) - !s[sizeof(s)-1])
-</span></code></pre></div>
-<h2 id=4-explicitly-annotate-ignore-the-return-value>#4 Explicitly annotate ignore the return value</h2>
-<p>Case happens when a function return something, yet you don&rsquo;t care.</p>
-<p>For example, you know <a href=http://man7.org/linux/man-pages/man2/signal.2.html>signal(2)</a> won&rsquo;t fail in such case:</p>
-<div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-c data-lang=c><span style=color:#00f>#include</span> <span style=color:#00f>&lt;stdio.h&gt;</span><span style=color:#00f>
-</span><span style=color:#00f>#include</span> <span style=color:#00f>&lt;signal.h&gt;</span><span style=color:#00f>
-</span><span style=color:#00f></span>
-<span style=color:#2b91af>int</span> main(<span style=color:#2b91af>void</span>)
-{
-	signal(SIGPIPE, SIG_IGN); <span style=color:green>/* I don&#39;t give it a shit of what signal(2) returns */</span>
-	...
-	<span style=color:#00f>return</span> 0;
-}
-</code></pre></div><p>Or, you want to implement a microsecond-level <a href=http://man7.org/linux/man-pages/man3/sleep.3.html>sleep(3)</a> function by <a href=http://man7.org/linux/man-pages/man2/select.2.html>select(2)</a>, and you don&rsquo;t care about what <a href=http://man7.org/linux/man-pages/man2/select.2.html>select(2)</a> pumps out:</p>
-<div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-c data-lang=c><span style=color:#00f>#include</span> <span style=color:#00f>&lt;sys/select.h&gt;</span><span style=color:#00f>
-</span><span style=color:#00f></span>
-<span style=color:#2b91af>void</span> usleep(<span style=color:#2b91af>unsigned</span> <span style=color:#2b91af>int</span> us)
-{
-	<span style=color:#00f>struct</span> timeval tv = {us / 1000000, us % 1000000};
-	<span style=color:green>/* I don&#39;t care what select(2) returns  although it may got interrupted */</span>
-	select(0, NULL, NULL, NULL, &amp;tv);
-}
-</code></pre></div><p>Instead of write a comment tell people you don&rsquo;t care return value(In real life, don&rsquo;t expected people will do this nice job for you), you can prepend <code>(void)</code> before function call:</p>
-<div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-c data-lang=c><span style=color:#00f>#include</span> <span style=color:#00f>&lt;stdio.h&gt;</span><span style=color:#00f>
-</span><span style=color:#00f>#include</span> <span style=color:#00f>&lt;signal.h&gt;</span><span style=color:#00f>
-</span><span style=color:#00f></span>
-<span style=color:#2b91af>int</span> main(<span style=color:#2b91af>void</span>)
-{
-	(<span style=color:#2b91af>void</span>) signal(SIGPIPE, SIG_IGN);
-	...
-	<span style=color:#00f>return</span> 0;
-}
-</code></pre></div><div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-c data-lang=c><span style=color:#00f>#include</span> <span style=color:#00f>&lt;sys/select.h&gt;</span><span style=color:#00f>
-</span><span style=color:#00f></span>
-<span style=color:#2b91af>void</span> usleep(<span style=color:#2b91af>unsigned</span> <span style=color:#2b91af>int</span> us)
-{
-	(<span style=color:#2b91af>void</span>) select(0, NULL, NULL, NULL, (<span style=color:#00f>struct</span> timeval[]) {{us / 1000000, us % 1000000}});
-}
-</code></pre></div><p>Note that its usage somewhat like <code>UNUSED</code> macro, yet it won&rsquo;t be optimized out, since it&rsquo;s a function call, in most case it&rsquo;ll have side-effect, compiler won&rsquo;t optimize function call out by default, unless your function marked as <a href=https://gcc.gnu.org/onlinedocs/gcc/Common-Function-Attributes.html><code>const</code> or <code>pure</code></a>.</p>
-<p><code>(void) ...</code> used heavily in FreeBSD kernel, for example, <a href=http://fxr.watson.org/fxr/source/i386/i386/pmap.c>FreeBSD/i386/i386/pmap.c</a></p>
-<h2 id=5-compile-time-condition-assurance>#5 Compile-time condition assurance</h2>
-<div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-c data-lang=c><span style=color:green>/**
-</span><span style=color:green> * Compile-time assurance  see: linux/arch/x86/boot/boot.h
-</span><span style=color:green> */</span>
-<span style=color:#00f>#define BUILD_BUG_ON(cond)      ((void) sizeof(char[1 - 2 * !!(cond)]))
-</span></code></pre></div><p>This macro originally taken from <a href=https://elixir.bootlin.com/linux/latest/source/arch/x86/boot/boot.h#L33>Linux source code</a>, yet I optimized it slightly because it&rsquo;s clumsy.</p>
-<p>It mainly used for assuring some conditions, for example:</p>
-<div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-c data-lang=c><span style=color:green>/* Assure `long&#39; type is 64-bit long */</span>
-BUILD_BUG_ON(<span style=color:#00f>sizeof</span>(<span style=color:#2b91af>long</span>) != 8);
-</code></pre></div><p>Any use of <code>BUILD_BUG_ON</code> macro will eventually be optimized out by the compiler, thus you don&rsquo;t need to worry about nop execution.</p>
-<h2 id=6-branch-predictionsgcc-extension>#6 Branch predictions(GCC extension)</h2>
-<div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-c data-lang=c><span style=color:green>/**
-</span><span style=color:green> * Branch predictions
-</span><span style=color:green> * see: linux/include/linux/compiler.h
-</span><span style=color:green> */</span>
-<span style=color:#00f>#define likely(x)       __builtin_expect(!(x), 0)
-</span><span style=color:#00f>#define unlikely(x)     __builtin_expect(!(x), 1)
-</span></code></pre></div><p>Used heavily in <a href=https://elixir.bootlin.com/linux/latest/source/include/linux/compiler.h#L76>Linux kernel</a>, macro above is slightly different from original form.</p>
-<p>[<a href=https://stackoverflow.com/questions/109710/how-does-the-likely-unlikely-macros-in-the-linux-kernel-works-and-what-is-their>sic</a>] They are hint to the compiler to emit instructions that will cause branch prediction to favour the &ldquo;likely/unlikely&rdquo; side of a jump instruction.</p>
-<p>Compiler will optimize the code according to branch prediction, for examplem, if you have <a href=https://godbolt.org/z/v6lk7v>something</a> like this:</p>
-<div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-c data-lang=c><span style=color:#2b91af>char</span> *istrdup(<span style=color:#00f>const</span> <span style=color:#2b91af>char</span> *s)
-{
-	size_t sz = strlen(s) + 1;
-	<span style=color:#2b91af>char</span> *p = (<span style=color:#2b91af>char</span> *) malloc(sz);
-	<span style=color:#00f>if</span> (unlikely(p == NULL)) <span style=color:#00f>goto</span> out_exit;
-	(<span style=color:#2b91af>void</span>) strcpy(p, s);
-out_exit:
-	<span style=color:#00f>return</span> p;
-}
-</code></pre></div><p>The compiler may happen to optimize your code into <a href=https://godbolt.org/z/6gcjMz>the following form</a>, which its code path is more likely be a pipeline instead of a jumpline:</p>
-<div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-c data-lang=c><span style=color:#2b91af>char</span> *istrdup(<span style=color:#00f>const</span> <span style=color:#2b91af>char</span> *s)
-{
-	size_t sz = strlen(s) + 1;
-	<span style=color:#00f>register</span> <span style=color:#2b91af>char</span> *p = (<span style=color:#2b91af>char</span> *) malloc(sz);
-	<span style=color:#00f>if</span> (likely(p != NULL)) {
-		(<span style=color:#2b91af>void</span>) strcpy(p, s);
-	}
-	<span style=color:#00f>return</span> p;
-}
-</code></pre></div><p>Note that inverted prediction will cause <a href=https://en.wikipedia.org/wiki/Pipeline_stall>CPU pipeline flush</a>, it&rsquo;s better not to use branch prediction instead of using wrong one to cause performance degradation, especially in hot code path.</p>
-<h2 id=7-side-effect-safe-min-max-abs-macrogcc-extension>#7 Side-effect-safe <code>MIN</code>, <code>MAX</code>, <code>ABS</code> macro(GCC extension)</h2>
-<div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-c data-lang=c><span style=color:#00f>#define MIN(a, b) ({        \
-</span><span style=color:#00f>    __typeof(a) _a = (a);   \
-</span><span style=color:#00f>    __typeof(b) _b = (b);   \
-</span><span style=color:#00f>    _a &lt; _b ? _a : _b;      \
-</span><span style=color:#00f>})
-</span><span style=color:#00f></span>
-<span style=color:#00f>#define MAX(a, b) ({        \
-</span><span style=color:#00f>    __typeof(a) _a = (a);   \
-</span><span style=color:#00f>    __typeof(b) _b = (b);   \
-</span><span style=color:#00f>    _a &gt; _b ? _a : _b;      \
-</span><span style=color:#00f>})
-</span><span style=color:#00f></span>
-<span style=color:#00f>#define ABS(x) ({           \
-</span><span style=color:#00f>    __typeof(x) _ = (x);    \
-</span><span style=color:#00f>    _ &gt; 0 ? _ : -_;         \
-</span><span style=color:#00f>})
-</span></code></pre></div><p>Those three are common used math macros, which they&rsquo;re all type-agnostic, and eliminated possible side-effects, it uses GCC <a href=https://gcc.gnu.org/onlinedocs/gcc/Typeof.html>typeof</a> keyword.</p>
-<h2 id=8-sizeof-a-structs-member>#8 Sizeof a struct&rsquo;s member</h2>
-<div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-c data-lang=c><span style=color:#00f>#define STRUCT_MEMBER_SIZEOF(s, m)		sizeof((*((s[0]){})).m)
-</span></code></pre></div><p>Used to get <code>sizeof</code> result inside a struct, without intervention of a struct variable, i.e. <code>struct_var.some_member</code>.</p>
-<p>For example, if you want to <a href=http://man7.org/linux/man-pages/man2/bind.2.html>bind(2)</a> a socket with a name(path), you should check if given <code>path</code> length exceeds <code>struct sockaddr_un.sun_path</code>:</p>
-<div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-c data-lang=c><span style=color:#00f>#include</span> <span style=color:#00f>&lt;stdio.h&gt;</span><span style=color:#00f>
-</span><span style=color:#00f>#include</span> <span style=color:#00f>&lt;string.h&gt;</span><span style=color:#00f>
-</span><span style=color:#00f>#include</span> <span style=color:#00f>&lt;stdlib.h&gt;</span><span style=color:#00f>
-</span><span style=color:#00f>#include</span> <span style=color:#00f>&lt;unistd.h&gt;</span><span style=color:#00f>
-</span><span style=color:#00f>#include</span> <span style=color:#00f>&lt;assert.h&gt;</span><span style=color:#00f>
-</span><span style=color:#00f>#include</span> <span style=color:#00f>&lt;sys/param.h&gt;</span><span style=color:#00f>
-</span><span style=color:#00f>#include</span> <span style=color:#00f>&lt;sys/errno.h&gt;</span><span style=color:#00f>
-</span><span style=color:#00f>#include</span> <span style=color:#00f>&lt;sys/socket.h&gt;</span><span style=color:#00f>
-</span><span style=color:#00f>#include</span> <span style=color:#00f>&lt;sys/un.h&gt;</span><span style=color:#00f>
-</span><span style=color:#00f></span>
-<span style=color:#00f>#define STRUCT_MEMBER_SIZEOF(s, m)		sizeof((*((s[0]){})).m)
-</span><span style=color:#00f></span>
-<span style=color:green>/**
-</span><span style=color:green> * Create a named socket(trivial implementation)
-</span><span style=color:green> * @path        The socket name [XSI]
-</span><span style=color:green> * @return      file descriptor returned if success
-</span><span style=color:green> *              -1 if failed(errno will be set accordingly)
-</span><span style=color:green> */</span>
-<span style=color:#2b91af>int</span> create_named_socket(<span style=color:#00f>const</span> <span style=color:#2b91af>char</span> *path)
-{
-    <span style=color:green>/* XXX: Use of STRUCT_MEMBER_SIZEOF macro */</span>
-    <span style=color:#00f>static</span> size_t LIMIT = STRUCT_MEMBER_SIZEOF(<span style=color:#00f>struct</span> sockaddr_un, sun_path);
-    <span style=color:#2b91af>int</span> fd = -1;
-    size_t len;
-    <span style=color:#00f>struct</span> sockaddr_un sun;
-
-    assert(path != NULL);
-
-    len = strlen(path);
-    <span style=color:green>/* struct sockaddr_un.sun_path[10x] */</span>
-    <span style=color:#00f>if</span> (len &gt;= LIMIT) {
-        errno = ENAMETOOLONG;
-        fprintf(stderr, <span style=color:#a31515>&#34;Path %s too long  %zu vs %zu</span><span style=color:#a31515>\n</span><span style=color:#a31515>&#34;</span>, path, len, LIMIT);
-        <span style=color:#00f>goto</span> out_exit;
-    }
-
-    fd = socket(AF_UNIX, SOCK_STREAM, 0);
-    <span style=color:#00f>if</span> (fd &lt; 0) {
-        fprintf(stderr, <span style=color:#a31515>&#34;socket(2) fail  errno: %d</span><span style=color:#a31515>\n</span><span style=color:#a31515>&#34;</span>, errno);
-        <span style=color:#00f>goto</span> out_exit;
-    }
-
-    sun.sun_family = AF_UNIX;
-    (<span style=color:#2b91af>void</span>) strcpy(sun.sun_path, path);
-<span style=color:#00f>#if defined(__APPLE__) || defined(BSD)
-</span><span style=color:#00f></span>    sun.sun_len = (<span style=color:#2b91af>unsigned</span> <span style=color:#2b91af>char</span>) SUN_LEN(&amp;sun);
-<span style=color:#00f>#endif
-</span><span style=color:#00f></span>
-    <span style=color:#00f>if</span> (bind(fd, (<span style=color:#00f>struct</span> sockaddr *) &amp;sun, <span style=color:#00f>sizeof</span>(sun)) &lt; 0) {
-        fprintf(stderr, <span style=color:#a31515>&#34;bind(2) fail  fd: %d path: %s errno: %d</span><span style=color:#a31515>\n</span><span style=color:#a31515>&#34;</span>, fd, path, errno);
-        <span style=color:#00f>goto</span> out_fail;
-    }
-
-    <span style=color:#00f>if</span> (listen(fd, SOMAXCONN) &lt; 0) {
-        fprintf(stderr, <span style=color:#a31515>&#34;listen(2) fail  fd: %d path: %s errno: %d</span><span style=color:#a31515>\n</span><span style=color:#a31515>&#34;</span>, fd, path, errno);
-        <span style=color:#00f>goto</span> out_fail;
-    }
-
-    printf(<span style=color:#a31515>&#34;socket created   fd: %d path: %s</span><span style=color:#a31515>\n</span><span style=color:#a31515>&#34;</span>, fd, path);
-
-out_exit:
-    <span style=color:#00f>return</span> fd;
-out_fail:
-    (<span style=color:#2b91af>void</span>) close(fd);
-    fd = -1;
-    <span style=color:#00f>goto</span> out_exit;
-}
-</code></pre></div>
-<h2 id=wrap-up>Wrap up</h2>
-<p><a href=https://github.com/leiless/assertf.h>leiless/assertf.h</a> is a C assertion library(header-only), which enhanced compile-time/runtime assertions, it also included some frequently used macros aforementioned.</p>
-<p><img src=https://user-images.githubusercontent.com/38041294/90534891-dad15d80-e1ac-11ea-8123-48f4b13bad67.png alt></p>
-<p><a href=https://github.com/leiless/dbg.h>leiless/dbg.h</a> is a runtime code path tracing library for C89, a cheap replica of <a href=https://github.com/sharkdp/dbg-macro>sharkdp/dbg-macro</a>.</p>
-<p><img src=https://user-images.githubusercontent.com/38041294/90304146-2e128a00-dee7-11ea-8462-2854dfdeac03.png alt></p>
-<h2 id=references><em>References</em></h2>
-<blockquote>
-<p><a href=https://blog.noctua-software.com/c-tricks.html>10 C99 tricks</a></p>
-<p><a href=http://zubplot.blogspot.com/2015/01/gcc-is-wonderful-better-arraysize-macro.html>GCC <em>is</em> wonderful: a better ARRAY_SIZE macro</a></p>
-<p><a href=https://kernelnewbies.org/MagicMacros>MagicMacros - Linux Kernel Newbies</a></p>
-<p><a href=https://stackoverflow.com/questions/29117836/attribute-const-vs-attribute-pure-in-gnu-c>__attribute__((const)) vs __attribute__((pure)) in GNU C</a></p>
-<p><a href=https://www.techbeamers.com/top-c-programming-tips-and-tricks-for-you/>C Programming Tips and Tricks for Beginners – Top 15</a></p>
-<p><a href=https://stackoverflow.com/questions/599365/what-is-your-favorite-c-programming-trick>What is your favorite C programming trick? [closed]</a></p>
-</blockquote>
-</div>
-<div class=tags>
-</div></div>
-<script src=https://utteranc.es/client.js repo=leiless/blog issue-term=pathname label=comment theme=github-light crossorigin=anonymous async></script>
-</div>
-<div class="footer wrapper">
+</div></div><div class=matter>
+<h1 class=title>Useful C tricks</h1></div></div><div class=markdown>
+<p><code>C</code> is undoubtedly one of my favorite programming language, as I wrote C code in recent years, I&rsquo;ve collected several useful C tricks.</p><p>Some of &rsquo;em taken from popular open source code, you may already know, yet I still hope they can inspire you somehow.</p><p>This is an incremental list from time to time, feel free to share with me if you got any.</p><h2 id=1-unused-annotation>#1 Unused annotation</h2><div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-c data-lang=c><span style=display:flex><span><span style=color:green>/*
+</span></span></span><span style=display:flex><span><span style=color:green> * Space between __attribute__ and ( indicates it&#39;s not a function call
+</span></span></span><span style=display:flex><span><span style=color:green> *
+</span></span></span><span style=display:flex><span><span style=color:green> * [sic] &lt;sys/cdefs.h&gt; (from macOS kernel module header)
+</span></span></span><span style=display:flex><span><span style=color:green> *  __unused denotes variables and functions that may not be used, preventing
+</span></span></span><span style=display:flex><span><span style=color:green> *  the compiler from warning about it if not used.
+</span></span></span><span style=display:flex><span><span style=color:green> */</span>
+</span></span><span style=display:flex><span><span style=color:#00f>#define __unused 				__attribute__ ((unused))
+</span></span></span><span style=display:flex><span><span style=color:#00f></span>
+</span></span><span style=display:flex><span><span style=color:green>/**
+</span></span></span><span style=display:flex><span><span style=color:green> * Example __unused usage
+</span></span></span><span style=display:flex><span><span style=color:green> */</span>
+</span></span><span style=display:flex><span><span style=color:#2b91af>void</span> foobar(<span style=color:#2b91af>int</span> v __unused)
+</span></span><span style=display:flex><span>{
+</span></span><span style=display:flex><span>	...
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><p>Yet not all C/C++ compiler support GCC-derived <code>__attribute__</code> keyword, in such case, you instead define a macro to suppress compiler unused warning:</p><div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-c data-lang=c><span style=display:flex><span><span style=color:#00f>#define UNUSED(arg, ...)    (void) ((void) (arg), ##__VA_ARGS__)
+</span></span></span><span style=display:flex><span><span style=color:#00f></span>
+</span></span><span style=display:flex><span><span style=color:green>/**
+</span></span></span><span style=display:flex><span><span style=color:green> * Example UNUSED usage
+</span></span></span><span style=display:flex><span><span style=color:green> */</span>
+</span></span><span style=display:flex><span><span style=color:#2b91af>void</span> foobar(<span style=color:#2b91af>int</span> v)
+</span></span><span style=display:flex><span>{
+</span></span><span style=display:flex><span>	UNUSED(v);
+</span></span><span style=display:flex><span>	...
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><h2 id=2-compile-time-array-size>#2 Compile-time array size</h2><div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-c data-lang=c><span style=display:flex><span><span style=color:green>/**
+</span></span></span><span style=display:flex><span><span style=color:green> * Use only for array type, NOT strict pointer type
+</span></span></span><span style=display:flex><span><span style=color:green> * @a			The fixed size array
+</span></span></span><span style=display:flex><span><span style=color:green> */</span>
+</span></span><span style=display:flex><span><span style=color:#00f>#define ARRAY_SIZE(a)       (sizeof(a) / sizeof(*a))
+</span></span></span></code></pre></div><p>This macro used widely in <a href=https://elixir.bootlin.com/linux/latest/source/include/linux/kernel.h#L72>Linux kernel</a> and <a href=https://elixir.bootlin.com/barebox/latest/source/include/linux/kernel.h#L41>barebox</a>, there&rsquo;re several known variants, listing above for simplicity.</p><h2 id=3-compile-time-strlen3>#3 Compile-time strlen(3)</h2><div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-c data-lang=c><span style=display:flex><span><span style=color:green>/**
+</span></span></span><span style=display:flex><span><span style=color:green> * Should only used for `char[]&#39;  NOT `char *&#39;
+</span></span></span><span style=display:flex><span><span style=color:green> * Assume ends with null byte(&#39;\0&#39;)
+</span></span></span><span style=display:flex><span><span style=color:green> */</span>
+</span></span><span style=display:flex><span><span style=color:#00f>#define STRLEN(s)          (ARRAY_SIZE(s) - 1)
+</span></span></span></code></pre></div><p>This macro used for a <code>char</code> array, it acts as if it called <a href=http://man7.org/linux/man-pages/man3/strlen.3.html>strlen(3)</a>, note that it isn&rsquo;t applicable if the <code>char</code> array not ends with null byte, i.e. <code>'\0'</code>.</p><p>Since <code>sizeof(char)</code> always equals to 1, this macro can be further reduce into:</p><div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-c data-lang=c><span style=display:flex><span><span style=color:green>/**
+</span></span></span><span style=display:flex><span><span style=color:green> * Should only used for `char[]&#39;  NOT `char *&#39;
+</span></span></span><span style=display:flex><span><span style=color:green> * Assume ends with null byte(&#39;\0&#39;)
+</span></span></span><span style=display:flex><span><span style=color:green> */</span>
+</span></span><span style=display:flex><span><span style=color:#00f>#define STRLEN(s)          (sizeof(s) - 1)
+</span></span></span></code></pre></div><p>Still, there is a generic <code>STRLEN</code> to deal the case aforementioned, this macro used rarely since it&rsquo;s a bit of complicated.</p><div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-c data-lang=c><span style=display:flex><span><span style=color:green>/**
+</span></span></span><span style=display:flex><span><span style=color:green> * Should only used for `char[]&#39;  NOT `char *&#39;
+</span></span></span><span style=display:flex><span><span style=color:green> */</span>
+</span></span><span style=display:flex><span><span style=color:#00f>#define STRLEN(s)          (sizeof(s) - !s[sizeof(s)-1])
+</span></span></span></code></pre></div><h2 id=4-explicitly-annotate-ignore-the-return-value>#4 Explicitly annotate ignore the return value</h2><p>Case happens when a function return something, yet you don&rsquo;t care.</p><p>For example, you know <a href=http://man7.org/linux/man-pages/man2/signal.2.html>signal(2)</a> won&rsquo;t fail in such case:</p><div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-c data-lang=c><span style=display:flex><span><span style=color:#00f>#include</span> <span style=color:#00f>&lt;stdio.h&gt;</span><span style=color:#00f>
+</span></span></span><span style=display:flex><span><span style=color:#00f>#include</span> <span style=color:#00f>&lt;signal.h&gt;</span><span style=color:#00f>
+</span></span></span><span style=display:flex><span><span style=color:#00f></span>
+</span></span><span style=display:flex><span><span style=color:#2b91af>int</span> main(<span style=color:#2b91af>void</span>)
+</span></span><span style=display:flex><span>{
+</span></span><span style=display:flex><span>	signal(SIGPIPE, SIG_IGN); <span style=color:green>/* I don&#39;t give it a shit of what signal(2) returns */</span>
+</span></span><span style=display:flex><span>	...
+</span></span><span style=display:flex><span>	<span style=color:#00f>return</span> 0;
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><p>Or, you want to implement a microsecond-level <a href=http://man7.org/linux/man-pages/man3/sleep.3.html>sleep(3)</a> function by <a href=http://man7.org/linux/man-pages/man2/select.2.html>select(2)</a>, and you don&rsquo;t care about what <a href=http://man7.org/linux/man-pages/man2/select.2.html>select(2)</a> pumps out:</p><div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-c data-lang=c><span style=display:flex><span><span style=color:#00f>#include</span> <span style=color:#00f>&lt;sys/select.h&gt;</span><span style=color:#00f>
+</span></span></span><span style=display:flex><span><span style=color:#00f></span>
+</span></span><span style=display:flex><span><span style=color:#2b91af>void</span> usleep(<span style=color:#2b91af>unsigned</span> <span style=color:#2b91af>int</span> us)
+</span></span><span style=display:flex><span>{
+</span></span><span style=display:flex><span>	<span style=color:#00f>struct</span> timeval tv = {us / 1000000, us % 1000000};
+</span></span><span style=display:flex><span>	<span style=color:green>/* I don&#39;t care what select(2) returns  although it may got interrupted */</span>
+</span></span><span style=display:flex><span>	select(0, NULL, NULL, NULL, &amp;tv);
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><p>Instead of write a comment tell people you don&rsquo;t care return value(In real life, don&rsquo;t expected people will do this nice job for you), you can prepend <code>(void)</code> before function call:</p><div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-c data-lang=c><span style=display:flex><span><span style=color:#00f>#include</span> <span style=color:#00f>&lt;stdio.h&gt;</span><span style=color:#00f>
+</span></span></span><span style=display:flex><span><span style=color:#00f>#include</span> <span style=color:#00f>&lt;signal.h&gt;</span><span style=color:#00f>
+</span></span></span><span style=display:flex><span><span style=color:#00f></span>
+</span></span><span style=display:flex><span><span style=color:#2b91af>int</span> main(<span style=color:#2b91af>void</span>)
+</span></span><span style=display:flex><span>{
+</span></span><span style=display:flex><span>	(<span style=color:#2b91af>void</span>) signal(SIGPIPE, SIG_IGN);
+</span></span><span style=display:flex><span>	...
+</span></span><span style=display:flex><span>	<span style=color:#00f>return</span> 0;
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-c data-lang=c><span style=display:flex><span><span style=color:#00f>#include</span> <span style=color:#00f>&lt;sys/select.h&gt;</span><span style=color:#00f>
+</span></span></span><span style=display:flex><span><span style=color:#00f></span>
+</span></span><span style=display:flex><span><span style=color:#2b91af>void</span> usleep(<span style=color:#2b91af>unsigned</span> <span style=color:#2b91af>int</span> us)
+</span></span><span style=display:flex><span>{
+</span></span><span style=display:flex><span>	(<span style=color:#2b91af>void</span>) select(0, NULL, NULL, NULL, (<span style=color:#00f>struct</span> timeval[]) {{us / 1000000, us % 1000000}});
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><p>Note that its usage somewhat like <code>UNUSED</code> macro, yet it won&rsquo;t be optimized out, since it&rsquo;s a function call, in most case it&rsquo;ll have side-effect, compiler won&rsquo;t optimize function call out by default, unless your function marked as <a href=https://gcc.gnu.org/onlinedocs/gcc/Common-Function-Attributes.html><code>const</code> or <code>pure</code></a>.</p><p><code>(void) ...</code> used heavily in FreeBSD kernel, for example, <a href=http://fxr.watson.org/fxr/source/i386/i386/pmap.c>FreeBSD/i386/i386/pmap.c</a></p><h2 id=5-compile-time-condition-assurance>#5 Compile-time condition assurance</h2><div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-c data-lang=c><span style=display:flex><span><span style=color:green>/**
+</span></span></span><span style=display:flex><span><span style=color:green> * Compile-time assurance  see: linux/arch/x86/boot/boot.h
+</span></span></span><span style=display:flex><span><span style=color:green> */</span>
+</span></span><span style=display:flex><span><span style=color:#00f>#define BUILD_BUG_ON(cond)      ((void) sizeof(char[1 - 2 * !!(cond)]))
+</span></span></span></code></pre></div><p>This macro originally taken from <a href=https://elixir.bootlin.com/linux/latest/source/arch/x86/boot/boot.h#L33>Linux source code</a>, yet I optimized it slightly because it&rsquo;s clumsy.</p><p>It mainly used for assuring some conditions, for example:</p><div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-c data-lang=c><span style=display:flex><span><span style=color:green>/* Assure `long&#39; type is 64-bit long */</span>
+</span></span><span style=display:flex><span>BUILD_BUG_ON(<span style=color:#00f>sizeof</span>(<span style=color:#2b91af>long</span>) != 8);
+</span></span></code></pre></div><p>Any use of <code>BUILD_BUG_ON</code> macro will eventually be optimized out by the compiler, thus you don&rsquo;t need to worry about nop execution.</p><h2 id=6-branch-predictionsgcc-extension>#6 Branch predictions(GCC extension)</h2><div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-c data-lang=c><span style=display:flex><span><span style=color:green>/**
+</span></span></span><span style=display:flex><span><span style=color:green> * Branch predictions
+</span></span></span><span style=display:flex><span><span style=color:green> * see: linux/include/linux/compiler.h
+</span></span></span><span style=display:flex><span><span style=color:green> */</span>
+</span></span><span style=display:flex><span><span style=color:#00f>#define likely(x)       __builtin_expect(!(x), 0)
+</span></span></span><span style=display:flex><span><span style=color:#00f>#define unlikely(x)     __builtin_expect(!(x), 1)
+</span></span></span></code></pre></div><p>Used heavily in <a href=https://elixir.bootlin.com/linux/latest/source/include/linux/compiler.h#L76>Linux kernel</a>, macro above is slightly different from original form.</p><p>[<a href=https://stackoverflow.com/questions/109710/how-does-the-likely-unlikely-macros-in-the-linux-kernel-works-and-what-is-their>sic</a>] They are hint to the compiler to emit instructions that will cause branch prediction to favour the &ldquo;likely/unlikely&rdquo; side of a jump instruction.</p><p>Compiler will optimize the code according to branch prediction, for examplem, if you have <a href=https://godbolt.org/z/v6lk7v>something</a> like this:</p><div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-c data-lang=c><span style=display:flex><span><span style=color:#2b91af>char</span> *istrdup(<span style=color:#00f>const</span> <span style=color:#2b91af>char</span> *s)
+</span></span><span style=display:flex><span>{
+</span></span><span style=display:flex><span>	size_t sz = strlen(s) + 1;
+</span></span><span style=display:flex><span>	<span style=color:#2b91af>char</span> *p = (<span style=color:#2b91af>char</span> *) malloc(sz);
+</span></span><span style=display:flex><span>	<span style=color:#00f>if</span> (unlikely(p == NULL)) <span style=color:#00f>goto</span> out_exit;
+</span></span><span style=display:flex><span>	(<span style=color:#2b91af>void</span>) strcpy(p, s);
+</span></span><span style=display:flex><span>out_exit:
+</span></span><span style=display:flex><span>	<span style=color:#00f>return</span> p;
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><p>The compiler may happen to optimize your code into <a href=https://godbolt.org/z/6gcjMz>the following form</a>, which its code path is more likely be a pipeline instead of a jumpline:</p><div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-c data-lang=c><span style=display:flex><span><span style=color:#2b91af>char</span> *istrdup(<span style=color:#00f>const</span> <span style=color:#2b91af>char</span> *s)
+</span></span><span style=display:flex><span>{
+</span></span><span style=display:flex><span>	size_t sz = strlen(s) + 1;
+</span></span><span style=display:flex><span>	<span style=color:#00f>register</span> <span style=color:#2b91af>char</span> *p = (<span style=color:#2b91af>char</span> *) malloc(sz);
+</span></span><span style=display:flex><span>	<span style=color:#00f>if</span> (likely(p != NULL)) {
+</span></span><span style=display:flex><span>		(<span style=color:#2b91af>void</span>) strcpy(p, s);
+</span></span><span style=display:flex><span>	}
+</span></span><span style=display:flex><span>	<span style=color:#00f>return</span> p;
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><p>Note that inverted prediction will cause <a href=https://en.wikipedia.org/wiki/Pipeline_stall>CPU pipeline flush</a>, it&rsquo;s better not to use branch prediction instead of using wrong one to cause performance degradation, especially in hot code path.</p><h2 id=7-side-effect-safe-min-max-abs-macrogcc-extension>#7 Side-effect-safe <code>MIN</code>, <code>MAX</code>, <code>ABS</code> macro(GCC extension)</h2><div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-c data-lang=c><span style=display:flex><span><span style=color:#00f>#define MIN(a, b) ({        \
+</span></span></span><span style=display:flex><span><span style=color:#00f>    __typeof(a) _a = (a);   \
+</span></span></span><span style=display:flex><span><span style=color:#00f>    __typeof(b) _b = (b);   \
+</span></span></span><span style=display:flex><span><span style=color:#00f>    _a &lt; _b ? _a : _b;      \
+</span></span></span><span style=display:flex><span><span style=color:#00f>})
+</span></span></span><span style=display:flex><span><span style=color:#00f></span>
+</span></span><span style=display:flex><span><span style=color:#00f>#define MAX(a, b) ({        \
+</span></span></span><span style=display:flex><span><span style=color:#00f>    __typeof(a) _a = (a);   \
+</span></span></span><span style=display:flex><span><span style=color:#00f>    __typeof(b) _b = (b);   \
+</span></span></span><span style=display:flex><span><span style=color:#00f>    _a &gt; _b ? _a : _b;      \
+</span></span></span><span style=display:flex><span><span style=color:#00f>})
+</span></span></span><span style=display:flex><span><span style=color:#00f></span>
+</span></span><span style=display:flex><span><span style=color:#00f>#define ABS(x) ({           \
+</span></span></span><span style=display:flex><span><span style=color:#00f>    __typeof(x) _ = (x);    \
+</span></span></span><span style=display:flex><span><span style=color:#00f>    _ &gt; 0 ? _ : -_;         \
+</span></span></span><span style=display:flex><span><span style=color:#00f>})
+</span></span></span></code></pre></div><p>Those three are common used math macros, which they&rsquo;re all type-agnostic, and eliminated possible side-effects, it uses GCC <a href=https://gcc.gnu.org/onlinedocs/gcc/Typeof.html>typeof</a> keyword.</p><h2 id=8-sizeof-a-structs-member>#8 Sizeof a struct&rsquo;s member</h2><div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-c data-lang=c><span style=display:flex><span><span style=color:#00f>#define STRUCT_MEMBER_SIZEOF(s, m)		sizeof((*((s[0]){})).m)
+</span></span></span></code></pre></div><p>Used to get <code>sizeof</code> result inside a struct, without intervention of a struct variable, i.e. <code>struct_var.some_member</code>.</p><p>For example, if you want to <a href=http://man7.org/linux/man-pages/man2/bind.2.html>bind(2)</a> a socket with a name(path), you should check if given <code>path</code> length exceeds <code>struct sockaddr_un.sun_path</code>:</p><div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-c data-lang=c><span style=display:flex><span><span style=color:#00f>#include</span> <span style=color:#00f>&lt;stdio.h&gt;</span><span style=color:#00f>
+</span></span></span><span style=display:flex><span><span style=color:#00f>#include</span> <span style=color:#00f>&lt;string.h&gt;</span><span style=color:#00f>
+</span></span></span><span style=display:flex><span><span style=color:#00f>#include</span> <span style=color:#00f>&lt;stdlib.h&gt;</span><span style=color:#00f>
+</span></span></span><span style=display:flex><span><span style=color:#00f>#include</span> <span style=color:#00f>&lt;unistd.h&gt;</span><span style=color:#00f>
+</span></span></span><span style=display:flex><span><span style=color:#00f>#include</span> <span style=color:#00f>&lt;assert.h&gt;</span><span style=color:#00f>
+</span></span></span><span style=display:flex><span><span style=color:#00f>#include</span> <span style=color:#00f>&lt;sys/param.h&gt;</span><span style=color:#00f>
+</span></span></span><span style=display:flex><span><span style=color:#00f>#include</span> <span style=color:#00f>&lt;sys/errno.h&gt;</span><span style=color:#00f>
+</span></span></span><span style=display:flex><span><span style=color:#00f>#include</span> <span style=color:#00f>&lt;sys/socket.h&gt;</span><span style=color:#00f>
+</span></span></span><span style=display:flex><span><span style=color:#00f>#include</span> <span style=color:#00f>&lt;sys/un.h&gt;</span><span style=color:#00f>
+</span></span></span><span style=display:flex><span><span style=color:#00f></span>
+</span></span><span style=display:flex><span><span style=color:#00f>#define STRUCT_MEMBER_SIZEOF(s, m)		sizeof((*((s[0]){})).m)
+</span></span></span><span style=display:flex><span><span style=color:#00f></span>
+</span></span><span style=display:flex><span><span style=color:green>/**
+</span></span></span><span style=display:flex><span><span style=color:green> * Create a named socket(trivial implementation)
+</span></span></span><span style=display:flex><span><span style=color:green> * @path        The socket name [XSI]
+</span></span></span><span style=display:flex><span><span style=color:green> * @return      file descriptor returned if success
+</span></span></span><span style=display:flex><span><span style=color:green> *              -1 if failed(errno will be set accordingly)
+</span></span></span><span style=display:flex><span><span style=color:green> */</span>
+</span></span><span style=display:flex><span><span style=color:#2b91af>int</span> create_named_socket(<span style=color:#00f>const</span> <span style=color:#2b91af>char</span> *path)
+</span></span><span style=display:flex><span>{
+</span></span><span style=display:flex><span>    <span style=color:green>/* XXX: Use of STRUCT_MEMBER_SIZEOF macro */</span>
+</span></span><span style=display:flex><span>    <span style=color:#00f>static</span> size_t LIMIT = STRUCT_MEMBER_SIZEOF(<span style=color:#00f>struct</span> sockaddr_un, sun_path);
+</span></span><span style=display:flex><span>    <span style=color:#2b91af>int</span> fd = -1;
+</span></span><span style=display:flex><span>    size_t len;
+</span></span><span style=display:flex><span>    <span style=color:#00f>struct</span> sockaddr_un sun;
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    assert(path != NULL);
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    len = strlen(path);
+</span></span><span style=display:flex><span>    <span style=color:green>/* struct sockaddr_un.sun_path[10x] */</span>
+</span></span><span style=display:flex><span>    <span style=color:#00f>if</span> (len &gt;= LIMIT) {
+</span></span><span style=display:flex><span>        errno = ENAMETOOLONG;
+</span></span><span style=display:flex><span>        fprintf(stderr, <span style=color:#a31515>&#34;Path %s too long  %zu vs %zu</span><span style=color:#a31515>\n</span><span style=color:#a31515>&#34;</span>, path, len, LIMIT);
+</span></span><span style=display:flex><span>        <span style=color:#00f>goto</span> out_exit;
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    fd = socket(AF_UNIX, SOCK_STREAM, 0);
+</span></span><span style=display:flex><span>    <span style=color:#00f>if</span> (fd &lt; 0) {
+</span></span><span style=display:flex><span>        fprintf(stderr, <span style=color:#a31515>&#34;socket(2) fail  errno: %d</span><span style=color:#a31515>\n</span><span style=color:#a31515>&#34;</span>, errno);
+</span></span><span style=display:flex><span>        <span style=color:#00f>goto</span> out_exit;
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    sun.sun_family = AF_UNIX;
+</span></span><span style=display:flex><span>    (<span style=color:#2b91af>void</span>) strcpy(sun.sun_path, path);
+</span></span><span style=display:flex><span><span style=color:#00f>#if defined(__APPLE__) || defined(BSD)
+</span></span></span><span style=display:flex><span><span style=color:#00f></span>    sun.sun_len = (<span style=color:#2b91af>unsigned</span> <span style=color:#2b91af>char</span>) SUN_LEN(&amp;sun);
+</span></span><span style=display:flex><span><span style=color:#00f>#endif
+</span></span></span><span style=display:flex><span><span style=color:#00f></span>
+</span></span><span style=display:flex><span>    <span style=color:#00f>if</span> (bind(fd, (<span style=color:#00f>struct</span> sockaddr *) &amp;sun, <span style=color:#00f>sizeof</span>(sun)) &lt; 0) {
+</span></span><span style=display:flex><span>        fprintf(stderr, <span style=color:#a31515>&#34;bind(2) fail  fd: %d path: %s errno: %d</span><span style=color:#a31515>\n</span><span style=color:#a31515>&#34;</span>, fd, path, errno);
+</span></span><span style=display:flex><span>        <span style=color:#00f>goto</span> out_fail;
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#00f>if</span> (listen(fd, SOMAXCONN) &lt; 0) {
+</span></span><span style=display:flex><span>        fprintf(stderr, <span style=color:#a31515>&#34;listen(2) fail  fd: %d path: %s errno: %d</span><span style=color:#a31515>\n</span><span style=color:#a31515>&#34;</span>, fd, path, errno);
+</span></span><span style=display:flex><span>        <span style=color:#00f>goto</span> out_fail;
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    printf(<span style=color:#a31515>&#34;socket created   fd: %d path: %s</span><span style=color:#a31515>\n</span><span style=color:#a31515>&#34;</span>, fd, path);
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>out_exit:
+</span></span><span style=display:flex><span>    <span style=color:#00f>return</span> fd;
+</span></span><span style=display:flex><span>out_fail:
+</span></span><span style=display:flex><span>    (<span style=color:#2b91af>void</span>) close(fd);
+</span></span><span style=display:flex><span>    fd = -1;
+</span></span><span style=display:flex><span>    <span style=color:#00f>goto</span> out_exit;
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><h2 id=wrap-up>Wrap up</h2><p><a href=https://github.com/leiless/assertf.h>leiless/assertf.h</a> is a C assertion library(header-only), which enhanced compile-time/runtime assertions, it also included some frequently used macros aforementioned.</p><p><img src=https://user-images.githubusercontent.com/38041294/90534891-dad15d80-e1ac-11ea-8123-48f4b13bad67.png alt></p><p><a href=https://github.com/leiless/dbg.h>leiless/dbg.h</a> is a runtime code path tracing library for C89, a cheap replica of <a href=https://github.com/sharkdp/dbg-macro>sharkdp/dbg-macro</a>.</p><p><img src=https://user-images.githubusercontent.com/38041294/90304146-2e128a00-dee7-11ea-8462-2854dfdeac03.png alt></p><h2 id=references><em>References</em></h2><blockquote>
+<p><a href=https://blog.noctua-software.com/c-tricks.html>10 C99 tricks</a></p><p><a href=http://zubplot.blogspot.com/2015/01/gcc-is-wonderful-better-arraysize-macro.html>GCC <em>is</em> wonderful: a better ARRAY_SIZE macro</a></p><p><a href=https://kernelnewbies.org/MagicMacros>MagicMacros - Linux Kernel Newbies</a></p><p><a href=https://stackoverflow.com/questions/29117836/attribute-const-vs-attribute-pure-in-gnu-c>__attribute__((const)) vs __attribute__((pure)) in GNU C</a></p><p><a href=https://www.techbeamers.com/top-c-programming-tips-and-tricks-for-you/>C Programming Tips and Tricks for Beginners – Top 15</a></p><p><a href=https://stackoverflow.com/questions/599365/what-is-your-favorite-c-programming-trick>What is your favorite C programming trick? [closed]</a></p></blockquote></div><div class=tags>
+</div></div><script src=https://utteranc.es/client.js repo=leiless/blog issue-term=pathname label=comment theme=github-light crossorigin=anonymous async></script>
+</div><div class="footer wrapper">
 <nav class=nav>
-<div>2021 Released under <a href=https://creativecommons.org/licenses/by-nc-sa/4.0/>CC BY-NC-SA 4.0</a> license | <a href=https://github.com/knadh/hugo-ink>Ink</a> theme on <a href=https://gohugo.io>Hugo</a></div>
-</nav>
-</div>
-<script type=application/javascript>var doNotTrack=!1;doNotTrack||(window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)},ga.l=+new Date,ga('create','G-RMJ7KLHXH8','auto'),ga('send','pageview'))</script>
+<div>2022 Released under <a href=https://creativecommons.org/licenses/by-nc-sa/4.0/>CC BY-NC-SA 4.0</a> license | <a href=https://github.com/knadh/hugo-ink>Ink</a> theme on <a href=https://gohugo.io>Hugo</a></div></nav></div><script type=application/javascript>var doNotTrack=!1;doNotTrack||(window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)},ga.l=+new Date,ga("create","G-RMJ7KLHXH8","auto"),ga("send","pageview"))</script>
 <script async src=https://www.google-analytics.com/analytics.js></script>
 <script>feather.replace()</script>
-</body>
-</html>
+</body></html>

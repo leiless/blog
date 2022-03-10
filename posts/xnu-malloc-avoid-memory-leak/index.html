@@ -13,7 +13,7 @@ When possible, avoid using _MALLOC or _FREE. if you don&rsquo;t free the memory 
 Specially, I&rsquo;ll take XNU kernel driver(kernel extension) as our topic.
 When possible, avoid using _MALLOC or _FREE. if you don&rsquo;t free the memory allocated by _MALLOC, it certainly memory leaked, it won&rsquo;t kernel panic even when you unload the kext.">
 <meta property="og:type" content="article">
-<meta property="og:url" content="https://leiless.me/posts/xnu-malloc-avoid-memory-leak/"><meta property="article:section" content="posts">
+<meta property="og:url" content="https://leiless.github.io/blog/posts/xnu-malloc-avoid-memory-leak/"><meta property="article:section" content="posts">
 <meta property="article:published_time" content="2018-08-18T00:00:00+00:00">
 <meta property="article:modified_time" content="2018-08-18T00:00:00+00:00">
 <meta name=twitter:card content="summary">
@@ -22,392 +22,346 @@ When possible, avoid using _MALLOC or _FREE. if you don&rsquo;t free the memory 
 Specially, I&rsquo;ll take XNU kernel driver(kernel extension) as our topic.
 When possible, avoid using _MALLOC or _FREE. if you don&rsquo;t free the memory allocated by _MALLOC, it certainly memory leaked, it won&rsquo;t kernel panic even when you unload the kext.">
 <link href="https://fonts.googleapis.com/css?family=Playfair+Display:700" rel=stylesheet type=text/css>
-<link rel=stylesheet type=text/css media=screen href=https://leiless.me/css/normalize.css>
-<link rel=stylesheet type=text/css media=screen href=https://leiless.me/css/main.css>
-<link id=dark-scheme rel=stylesheet type=text/css href=https://leiless.me/css/dark.css>
-<script src=https://leiless.me/js/feather.min.js></script>
-<script src=https://leiless.me/js/main.js></script>
-</head>
-<body>
+<link rel=stylesheet type=text/css media=screen href=https://leiless.github.io/blog/css/normalize.css>
+<link rel=stylesheet type=text/css media=screen href=https://leiless.github.io/blog/css/main.css>
+<link id=dark-scheme rel=stylesheet type=text/css href=https://leiless.github.io/blog/css/dark.css>
+<script src=https://leiless.github.io/blog/js/feather.min.js></script>
+<script src=https://leiless.github.io/blog/js/main.js></script>
+</head><body>
 <div class="container wrapper">
 <div class=header>
 <div class=avatar>
-<a href=https://leiless.me/>
-<img src=../../avatar.jpg alt=一个程序员的辩白>
+<a href=https://leiless.github.io/blog/>
+<img src=avatar.jpg alt=一个程序员的辩白>
 </a>
-</div>
-<h1 class=site-title><a href=https://leiless.me/>一个程序员的辩白</a></h1>
-<div class=site-description><nav class="nav social">
-<ul class=flat><li><a href=https://github.com/leiless title=GitHub><i data-feather=github></i></a></li><li><a href=https://twitter.com/fake_fishbone title=Twitter><i data-feather=twitter></i></a></li><li><a href=/index.xml title=RSS><i data-feather=rss></i></a></li><li><a href=# class=scheme-toggle id=scheme-toggle></a></li></ul>
-</nav>
-</div>
-<nav class=nav>
+</div><h1 class=site-title><a href=https://leiless.github.io/blog/>一个程序员的辩白</a></h1><div class=site-description><nav class="nav social">
+<ul class=flat><li><a href=https://github.com/leiless title=GitHub><i data-feather=github></i></a></li><li><a href=https://twitter.com/space_bohemian title=Twitter><i data-feather=twitter></i></a></li><li><a href=/index.xml title=RSS><i data-feather=rss></i></a></li><li><a href=# class=scheme-toggle id=scheme-toggle></a></li></ul></nav></div><nav class=nav>
 <ul class=flat>
-</ul>
-</nav>
-</div>
-<div class=post>
+</ul></nav></div><div class=post>
 <div class=post-header>
 <div class=meta>
 <div class=date>
 <span class=day>18</span>
 <span class=rest>Aug 2018</span>
-</div>
-</div>
-<div class=matter>
-<h1 class=title>HOWTO avoid memory leak in kext development</h1>
-</div>
-</div>
-<div class=markdown>
-<p>Memory leakage is a major issue in software development, let alone happens in <em>kernel extension</em>(kext) layer. Also, sometimes it&rsquo;s hard to track down memory leakage, it&rsquo;s an invisible bomb, it won&rsquo;t cause kernel panic in most cases, yet it unstabilize the whole kernel.</p>
-<p>Specially, I&rsquo;ll take XNU kernel driver(kernel extension) as our topic.</p>
-<p>When possible, avoid using <a href=http://xr.anadoxin.org/source/xref/macos-10.12.6-sierra/xnu-3789.70.16/bsd/kern/libkext_malloc.c#565><em>_MALLOC</em></a> or <a href=http://xr.anadoxin.org/source/xref/macos-10.12.6-sierra/xnu-3789.70.16/bsd/kern/libkext_malloc.c#616><em>_FREE</em></a>. if you don&rsquo;t free the memory allocated by <em>_MALLOC</em>, it certainly memory leaked, it won&rsquo;t kernel panic even when you unload the kext.</p>
-<div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-c data-lang=c><span style=color:green>/**
-</span><span style=color:green> * A _MALLOC leakage demo kext
-</span><span style=color:green> */</span>
-<span style=color:#00f>#include</span> <span style=color:#00f>&lt;mach/mach_types.h&gt;</span><span style=color:#00f>
-</span><span style=color:#00f>#include</span> <span style=color:#00f>&lt;sys/systm.h&gt;</span><span style=color:#00f>
-</span><span style=color:#00f>#include</span> <span style=color:#00f>&lt;sys/malloc.h&gt;</span><span style=color:#00f>
-</span><span style=color:#00f></span>
-<span style=color:#00f>#define INAME &#34;kext-memleak&#34;
-</span><span style=color:#00f>#define LOG(fmt, ...) printf(INAME &#34;: &#34; fmt &#34;\n&#34;, ##__VA_ARGS__)
-</span><span style=color:#00f></span>
-<span style=color:#00f>static</span> <span style=color:#2b91af>unsigned</span> <span style=color:#2b91af>char</span> *p;
-
-kern_return_t kext_memleak_start(kmod_info_t *ki, <span style=color:#2b91af>void</span> *d)
-{
-    p = _MALLOC(1, M_TEMP, M_WAITOK);
-    LOG(<span style=color:#a31515>&#34;byte allocated %#llx %#x&#34;</span>, (<span style=color:#2b91af>uint64_t</span>) p, *p);
-    <span style=color:#00f>return</span> KERN_SUCCESS;
-}
-
-kern_return_t kext_memleak_stop(kmod_info_t *ki, <span style=color:#2b91af>void</span> *d)
-{
-    <span style=color:green>/* Say, you forget to free the byte */</span>
-    LOG(<span style=color:#a31515>&#34;byte leaked %#llx&#34;</span>, (<span style=color:#2b91af>uint64_t</span>) p);
-    <span style=color:#00f>return</span> KERN_SUCCESS;
-}
-</code></pre></div><p>When you load and unload the kext, the output like:</p>
-<div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>kext-memleak: byte allocated 0xffffff8027da0a10 0xef
-kext-memleak: byte leaked 0xffffff8027da0a10
-</code></pre></div><p>The same frustration apply to <a href=http://xr.anadoxin.org/source/xref/macos-10.12.6-sierra/xnu-3789.70.16/osfmk/kern/kalloc.c#843>OSMalloc()</a> family functions:</p>
-<div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-c data-lang=c><span style=color:green>/**
-</span><span style=color:green> * A OSMalloc leakage demo kext
-</span><span style=color:green> */</span>
-<span style=color:#00f>#include</span> <span style=color:#00f>&lt;mach/mach_types.h&gt;</span><span style=color:#00f>
-</span><span style=color:#00f>#include</span> <span style=color:#00f>&lt;sys/systm.h&gt;</span><span style=color:#00f>
-</span><span style=color:#00f>#include</span> <span style=color:#00f>&lt;libkern/OSMalloc.h&gt;</span><span style=color:#00f>
-</span><span style=color:#00f>#include</span> <span style=color:#00f>&lt;kern/queue.h&gt;         /* queue_chain_t */</span><span style=color:#00f>
-</span><span style=color:#00f></span>
-<span style=color:#00f>#define INAME &#34;kext-memleak&#34;
-</span><span style=color:#00f>#define LOG(fmt, ...) printf(INAME &#34;: &#34; fmt &#34;\n&#34;, ##__VA_ARGS__)
-</span><span style=color:#00f></span>
-<span style=color:#00f>static</span> <span style=color:#00f>const</span> <span style=color:#2b91af>char</span> *tagname = <span style=color:#a31515>&#34;f2fc2611-07b1-4a30-af82-3459596b64cb&#34;</span>;
-<span style=color:#00f>static</span> OSMallocTag tag;
-<span style=color:#00f>static</span> <span style=color:#2b91af>unsigned</span> <span style=color:#2b91af>char</span> *p;
-
-kern_return_t kext_memleak_start(kmod_info_t *ki, <span style=color:#2b91af>void</span> *d)
-{
-    tag = OSMalloc_Tagalloc(tagname, OSMT_DEFAULT);
-    <span style=color:#00f>if</span> (tag == NULL) <span style=color:#00f>goto</span> out_oom;
-    p = OSMalloc(1, tag);
-
-    <span style=color:green>/*
-</span><span style=color:green>     * After OSMalloc_Tagalloc and OSMalloc
-</span><span style=color:green>     * tag-&gt;OSMT_refcnt equals to two
-</span><span style=color:green>     *
-</span><span style=color:green>     * XXX: following statements extremely dangerous  may panic!
-</span><span style=color:green>     * see: xnu/libkern/libkern/OSMalloc.h#_OSMallocTag_
-</span><span style=color:green>     */</span>
-    <span style=color:#2b91af>uint32_t</span> *tag_refcnt = (<span style=color:#2b91af>void</span> *) tag + <span style=color:#00f>sizeof</span>(queue_chain_t);
-    <span style=color:#00f>if</span> (*tag_refcnt != 2) {
-        LOG(<span style=color:#a31515>&#34;tag-&gt;OSMT_refcnt != 2 due to struct alignment&#34;</span>);
-    } <span style=color:#00f>else</span> {
-        LOG(<span style=color:#a31515>&#34;tag-&gt;OSMT_refcnt = 2&#34;</span>);
-    }
-
-    LOG(<span style=color:#a31515>&#34;byte allocated %#llx %#x&#34;</span>, (<span style=color:#2b91af>uint64_t</span>) p, *p);
-    <span style=color:#00f>return</span> KERN_SUCCESS;
-
-out_oom:
-    LOG(<span style=color:#a31515>&#34;OSMalloc_Tagalloc failure&#34;</span>);
-    <span style=color:#00f>return</span> KERN_FAILURE;
-}
-
-kern_return_t kext_memleak_stop(kmod_info_t *ki, <span style=color:#2b91af>void</span> *d)
-{
-    <span style=color:green>/*
-</span><span style=color:green>     * Say, you forget OSFree the memory allocated by OSMalloc
-</span><span style=color:green>     * Tag won&#39;t be freed :. its OSMT_refcnt not down to zero
-</span><span style=color:green>     */</span>
-    OSMalloc_Tagfree(tag);
-
-    LOG(<span style=color:#a31515>&#34;#1 byte leaked %#llx %#x&#34;</span>, (<span style=color:#2b91af>uint64_t</span>) p, *p);
-
-    <span style=color:green>/* OSMalloc will succeed :. tag still alive */</span>
-    <span style=color:#2b91af>unsigned</span> <span style=color:#2b91af>char</span> *q = OSMalloc(1, tag);
-    LOG(<span style=color:#a31515>&#34;#2 byte leaked %#llx %#x&#34;</span>, (<span style=color:#2b91af>uint64_t</span>) q, *q);
-
-    <span style=color:#00f>return</span> KERN_SUCCESS;
-}
-</code></pre></div><p>System message output:</p>
-<div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>kext-memleak: tag-&gt;OSMT_refcnt = 2
-kext-memleak: byte allocated 0xffffff8018c7b290 0xef
-kext-memleak: #1 byte leaked 0xffffff8018c7b290 0xef
-kext-memleak: #2 byte leaked 0xffffff8018c7b670 0xef
-</code></pre></div><hr>
-<p>If you dive into <em>OSMalloc</em>, you&rsquo;ll find</p>
-<p><a href=http://xr.anadoxin.org/source/xref/macos-10.12.6-sierra/xnu-3789.70.16/osfmk/kern/kalloc.c#775><em>xnu/osfmk/kern/kalloc.c#OSMalloc_Tagalloc</em></a>:</p>
-<div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-c data-lang=c>OSMallocTag
-OSMalloc_Tagalloc(
-	<span style=color:#00f>const</span> <span style=color:#2b91af>char</span>			*str,
-	<span style=color:#2b91af>uint32_t</span>			flags)
-{
-	OSMallocTag       OSMTag;
-
-	OSMTag = (OSMallocTag)kalloc(<span style=color:#00f>sizeof</span>(*OSMTag));
-
-	bzero((<span style=color:#2b91af>void</span> *)OSMTag, <span style=color:#00f>sizeof</span>(*OSMTag));
-
-	<span style=color:#00f>if</span> (flags &amp; OSMT_PAGEABLE)
-		OSMTag-&gt;OSMT_attr = OSMT_ATTR_PAGEABLE;
-
-	OSMTag-&gt;OSMT_refcnt = 1; <span style=color:green>/* XXX: Initial refcot one */</span>
-
-	strlcpy(OSMTag-&gt;OSMT_name, str, OSMT_MAX_NAME);
-
-	OSMalloc_tag_spin_lock();
-	enqueue_tail(&amp;OSMalloc_tag_list, (queue_entry_t)OSMTag);
-	OSMalloc_tag_unlock();
-	OSMTag-&gt;OSMT_state = OSMT_VALID;
-	<span style=color:#00f>return</span>(OSMTag);
-}
-</code></pre></div><p><a href=http://xr.anadoxin.org/source/xref/macos-10.12.6-sierra/xnu-3789.70.16/osfmk/kern/kalloc.c#843><em>xnu/osfmk/kern/kalloc.c#OSMalloc</em></a>:</p>
-<div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-c data-lang=c><span style=color:#2b91af>void</span> *
-OSMalloc(
-	<span style=color:#2b91af>uint32_t</span>			size,
-	OSMallocTag			tag)
-{
-	<span style=color:#2b91af>void</span>			*addr=NULL;
-	kern_return_t	kr;
-
-	<span style=color:green>/* XXX: equivalent to tag-&gt;OSMT_refcnt++ */</span>
-	OSMalloc_Tagref(tag);
-
-	<span style=color:#00f>if</span> ((tag-&gt;OSMT_attr &amp; OSMT_PAGEABLE)
-	    &amp;&amp; (size &amp; ~PAGE_MASK)) {
-		<span style=color:#00f>if</span> ((kr = kmem_alloc_pageable_external(kernel_map, (vm_offset_t *)&amp;addr, size)) != KERN_SUCCESS)
-			addr = NULL;
-	} <span style=color:#00f>else</span> 
-		addr = kalloc_tag_bt((vm_size_t)size, VM_KERN_MEMORY_KALLOC);
-
-	<span style=color:#00f>if</span> (!addr)
-		OSMalloc_Tagrele(tag);
-
-	<span style=color:#00f>return</span>(addr);
-}
-</code></pre></div><p><a href=http://xr.anadoxin.org/source/xref/macos-10.12.6-sierra/xnu-3789.70.16/osfmk/kern/kalloc.c#828><em>xnu-3789.70.16/osfmk/kern/kalloc.c#OSMalloc_Tagfree</em></a>:</p>
-<div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-c data-lang=c><span style=color:#2b91af>void</span>
-OSMalloc_Tagfree(
-	 OSMallocTag		tag)
-{
-	<span style=color:#00f>if</span> (!hw_compare_and_store(OSMT_VALID, OSMT_VALID|OSMT_RELEASED, &amp;tag-&gt;OSMT_state))
-		panic(<span style=color:#a31515>&#34;OSMalloc_Tagfree():&#39;%s&#39; has bad state 0x%08X </span><span style=color:#a31515>\n</span><span style=color:#a31515>&#34;</span>, tag-&gt;OSMT_name, tag-&gt;OSMT_state);
-
-	<span style=color:green>/* XXX: Free the tag iff. OSMT_refcnt down to zero */</span>
-	<span style=color:#00f>if</span> (hw_atomic_sub(&amp;tag-&gt;OSMT_refcnt, 1) == 0) {
-		OSMalloc_tag_spin_lock();
-		(<span style=color:#2b91af>void</span>)remque((queue_entry_t)tag);
-		OSMalloc_tag_unlock();
-		kfree((<span style=color:#2b91af>void</span>*)tag, <span style=color:#00f>sizeof</span>(*tag));
-	}
-}
-</code></pre></div><p>Thus even when you use the <em>OSMalloc</em> family functions won&rsquo;t prevent you from memory leakage in some ways.</p>
-<hr>
-<p>In stead of using untracked <em>_MALLOC</em> family functions, or, refcnt-tracked <em>OSMalloc</em> family functions, you may alternatively implement your own memory-allocation facilities, here is a sane example taken from <a href=https://github.com/leiless/libkext>libkext</a></p>
-<div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-c data-lang=c><span style=color:#00f>static</span> <span style=color:#2b91af>void</span> libkext_mref(<span style=color:#2b91af>int</span> opt)
-{
-    <span style=color:#00f>static</span> <span style=color:#00f>volatile</span> SInt64 cnt = 0;
-    <span style=color:#00f>switch</span> (opt) {
-    <span style=color:#00f>case</span> 0:
-        <span style=color:#00f>if</span> (OSDecrementAtomic64(&amp;cnt) &gt; 0) <span style=color:#00f>return</span>;
-        <span style=color:#00f>break</span>;
-    <span style=color:#00f>case</span> 1:
-        <span style=color:#00f>if</span> (OSIncrementAtomic64(&amp;cnt) &gt;= 0) <span style=color:#00f>return</span>;
-        <span style=color:#00f>break</span>;
-    <span style=color:#00f>case</span> 2:
-        <span style=color:#00f>if</span> (cnt == 0) <span style=color:#00f>return</span>;
-        <span style=color:#00f>break</span>;
-    }
-    <span style=color:green>/* You may use DEBUG macro for production */</span>
-    panic(<span style=color:#a31515>&#34;</span><span style=color:#a31515>\n</span><span style=color:#a31515>%s#L%d (potential memleak)  opt: %d cnt: %llu</span><span style=color:#a31515>\n</span><span style=color:#a31515>&#34;</span>,
-            __func__, __LINE__, opt, cnt);
-}
-
-<span style=color:#2b91af>void</span> *libkext_malloc(size_t size, <span style=color:#2b91af>int</span> flags)
-{
-    <span style=color:green>/* _MALLOC `type&#39; parameter is a joke */</span>
-    <span style=color:#2b91af>void</span> *addr = _MALLOC(size, M_TEMP, flags);
-    <span style=color:#00f>if</span> (addr != NULL) libkext_mref(1);
-    <span style=color:#00f>return</span> addr;
-}
-
-<span style=color:#2b91af>void</span> *libkext_realloc(<span style=color:#2b91af>void</span> *addr, size_t size, <span style=color:#2b91af>int</span> flags)
-{
-    <span style=color:green>/* XXX: _REALLOC not exported  implement you own */</span>
-    <span style=color:#2b91af>void</span> *newaddr = _REALLOC(addr, size, M_TEMP, flags);
-    <span style=color:#00f>if</span> (!!addr ^ !!newaddr) libkext_mref(!!newaddr);
-    <span style=color:#00f>return</span> newaddr;
-}
-
-<span style=color:#2b91af>void</span> libkext_mfree(<span style=color:#2b91af>void</span> *addr)
-{
-    <span style=color:#00f>if</span> (addr != NULL) libkext_mref(0);
-    _FREE(addr, M_TEMP);
-}
-
-<span style=color:green>/* XXX: call when all memory freed */</span>
-<span style=color:#2b91af>void</span> libkext_memck(<span style=color:#2b91af>void</span>)
-{
-    libkext_mref(2);
-}
-</code></pre></div><p>Note that the <em>_REALLOC</em> is not exported by Apple, so you may have no chance to use this function, anyway, you can implement <em>_REALLOC</em> via <em>_MALLOC</em>, that&rsquo;s how the XNU kernel <a href=http://xr.anadoxin.org/source/xref/macos-10.12.6-sierra/xnu-3789.70.16/bsd/kern/libkext_malloc.c#630>implement</a> it.</p>
-<p>Check</p>
-<blockquote>
-<p><em>/System/Library/Frameworks/Kernel.framework/Resources/SupportedKPIs-all-archs.txt</em></p>
-</blockquote>
-<blockquote>
-<p><em>/System/Library/Frameworks/Kernel.framework/Resources/SupportedKPIs-x86_64.txt</em></p>
-</blockquote>
-<p>for a list of universal/x86_64 exported kernel functions.</p>
-<p><a href=https://gist.github.com/leiless/a870ea84e346b9a2639575224f4fec6b>resolvkpi.sh</a> is a script used to resolve KPI functions.</p>
-<hr>
-<p>Here is <a href=https://gist.github.com/leiless/eedb232f8ba25381b4a62b30faa142aa>a bare-bone example</a> show the power of above implementation:</p>
-<div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-c data-lang=c><span style=color:#00f>#include</span> <span style=color:#00f>&lt;mach/mach_types.h&gt;</span><span style=color:#00f>
-</span><span style=color:#00f>#include</span> <span style=color:#00f>&lt;sys/systm.h&gt;</span><span style=color:#00f>
-</span><span style=color:#00f>#include</span> <span style=color:#00f>&lt;libkern/OSAtomic.h&gt;</span><span style=color:#00f>
-</span><span style=color:#00f></span>
-<span style=color:#00f>#define INAME &#34;kext-memleak&#34;
-</span><span style=color:#00f>#define LOG(fmt, ...) printf(INAME &#34;: &#34; fmt &#34;\n&#34;, ##__VA_ARGS__)
-</span><span style=color:#00f></span>
-<span style=color:green>/* Above code snippet omitted */</span>
-
-<span style=color:#00f>static</span> <span style=color:#2b91af>unsigned</span> <span style=color:#2b91af>char</span> *nil;
-<span style=color:#00f>static</span> <span style=color:#2b91af>unsigned</span> <span style=color:#2b91af>char</span> *p;
-
-kern_return_t kext_memleak_start(kmod_info_t *ki, <span style=color:#2b91af>void</span> *d)
-{
-    nil = libkext_malloc(INT_MAX, M_NOWAIT); <span style=color:green>/* Should fail */</span>
-    p = libkext_malloc(1, M_WAITOK);
-    LOG(<span style=color:#a31515>&#34;nil address %#llx&#34;</span>, (<span style=color:#2b91af>uint64_t</span>) nil);
-    LOG(<span style=color:#a31515>&#34;byte allocated %#llx %#x&#34;</span>, (<span style=color:#2b91af>uint64_t</span>) p, *p);
-    <span style=color:#00f>return</span> KERN_SUCCESS;
-}
-
-kern_return_t kext_memleak_stop(kmod_info_t *ki, <span style=color:#2b91af>void</span> *d)
-{
-    libkext_mfree(nil);
-    <span style=color:green>/* Say, you forget to free the p */</span>
-
-    libkext_memck(); <span style=color:green>/* Panic if memleaked */</span>
-    LOG(<span style=color:#a31515>&#34;byte leaked!!! %#llx %#x&#34;</span>, (<span style=color:#2b91af>uint64_t</span>) p, *p);
-    <span style=color:#00f>return</span> KERN_SUCCESS;
-}
-</code></pre></div><p>When you kextload and kextunload the demo kext, system buffer output:</p>
-<div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>kext-memleak: nil address 0
-kext-memleak: byte allocated 0xffffff8027d67b80 0xef
-
---- XXX: kernel panic when kextunloading ---
-
-panic(cpu 1 caller 0xffffff7f9f73ed55): 
-libkext_mref#L26 (potential memleak)  opt: 2 cnt: 1
-
-Backtrace (CPU 1), Frame : Return Address
-0xffffff90b627b6c0 : 0xffffff801d830c64 
-0xffffff90b627bb60 : 0xffffff7f9f73ed55 
-0xffffff90b627bb80 : 0xffffff7f9f73edae 
-0xffffff90b627bb90 : 0xffffff7f9f73ee61 
-0xffffff90b627bbc0 : 0xffffff801ddffedf 
-0xffffff90b627bbf0 : 0xffffff801ddfd7da 
-0xffffff90b627bc30 : 0xffffff801de06bfe 
-0xffffff90b627bc70 : 0xffffff801de0c7e4 
-0xffffff90b627bcf0 : 0xffffff801de1bcfc 
-0xffffff90b627bd70 : 0xffffff801d88bd15 
-0xffffff90b627bdc0 : 0xffffff801d8361cc 
-0xffffff90b627be20 : 0xffffff801d80d19c 
-0xffffff90b627be70 : 0xffffff801d826057 
-0xffffff90b627bf00 : 0xffffff801d96db7d 
-0xffffff90b627bfb0 : 0xffffff801d7d9db6 
-      Kernel Extensions in backtrace:
-         cn.junkman.kext-memleak(1.0)[62D705E1-D080-30F7-9AB1-1CA1F37A07D6]@0xffffff7f9f73e000-&gt;0xffffff7f9f740fff
-
-BSD process name corresponding to current thread: kextunload
-Boot args: debug=0x144 kext-dev-mode=1 pmuflags=1 -v
-
-Mac OS version:
-16G29
-
-Kernel version:
-Darwin Kernel Version 16.7.0: Thu Jun 15 17:36:27 PDT 2017; root:xnu-3789.70.16~2/DEVELOPMENT_X86_64
-Kernel UUID: B8B972B8-220D-3E56-92F8-ADB8CF777CE2
-Kernel slide:     0x000000001d400000
-Kernel text base: 0xffffff801d600000
-__HIB  text base: 0xffffff801d500000
-System model name: VMware7,1 (Mac-E43C1C25D4880AD6)
-
-System uptime in nanoseconds: 354232721359
-ethernet MAC address: 00:0c:29:af:fa:a0
-ip address: 172.16.41.129
-
-Waiting for remote debugger connection.
-</code></pre></div><p>Which the panic report shows that there is one memory leakage in <em>kern_malloc</em>, panic backtrace:</p>
-<div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>(lldb) up 0
-frame #0: 0xffffff801d98957e kernel.development`Debugger [inlined] hw_atomic_sub(delt=1) at locks.c:1514 [opt]
-(lldb) up
-frame #1: 0xffffff801d98957e kernel.development`Debugger(message=&lt;unavailable&gt;) at model_dep.c:1016 [opt]
-(lldb) 
-frame #2: 0xffffff801d830c64 kernel.development`panic(str=&#34;\n%s#L%d (potential memleak)  opt: %d cnt: %llu\n&#34;) at debug.c:459 [opt]
-(lldb) 
-frame #3: 0xffffff7f9f73ed55 kext-memleak`libkext_mref(opt=2) at kext_memleak.c:25
-   22  	        if (cnt == 0) return;
-   23  	        break;
-   24  	    }
--&gt; 25  	    panic(&#34;\n%s#L%d (potential memleak)  opt: %d cnt: %llu\n&#34;,
-   26  	            __func__, __LINE__, opt, cnt);
-   27  	}
-   28  	
-(lldb) 
-frame #4: 0xffffff7f9f73edae kext-memleak`libkext_memck at kext_memleak.c:54
-   51  	/* XXX: call when all memory freed */
-   52  	void libkext_memck(void)
-   53  	{
--&gt; 54  	    libkext_mref(2);
-   55  	}
-   56  	
-   57  	static unsigned char *nil;
-(lldb) 
-frame #5: 0xffffff7f9f73ee61 kext-memleak`kext_memleak_stop(ki=0xffffff7f9f73f000, d=0x0000000000000000) at kext_memleak.c:74
-   71  	    libkext_mfree(nil);
-   72  	    /* Say, you forget to free the p */
-   73  	
--&gt; 74  	    libkext_memck(); /* Panic if memleaked */
-   75  	    LOG(&#34;byte leaked!!! %#llx %#x&#34;, (uint64_t) p, *p);
-   76  	    return KERN_SUCCESS;
-   77  	}
-</code></pre></div><p>We use the similar technique(e.g. refcnt) as in <em>OSMalloc</em>, yet we balanced simplicity and safety. Put <em>kern_memck</em> as last statement when unloading kext can prevent you from memory leakage.</p>
-<p>You certainly mustn&rsquo;t mix <em>libkext_malloc</em> family with any other <em>malloc</em>s, it&rsquo;ll debalance <em>libkext_malloc</em> refcnt, and eventually panic when you call <em>libkext_memck</em>.</p>
-</div>
-<div class=tags>
-</div></div>
-<script src=https://utteranc.es/client.js repo=leiless/blog issue-term=pathname label=comment theme=github-light crossorigin=anonymous async></script>
-</div>
-<div class="footer wrapper">
+</div></div><div class=matter>
+<h1 class=title>HOWTO avoid memory leak in kext development</h1></div></div><div class=markdown>
+<p>Memory leakage is a major issue in software development, let alone happens in <em>kernel extension</em>(kext) layer. Also, sometimes it&rsquo;s hard to track down memory leakage, it&rsquo;s an invisible bomb, it won&rsquo;t cause kernel panic in most cases, yet it unstabilize the whole kernel.</p><p>Specially, I&rsquo;ll take XNU kernel driver(kernel extension) as our topic.</p><p>When possible, avoid using <a href=http://xr.anadoxin.org/source/xref/macos-10.12.6-sierra/xnu-3789.70.16/bsd/kern/libkext_malloc.c#565><em>_MALLOC</em></a> or <a href=http://xr.anadoxin.org/source/xref/macos-10.12.6-sierra/xnu-3789.70.16/bsd/kern/libkext_malloc.c#616><em>_FREE</em></a>. if you don&rsquo;t free the memory allocated by <em>_MALLOC</em>, it certainly memory leaked, it won&rsquo;t kernel panic even when you unload the kext.</p><div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-c data-lang=c><span style=display:flex><span><span style=color:green>/**
+</span></span></span><span style=display:flex><span><span style=color:green> * A _MALLOC leakage demo kext
+</span></span></span><span style=display:flex><span><span style=color:green> */</span>
+</span></span><span style=display:flex><span><span style=color:#00f>#include</span> <span style=color:#00f>&lt;mach/mach_types.h&gt;</span><span style=color:#00f>
+</span></span></span><span style=display:flex><span><span style=color:#00f>#include</span> <span style=color:#00f>&lt;sys/systm.h&gt;</span><span style=color:#00f>
+</span></span></span><span style=display:flex><span><span style=color:#00f>#include</span> <span style=color:#00f>&lt;sys/malloc.h&gt;</span><span style=color:#00f>
+</span></span></span><span style=display:flex><span><span style=color:#00f></span>
+</span></span><span style=display:flex><span><span style=color:#00f>#define INAME &#34;kext-memleak&#34;
+</span></span></span><span style=display:flex><span><span style=color:#00f>#define LOG(fmt, ...) printf(INAME &#34;: &#34; fmt &#34;\n&#34;, ##__VA_ARGS__)
+</span></span></span><span style=display:flex><span><span style=color:#00f></span>
+</span></span><span style=display:flex><span><span style=color:#00f>static</span> <span style=color:#2b91af>unsigned</span> <span style=color:#2b91af>char</span> *p;
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>kern_return_t kext_memleak_start(kmod_info_t *ki, <span style=color:#2b91af>void</span> *d)
+</span></span><span style=display:flex><span>{
+</span></span><span style=display:flex><span>    p = _MALLOC(1, M_TEMP, M_WAITOK);
+</span></span><span style=display:flex><span>    LOG(<span style=color:#a31515>&#34;byte allocated %#llx %#x&#34;</span>, (<span style=color:#2b91af>uint64_t</span>) p, *p);
+</span></span><span style=display:flex><span>    <span style=color:#00f>return</span> KERN_SUCCESS;
+</span></span><span style=display:flex><span>}
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>kern_return_t kext_memleak_stop(kmod_info_t *ki, <span style=color:#2b91af>void</span> *d)
+</span></span><span style=display:flex><span>{
+</span></span><span style=display:flex><span>    <span style=color:green>/* Say, you forget to free the byte */</span>
+</span></span><span style=display:flex><span>    LOG(<span style=color:#a31515>&#34;byte leaked %#llx&#34;</span>, (<span style=color:#2b91af>uint64_t</span>) p);
+</span></span><span style=display:flex><span>    <span style=color:#00f>return</span> KERN_SUCCESS;
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><p>When you load and unload the kext, the output like:</p><div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>kext-memleak: byte allocated 0xffffff8027da0a10 0xef
+</span></span><span style=display:flex><span>kext-memleak: byte leaked 0xffffff8027da0a10
+</span></span></code></pre></div><p>The same frustration apply to <a href=http://xr.anadoxin.org/source/xref/macos-10.12.6-sierra/xnu-3789.70.16/osfmk/kern/kalloc.c#843>OSMalloc()</a> family functions:</p><div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-c data-lang=c><span style=display:flex><span><span style=color:green>/**
+</span></span></span><span style=display:flex><span><span style=color:green> * A OSMalloc leakage demo kext
+</span></span></span><span style=display:flex><span><span style=color:green> */</span>
+</span></span><span style=display:flex><span><span style=color:#00f>#include</span> <span style=color:#00f>&lt;mach/mach_types.h&gt;</span><span style=color:#00f>
+</span></span></span><span style=display:flex><span><span style=color:#00f>#include</span> <span style=color:#00f>&lt;sys/systm.h&gt;</span><span style=color:#00f>
+</span></span></span><span style=display:flex><span><span style=color:#00f>#include</span> <span style=color:#00f>&lt;libkern/OSMalloc.h&gt;</span><span style=color:#00f>
+</span></span></span><span style=display:flex><span><span style=color:#00f>#include</span> <span style=color:#00f>&lt;kern/queue.h&gt;         /* queue_chain_t */</span><span style=color:#00f>
+</span></span></span><span style=display:flex><span><span style=color:#00f></span>
+</span></span><span style=display:flex><span><span style=color:#00f>#define INAME &#34;kext-memleak&#34;
+</span></span></span><span style=display:flex><span><span style=color:#00f>#define LOG(fmt, ...) printf(INAME &#34;: &#34; fmt &#34;\n&#34;, ##__VA_ARGS__)
+</span></span></span><span style=display:flex><span><span style=color:#00f></span>
+</span></span><span style=display:flex><span><span style=color:#00f>static</span> <span style=color:#00f>const</span> <span style=color:#2b91af>char</span> *tagname = <span style=color:#a31515>&#34;f2fc2611-07b1-4a30-af82-3459596b64cb&#34;</span>;
+</span></span><span style=display:flex><span><span style=color:#00f>static</span> OSMallocTag tag;
+</span></span><span style=display:flex><span><span style=color:#00f>static</span> <span style=color:#2b91af>unsigned</span> <span style=color:#2b91af>char</span> *p;
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>kern_return_t kext_memleak_start(kmod_info_t *ki, <span style=color:#2b91af>void</span> *d)
+</span></span><span style=display:flex><span>{
+</span></span><span style=display:flex><span>    tag = OSMalloc_Tagalloc(tagname, OSMT_DEFAULT);
+</span></span><span style=display:flex><span>    <span style=color:#00f>if</span> (tag == NULL) <span style=color:#00f>goto</span> out_oom;
+</span></span><span style=display:flex><span>    p = OSMalloc(1, tag);
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:green>/*
+</span></span></span><span style=display:flex><span><span style=color:green>     * After OSMalloc_Tagalloc and OSMalloc
+</span></span></span><span style=display:flex><span><span style=color:green>     * tag-&gt;OSMT_refcnt equals to two
+</span></span></span><span style=display:flex><span><span style=color:green>     *
+</span></span></span><span style=display:flex><span><span style=color:green>     * XXX: following statements extremely dangerous  may panic!
+</span></span></span><span style=display:flex><span><span style=color:green>     * see: xnu/libkern/libkern/OSMalloc.h#_OSMallocTag_
+</span></span></span><span style=display:flex><span><span style=color:green>     */</span>
+</span></span><span style=display:flex><span>    <span style=color:#2b91af>uint32_t</span> *tag_refcnt = (<span style=color:#2b91af>void</span> *) tag + <span style=color:#00f>sizeof</span>(queue_chain_t);
+</span></span><span style=display:flex><span>    <span style=color:#00f>if</span> (*tag_refcnt != 2) {
+</span></span><span style=display:flex><span>        LOG(<span style=color:#a31515>&#34;tag-&gt;OSMT_refcnt != 2 due to struct alignment&#34;</span>);
+</span></span><span style=display:flex><span>    } <span style=color:#00f>else</span> {
+</span></span><span style=display:flex><span>        LOG(<span style=color:#a31515>&#34;tag-&gt;OSMT_refcnt = 2&#34;</span>);
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    LOG(<span style=color:#a31515>&#34;byte allocated %#llx %#x&#34;</span>, (<span style=color:#2b91af>uint64_t</span>) p, *p);
+</span></span><span style=display:flex><span>    <span style=color:#00f>return</span> KERN_SUCCESS;
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>out_oom:
+</span></span><span style=display:flex><span>    LOG(<span style=color:#a31515>&#34;OSMalloc_Tagalloc failure&#34;</span>);
+</span></span><span style=display:flex><span>    <span style=color:#00f>return</span> KERN_FAILURE;
+</span></span><span style=display:flex><span>}
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>kern_return_t kext_memleak_stop(kmod_info_t *ki, <span style=color:#2b91af>void</span> *d)
+</span></span><span style=display:flex><span>{
+</span></span><span style=display:flex><span>    <span style=color:green>/*
+</span></span></span><span style=display:flex><span><span style=color:green>     * Say, you forget OSFree the memory allocated by OSMalloc
+</span></span></span><span style=display:flex><span><span style=color:green>     * Tag won&#39;t be freed :. its OSMT_refcnt not down to zero
+</span></span></span><span style=display:flex><span><span style=color:green>     */</span>
+</span></span><span style=display:flex><span>    OSMalloc_Tagfree(tag);
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    LOG(<span style=color:#a31515>&#34;#1 byte leaked %#llx %#x&#34;</span>, (<span style=color:#2b91af>uint64_t</span>) p, *p);
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:green>/* OSMalloc will succeed :. tag still alive */</span>
+</span></span><span style=display:flex><span>    <span style=color:#2b91af>unsigned</span> <span style=color:#2b91af>char</span> *q = OSMalloc(1, tag);
+</span></span><span style=display:flex><span>    LOG(<span style=color:#a31515>&#34;#2 byte leaked %#llx %#x&#34;</span>, (<span style=color:#2b91af>uint64_t</span>) q, *q);
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#00f>return</span> KERN_SUCCESS;
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><p>System message output:</p><div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>kext-memleak: tag-&gt;OSMT_refcnt = 2
+</span></span><span style=display:flex><span>kext-memleak: byte allocated 0xffffff8018c7b290 0xef
+</span></span><span style=display:flex><span>kext-memleak: #1 byte leaked 0xffffff8018c7b290 0xef
+</span></span><span style=display:flex><span>kext-memleak: #2 byte leaked 0xffffff8018c7b670 0xef
+</span></span></code></pre></div><hr>
+<p>If you dive into <em>OSMalloc</em>, you&rsquo;ll find</p><p><a href=http://xr.anadoxin.org/source/xref/macos-10.12.6-sierra/xnu-3789.70.16/osfmk/kern/kalloc.c#775><em>xnu/osfmk/kern/kalloc.c#OSMalloc_Tagalloc</em></a>:</p><div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-c data-lang=c><span style=display:flex><span>OSMallocTag
+</span></span><span style=display:flex><span>OSMalloc_Tagalloc(
+</span></span><span style=display:flex><span>	<span style=color:#00f>const</span> <span style=color:#2b91af>char</span>			*str,
+</span></span><span style=display:flex><span>	<span style=color:#2b91af>uint32_t</span>			flags)
+</span></span><span style=display:flex><span>{
+</span></span><span style=display:flex><span>	OSMallocTag       OSMTag;
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>	OSMTag = (OSMallocTag)kalloc(<span style=color:#00f>sizeof</span>(*OSMTag));
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>	bzero((<span style=color:#2b91af>void</span> *)OSMTag, <span style=color:#00f>sizeof</span>(*OSMTag));
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>	<span style=color:#00f>if</span> (flags &amp; OSMT_PAGEABLE)
+</span></span><span style=display:flex><span>		OSMTag-&gt;OSMT_attr = OSMT_ATTR_PAGEABLE;
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>	OSMTag-&gt;OSMT_refcnt = 1; <span style=color:green>/* XXX: Initial refcot one */</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>	strlcpy(OSMTag-&gt;OSMT_name, str, OSMT_MAX_NAME);
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>	OSMalloc_tag_spin_lock();
+</span></span><span style=display:flex><span>	enqueue_tail(&amp;OSMalloc_tag_list, (queue_entry_t)OSMTag);
+</span></span><span style=display:flex><span>	OSMalloc_tag_unlock();
+</span></span><span style=display:flex><span>	OSMTag-&gt;OSMT_state = OSMT_VALID;
+</span></span><span style=display:flex><span>	<span style=color:#00f>return</span>(OSMTag);
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><p><a href=http://xr.anadoxin.org/source/xref/macos-10.12.6-sierra/xnu-3789.70.16/osfmk/kern/kalloc.c#843><em>xnu/osfmk/kern/kalloc.c#OSMalloc</em></a>:</p><div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-c data-lang=c><span style=display:flex><span><span style=color:#2b91af>void</span> *
+</span></span><span style=display:flex><span>OSMalloc(
+</span></span><span style=display:flex><span>	<span style=color:#2b91af>uint32_t</span>			size,
+</span></span><span style=display:flex><span>	OSMallocTag			tag)
+</span></span><span style=display:flex><span>{
+</span></span><span style=display:flex><span>	<span style=color:#2b91af>void</span>			*addr=NULL;
+</span></span><span style=display:flex><span>	kern_return_t	kr;
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>	<span style=color:green>/* XXX: equivalent to tag-&gt;OSMT_refcnt++ */</span>
+</span></span><span style=display:flex><span>	OSMalloc_Tagref(tag);
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>	<span style=color:#00f>if</span> ((tag-&gt;OSMT_attr &amp; OSMT_PAGEABLE)
+</span></span><span style=display:flex><span>	    &amp;&amp; (size &amp; ~PAGE_MASK)) {
+</span></span><span style=display:flex><span>		<span style=color:#00f>if</span> ((kr = kmem_alloc_pageable_external(kernel_map, (vm_offset_t *)&amp;addr, size)) != KERN_SUCCESS)
+</span></span><span style=display:flex><span>			addr = NULL;
+</span></span><span style=display:flex><span>	} <span style=color:#00f>else</span> 
+</span></span><span style=display:flex><span>		addr = kalloc_tag_bt((vm_size_t)size, VM_KERN_MEMORY_KALLOC);
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>	<span style=color:#00f>if</span> (!addr)
+</span></span><span style=display:flex><span>		OSMalloc_Tagrele(tag);
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>	<span style=color:#00f>return</span>(addr);
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><p><a href=http://xr.anadoxin.org/source/xref/macos-10.12.6-sierra/xnu-3789.70.16/osfmk/kern/kalloc.c#828><em>xnu-3789.70.16/osfmk/kern/kalloc.c#OSMalloc_Tagfree</em></a>:</p><div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-c data-lang=c><span style=display:flex><span><span style=color:#2b91af>void</span>
+</span></span><span style=display:flex><span>OSMalloc_Tagfree(
+</span></span><span style=display:flex><span>	 OSMallocTag		tag)
+</span></span><span style=display:flex><span>{
+</span></span><span style=display:flex><span>	<span style=color:#00f>if</span> (!hw_compare_and_store(OSMT_VALID, OSMT_VALID|OSMT_RELEASED, &amp;tag-&gt;OSMT_state))
+</span></span><span style=display:flex><span>		panic(<span style=color:#a31515>&#34;OSMalloc_Tagfree():&#39;%s&#39; has bad state 0x%08X </span><span style=color:#a31515>\n</span><span style=color:#a31515>&#34;</span>, tag-&gt;OSMT_name, tag-&gt;OSMT_state);
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>	<span style=color:green>/* XXX: Free the tag iff. OSMT_refcnt down to zero */</span>
+</span></span><span style=display:flex><span>	<span style=color:#00f>if</span> (hw_atomic_sub(&amp;tag-&gt;OSMT_refcnt, 1) == 0) {
+</span></span><span style=display:flex><span>		OSMalloc_tag_spin_lock();
+</span></span><span style=display:flex><span>		(<span style=color:#2b91af>void</span>)remque((queue_entry_t)tag);
+</span></span><span style=display:flex><span>		OSMalloc_tag_unlock();
+</span></span><span style=display:flex><span>		kfree((<span style=color:#2b91af>void</span>*)tag, <span style=color:#00f>sizeof</span>(*tag));
+</span></span><span style=display:flex><span>	}
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><p>Thus even when you use the <em>OSMalloc</em> family functions won&rsquo;t prevent you from memory leakage in some ways.</p><hr>
+<p>In stead of using untracked <em>_MALLOC</em> family functions, or, refcnt-tracked <em>OSMalloc</em> family functions, you may alternatively implement your own memory-allocation facilities, here is a sane example taken from <a href=https://github.com/leiless/libkext>libkext</a></p><div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-c data-lang=c><span style=display:flex><span><span style=color:#00f>static</span> <span style=color:#2b91af>void</span> libkext_mref(<span style=color:#2b91af>int</span> opt)
+</span></span><span style=display:flex><span>{
+</span></span><span style=display:flex><span>    <span style=color:#00f>static</span> <span style=color:#00f>volatile</span> SInt64 cnt = 0;
+</span></span><span style=display:flex><span>    <span style=color:#00f>switch</span> (opt) {
+</span></span><span style=display:flex><span>    <span style=color:#00f>case</span> 0:
+</span></span><span style=display:flex><span>        <span style=color:#00f>if</span> (OSDecrementAtomic64(&amp;cnt) &gt; 0) <span style=color:#00f>return</span>;
+</span></span><span style=display:flex><span>        <span style=color:#00f>break</span>;
+</span></span><span style=display:flex><span>    <span style=color:#00f>case</span> 1:
+</span></span><span style=display:flex><span>        <span style=color:#00f>if</span> (OSIncrementAtomic64(&amp;cnt) &gt;= 0) <span style=color:#00f>return</span>;
+</span></span><span style=display:flex><span>        <span style=color:#00f>break</span>;
+</span></span><span style=display:flex><span>    <span style=color:#00f>case</span> 2:
+</span></span><span style=display:flex><span>        <span style=color:#00f>if</span> (cnt == 0) <span style=color:#00f>return</span>;
+</span></span><span style=display:flex><span>        <span style=color:#00f>break</span>;
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>    <span style=color:green>/* You may use DEBUG macro for production */</span>
+</span></span><span style=display:flex><span>    panic(<span style=color:#a31515>&#34;</span><span style=color:#a31515>\n</span><span style=color:#a31515>%s#L%d (potential memleak)  opt: %d cnt: %llu</span><span style=color:#a31515>\n</span><span style=color:#a31515>&#34;</span>,
+</span></span><span style=display:flex><span>            __func__, __LINE__, opt, cnt);
+</span></span><span style=display:flex><span>}
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#2b91af>void</span> *libkext_malloc(size_t size, <span style=color:#2b91af>int</span> flags)
+</span></span><span style=display:flex><span>{
+</span></span><span style=display:flex><span>    <span style=color:green>/* _MALLOC `type&#39; parameter is a joke */</span>
+</span></span><span style=display:flex><span>    <span style=color:#2b91af>void</span> *addr = _MALLOC(size, M_TEMP, flags);
+</span></span><span style=display:flex><span>    <span style=color:#00f>if</span> (addr != NULL) libkext_mref(1);
+</span></span><span style=display:flex><span>    <span style=color:#00f>return</span> addr;
+</span></span><span style=display:flex><span>}
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#2b91af>void</span> *libkext_realloc(<span style=color:#2b91af>void</span> *addr, size_t size, <span style=color:#2b91af>int</span> flags)
+</span></span><span style=display:flex><span>{
+</span></span><span style=display:flex><span>    <span style=color:green>/* XXX: _REALLOC not exported  implement you own */</span>
+</span></span><span style=display:flex><span>    <span style=color:#2b91af>void</span> *newaddr = _REALLOC(addr, size, M_TEMP, flags);
+</span></span><span style=display:flex><span>    <span style=color:#00f>if</span> (!!addr ^ !!newaddr) libkext_mref(!!newaddr);
+</span></span><span style=display:flex><span>    <span style=color:#00f>return</span> newaddr;
+</span></span><span style=display:flex><span>}
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#2b91af>void</span> libkext_mfree(<span style=color:#2b91af>void</span> *addr)
+</span></span><span style=display:flex><span>{
+</span></span><span style=display:flex><span>    <span style=color:#00f>if</span> (addr != NULL) libkext_mref(0);
+</span></span><span style=display:flex><span>    _FREE(addr, M_TEMP);
+</span></span><span style=display:flex><span>}
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:green>/* XXX: call when all memory freed */</span>
+</span></span><span style=display:flex><span><span style=color:#2b91af>void</span> libkext_memck(<span style=color:#2b91af>void</span>)
+</span></span><span style=display:flex><span>{
+</span></span><span style=display:flex><span>    libkext_mref(2);
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><p>Note that the <em>_REALLOC</em> is not exported by Apple, so you may have no chance to use this function, anyway, you can implement <em>_REALLOC</em> via <em>_MALLOC</em>, that&rsquo;s how the XNU kernel <a href=http://xr.anadoxin.org/source/xref/macos-10.12.6-sierra/xnu-3789.70.16/bsd/kern/libkext_malloc.c#630>implement</a> it.</p><p>Check</p><blockquote>
+<p><em>/System/Library/Frameworks/Kernel.framework/Resources/SupportedKPIs-all-archs.txt</em></p></blockquote><blockquote>
+<p><em>/System/Library/Frameworks/Kernel.framework/Resources/SupportedKPIs-x86_64.txt</em></p></blockquote><p>for a list of universal/x86_64 exported kernel functions.</p><p><a href=https://gist.github.com/leiless/a870ea84e346b9a2639575224f4fec6b>resolvkpi.sh</a> is a script used to resolve KPI functions.</p><hr>
+<p>Here is <a href=https://gist.github.com/leiless/eedb232f8ba25381b4a62b30faa142aa>a bare-bone example</a> show the power of above implementation:</p><div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-c data-lang=c><span style=display:flex><span><span style=color:#00f>#include</span> <span style=color:#00f>&lt;mach/mach_types.h&gt;</span><span style=color:#00f>
+</span></span></span><span style=display:flex><span><span style=color:#00f>#include</span> <span style=color:#00f>&lt;sys/systm.h&gt;</span><span style=color:#00f>
+</span></span></span><span style=display:flex><span><span style=color:#00f>#include</span> <span style=color:#00f>&lt;libkern/OSAtomic.h&gt;</span><span style=color:#00f>
+</span></span></span><span style=display:flex><span><span style=color:#00f></span>
+</span></span><span style=display:flex><span><span style=color:#00f>#define INAME &#34;kext-memleak&#34;
+</span></span></span><span style=display:flex><span><span style=color:#00f>#define LOG(fmt, ...) printf(INAME &#34;: &#34; fmt &#34;\n&#34;, ##__VA_ARGS__)
+</span></span></span><span style=display:flex><span><span style=color:#00f></span>
+</span></span><span style=display:flex><span><span style=color:green>/* Above code snippet omitted */</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#00f>static</span> <span style=color:#2b91af>unsigned</span> <span style=color:#2b91af>char</span> *nil;
+</span></span><span style=display:flex><span><span style=color:#00f>static</span> <span style=color:#2b91af>unsigned</span> <span style=color:#2b91af>char</span> *p;
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>kern_return_t kext_memleak_start(kmod_info_t *ki, <span style=color:#2b91af>void</span> *d)
+</span></span><span style=display:flex><span>{
+</span></span><span style=display:flex><span>    nil = libkext_malloc(INT_MAX, M_NOWAIT); <span style=color:green>/* Should fail */</span>
+</span></span><span style=display:flex><span>    p = libkext_malloc(1, M_WAITOK);
+</span></span><span style=display:flex><span>    LOG(<span style=color:#a31515>&#34;nil address %#llx&#34;</span>, (<span style=color:#2b91af>uint64_t</span>) nil);
+</span></span><span style=display:flex><span>    LOG(<span style=color:#a31515>&#34;byte allocated %#llx %#x&#34;</span>, (<span style=color:#2b91af>uint64_t</span>) p, *p);
+</span></span><span style=display:flex><span>    <span style=color:#00f>return</span> KERN_SUCCESS;
+</span></span><span style=display:flex><span>}
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>kern_return_t kext_memleak_stop(kmod_info_t *ki, <span style=color:#2b91af>void</span> *d)
+</span></span><span style=display:flex><span>{
+</span></span><span style=display:flex><span>    libkext_mfree(nil);
+</span></span><span style=display:flex><span>    <span style=color:green>/* Say, you forget to free the p */</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    libkext_memck(); <span style=color:green>/* Panic if memleaked */</span>
+</span></span><span style=display:flex><span>    LOG(<span style=color:#a31515>&#34;byte leaked!!! %#llx %#x&#34;</span>, (<span style=color:#2b91af>uint64_t</span>) p, *p);
+</span></span><span style=display:flex><span>    <span style=color:#00f>return</span> KERN_SUCCESS;
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><p>When you kextload and kextunload the demo kext, system buffer output:</p><div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>kext-memleak: nil address 0
+</span></span><span style=display:flex><span>kext-memleak: byte allocated 0xffffff8027d67b80 0xef
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>--- XXX: kernel panic when kextunloading ---
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>panic(cpu 1 caller 0xffffff7f9f73ed55): 
+</span></span><span style=display:flex><span>libkext_mref#L26 (potential memleak)  opt: 2 cnt: 1
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>Backtrace (CPU 1), Frame : Return Address
+</span></span><span style=display:flex><span>0xffffff90b627b6c0 : 0xffffff801d830c64 
+</span></span><span style=display:flex><span>0xffffff90b627bb60 : 0xffffff7f9f73ed55 
+</span></span><span style=display:flex><span>0xffffff90b627bb80 : 0xffffff7f9f73edae 
+</span></span><span style=display:flex><span>0xffffff90b627bb90 : 0xffffff7f9f73ee61 
+</span></span><span style=display:flex><span>0xffffff90b627bbc0 : 0xffffff801ddffedf 
+</span></span><span style=display:flex><span>0xffffff90b627bbf0 : 0xffffff801ddfd7da 
+</span></span><span style=display:flex><span>0xffffff90b627bc30 : 0xffffff801de06bfe 
+</span></span><span style=display:flex><span>0xffffff90b627bc70 : 0xffffff801de0c7e4 
+</span></span><span style=display:flex><span>0xffffff90b627bcf0 : 0xffffff801de1bcfc 
+</span></span><span style=display:flex><span>0xffffff90b627bd70 : 0xffffff801d88bd15 
+</span></span><span style=display:flex><span>0xffffff90b627bdc0 : 0xffffff801d8361cc 
+</span></span><span style=display:flex><span>0xffffff90b627be20 : 0xffffff801d80d19c 
+</span></span><span style=display:flex><span>0xffffff90b627be70 : 0xffffff801d826057 
+</span></span><span style=display:flex><span>0xffffff90b627bf00 : 0xffffff801d96db7d 
+</span></span><span style=display:flex><span>0xffffff90b627bfb0 : 0xffffff801d7d9db6 
+</span></span><span style=display:flex><span>      Kernel Extensions in backtrace:
+</span></span><span style=display:flex><span>         cn.junkman.kext-memleak(1.0)[62D705E1-D080-30F7-9AB1-1CA1F37A07D6]@0xffffff7f9f73e000-&gt;0xffffff7f9f740fff
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>BSD process name corresponding to current thread: kextunload
+</span></span><span style=display:flex><span>Boot args: debug=0x144 kext-dev-mode=1 pmuflags=1 -v
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>Mac OS version:
+</span></span><span style=display:flex><span>16G29
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>Kernel version:
+</span></span><span style=display:flex><span>Darwin Kernel Version 16.7.0: Thu Jun 15 17:36:27 PDT 2017; root:xnu-3789.70.16~2/DEVELOPMENT_X86_64
+</span></span><span style=display:flex><span>Kernel UUID: B8B972B8-220D-3E56-92F8-ADB8CF777CE2
+</span></span><span style=display:flex><span>Kernel slide:     0x000000001d400000
+</span></span><span style=display:flex><span>Kernel text base: 0xffffff801d600000
+</span></span><span style=display:flex><span>__HIB  text base: 0xffffff801d500000
+</span></span><span style=display:flex><span>System model name: VMware7,1 (Mac-E43C1C25D4880AD6)
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>System uptime in nanoseconds: 354232721359
+</span></span><span style=display:flex><span>ethernet MAC address: 00:0c:29:af:fa:a0
+</span></span><span style=display:flex><span>ip address: 172.16.41.129
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>Waiting for remote debugger connection.
+</span></span></code></pre></div><p>Which the panic report shows that there is one memory leakage in <em>kern_malloc</em>, panic backtrace:</p><div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>(lldb) up 0
+</span></span><span style=display:flex><span>frame #0: 0xffffff801d98957e kernel.development`Debugger [inlined] hw_atomic_sub(delt=1) at locks.c:1514 [opt]
+</span></span><span style=display:flex><span>(lldb) up
+</span></span><span style=display:flex><span>frame #1: 0xffffff801d98957e kernel.development`Debugger(message=&lt;unavailable&gt;) at model_dep.c:1016 [opt]
+</span></span><span style=display:flex><span>(lldb) 
+</span></span><span style=display:flex><span>frame #2: 0xffffff801d830c64 kernel.development`panic(str=&#34;\n%s#L%d (potential memleak)  opt: %d cnt: %llu\n&#34;) at debug.c:459 [opt]
+</span></span><span style=display:flex><span>(lldb) 
+</span></span><span style=display:flex><span>frame #3: 0xffffff7f9f73ed55 kext-memleak`libkext_mref(opt=2) at kext_memleak.c:25
+</span></span><span style=display:flex><span>   22  	        if (cnt == 0) return;
+</span></span><span style=display:flex><span>   23  	        break;
+</span></span><span style=display:flex><span>   24  	    }
+</span></span><span style=display:flex><span>-&gt; 25  	    panic(&#34;\n%s#L%d (potential memleak)  opt: %d cnt: %llu\n&#34;,
+</span></span><span style=display:flex><span>   26  	            __func__, __LINE__, opt, cnt);
+</span></span><span style=display:flex><span>   27  	}
+</span></span><span style=display:flex><span>   28  	
+</span></span><span style=display:flex><span>(lldb) 
+</span></span><span style=display:flex><span>frame #4: 0xffffff7f9f73edae kext-memleak`libkext_memck at kext_memleak.c:54
+</span></span><span style=display:flex><span>   51  	/* XXX: call when all memory freed */
+</span></span><span style=display:flex><span>   52  	void libkext_memck(void)
+</span></span><span style=display:flex><span>   53  	{
+</span></span><span style=display:flex><span>-&gt; 54  	    libkext_mref(2);
+</span></span><span style=display:flex><span>   55  	}
+</span></span><span style=display:flex><span>   56  	
+</span></span><span style=display:flex><span>   57  	static unsigned char *nil;
+</span></span><span style=display:flex><span>(lldb) 
+</span></span><span style=display:flex><span>frame #5: 0xffffff7f9f73ee61 kext-memleak`kext_memleak_stop(ki=0xffffff7f9f73f000, d=0x0000000000000000) at kext_memleak.c:74
+</span></span><span style=display:flex><span>   71  	    libkext_mfree(nil);
+</span></span><span style=display:flex><span>   72  	    /* Say, you forget to free the p */
+</span></span><span style=display:flex><span>   73  	
+</span></span><span style=display:flex><span>-&gt; 74  	    libkext_memck(); /* Panic if memleaked */
+</span></span><span style=display:flex><span>   75  	    LOG(&#34;byte leaked!!! %#llx %#x&#34;, (uint64_t) p, *p);
+</span></span><span style=display:flex><span>   76  	    return KERN_SUCCESS;
+</span></span><span style=display:flex><span>   77  	}
+</span></span></code></pre></div><p>We use the similar technique(e.g. refcnt) as in <em>OSMalloc</em>, yet we balanced simplicity and safety. Put <em>kern_memck</em> as last statement when unloading kext can prevent you from memory leakage.</p><p>You certainly mustn&rsquo;t mix <em>libkext_malloc</em> family with any other <em>malloc</em>s, it&rsquo;ll debalance <em>libkext_malloc</em> refcnt, and eventually panic when you call <em>libkext_memck</em>.</p></div><div class=tags>
+</div></div><script src=https://utteranc.es/client.js repo=leiless/blog issue-term=pathname label=comment theme=github-light crossorigin=anonymous async></script>
+</div><div class="footer wrapper">
 <nav class=nav>
-<div>2021 Released under <a href=https://creativecommons.org/licenses/by-nc-sa/4.0/>CC BY-NC-SA 4.0</a> license | <a href=https://github.com/knadh/hugo-ink>Ink</a> theme on <a href=https://gohugo.io>Hugo</a></div>
-</nav>
-</div>
-<script type=application/javascript>var doNotTrack=!1;doNotTrack||(window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)},ga.l=+new Date,ga('create','G-RMJ7KLHXH8','auto'),ga('send','pageview'))</script>
+<div>2022 Released under <a href=https://creativecommons.org/licenses/by-nc-sa/4.0/>CC BY-NC-SA 4.0</a> license | <a href=https://github.com/knadh/hugo-ink>Ink</a> theme on <a href=https://gohugo.io>Hugo</a></div></nav></div><script type=application/javascript>var doNotTrack=!1;doNotTrack||(window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)},ga.l=+new Date,ga("create","G-RMJ7KLHXH8","auto"),ga("send","pageview"))</script>
 <script async src=https://www.google-analytics.com/analytics.js></script>
 <script>feather.replace()</script>
-</body>
-</html>
+</body></html>

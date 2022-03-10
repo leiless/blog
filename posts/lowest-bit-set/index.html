@@ -6,16 +6,16 @@
 <meta itemprop=description content="How do you solve the question &ldquo;Determine position of lowest bit set&rdquo;?
 I&rsquo;m not excepting you to solve it by now, but think about it.
 The intuitive way to solve it may like Position of lowest bit set:
-unsigned int lowest_bit_set_naive(unsigned int x) { // x=0 is not properly handled by while-loop  if (x == 0) return 0; unsigned int result = 0; while ((x & 1) == 0) { x >>= 1; result++; } return result; } Yes, it solved the question nicely, I don&rsquo;t want be captious, 0 and 1 have the same value returned :-("><meta itemprop=datePublished content="2017-07-01T00:00:00+00:00">
+unsigned int lowest_bit_set_naive(unsigned int x) {  // x=0 is not properly handled by while-loop  if (x == 0) return 0;   unsigned int result = 0;  while ((x & 1) == 0) {  x >>= 1;  result++;  }   return result; } Yes, it solved the question nicely, I don&rsquo;t want be captious, 0 and 1 have the same value returned :-("><meta itemprop=datePublished content="2017-07-01T00:00:00+00:00">
 <meta itemprop=dateModified content="2017-07-01T00:00:00+00:00">
 <meta itemprop=wordCount content="1541">
 <meta itemprop=keywords content><meta property="og:title" content="Lowest Bit Set">
 <meta property="og:description" content="How do you solve the question &ldquo;Determine position of lowest bit set&rdquo;?
 I&rsquo;m not excepting you to solve it by now, but think about it.
 The intuitive way to solve it may like Position of lowest bit set:
-unsigned int lowest_bit_set_naive(unsigned int x) { // x=0 is not properly handled by while-loop  if (x == 0) return 0; unsigned int result = 0; while ((x & 1) == 0) { x >>= 1; result++; } return result; } Yes, it solved the question nicely, I don&rsquo;t want be captious, 0 and 1 have the same value returned :-(">
+unsigned int lowest_bit_set_naive(unsigned int x) {  // x=0 is not properly handled by while-loop  if (x == 0) return 0;   unsigned int result = 0;  while ((x & 1) == 0) {  x >>= 1;  result++;  }   return result; } Yes, it solved the question nicely, I don&rsquo;t want be captious, 0 and 1 have the same value returned :-(">
 <meta property="og:type" content="article">
-<meta property="og:url" content="https://leiless.me/posts/lowest-bit-set/"><meta property="article:section" content="posts">
+<meta property="og:url" content="https://leiless.github.io/blog/posts/lowest-bit-set/"><meta property="article:section" content="posts">
 <meta property="article:published_time" content="2017-07-01T00:00:00+00:00">
 <meta property="article:modified_time" content="2017-07-01T00:00:00+00:00">
 <meta name=twitter:card content="summary">
@@ -23,348 +23,252 @@ unsigned int lowest_bit_set_naive(unsigned int x) { // x=0 is not properly handl
 <meta name=twitter:description content="How do you solve the question &ldquo;Determine position of lowest bit set&rdquo;?
 I&rsquo;m not excepting you to solve it by now, but think about it.
 The intuitive way to solve it may like Position of lowest bit set:
-unsigned int lowest_bit_set_naive(unsigned int x) { // x=0 is not properly handled by while-loop  if (x == 0) return 0; unsigned int result = 0; while ((x & 1) == 0) { x >>= 1; result++; } return result; } Yes, it solved the question nicely, I don&rsquo;t want be captious, 0 and 1 have the same value returned :-(">
+unsigned int lowest_bit_set_naive(unsigned int x) {  // x=0 is not properly handled by while-loop  if (x == 0) return 0;   unsigned int result = 0;  while ((x & 1) == 0) {  x >>= 1;  result++;  }   return result; } Yes, it solved the question nicely, I don&rsquo;t want be captious, 0 and 1 have the same value returned :-(">
 <link href="https://fonts.googleapis.com/css?family=Playfair+Display:700" rel=stylesheet type=text/css>
-<link rel=stylesheet type=text/css media=screen href=https://leiless.me/css/normalize.css>
-<link rel=stylesheet type=text/css media=screen href=https://leiless.me/css/main.css>
-<link id=dark-scheme rel=stylesheet type=text/css href=https://leiless.me/css/dark.css>
-<script src=https://leiless.me/js/feather.min.js></script>
-<script src=https://leiless.me/js/main.js></script>
-</head>
-<body>
+<link rel=stylesheet type=text/css media=screen href=https://leiless.github.io/blog/css/normalize.css>
+<link rel=stylesheet type=text/css media=screen href=https://leiless.github.io/blog/css/main.css>
+<link id=dark-scheme rel=stylesheet type=text/css href=https://leiless.github.io/blog/css/dark.css>
+<script src=https://leiless.github.io/blog/js/feather.min.js></script>
+<script src=https://leiless.github.io/blog/js/main.js></script>
+</head><body>
 <div class="container wrapper">
 <div class=header>
 <div class=avatar>
-<a href=https://leiless.me/>
-<img src=../../avatar.jpg alt=一个程序员的辩白>
+<a href=https://leiless.github.io/blog/>
+<img src=avatar.jpg alt=一个程序员的辩白>
 </a>
-</div>
-<h1 class=site-title><a href=https://leiless.me/>一个程序员的辩白</a></h1>
-<div class=site-description><nav class="nav social">
-<ul class=flat><li><a href=https://github.com/leiless title=GitHub><i data-feather=github></i></a></li><li><a href=https://twitter.com/fake_fishbone title=Twitter><i data-feather=twitter></i></a></li><li><a href=/index.xml title=RSS><i data-feather=rss></i></a></li><li><a href=# class=scheme-toggle id=scheme-toggle></a></li></ul>
-</nav>
-</div>
-<nav class=nav>
+</div><h1 class=site-title><a href=https://leiless.github.io/blog/>一个程序员的辩白</a></h1><div class=site-description><nav class="nav social">
+<ul class=flat><li><a href=https://github.com/leiless title=GitHub><i data-feather=github></i></a></li><li><a href=https://twitter.com/space_bohemian title=Twitter><i data-feather=twitter></i></a></li><li><a href=/index.xml title=RSS><i data-feather=rss></i></a></li><li><a href=# class=scheme-toggle id=scheme-toggle></a></li></ul></nav></div><nav class=nav>
 <ul class=flat>
-</ul>
-</nav>
-</div>
-<div class=post>
+</ul></nav></div><div class=post>
 <div class=post-header>
 <div class=meta>
 <div class=date>
 <span class=day>01</span>
 <span class=rest>Jul 2017</span>
-</div>
-</div>
-<div class=matter>
-<h1 class=title>Lowest Bit Set</h1>
-</div>
-</div>
-<div class=markdown>
-<p>How do you solve the question &ldquo;Determine position of lowest bit set&rdquo;?</p>
-<p>I&rsquo;m not excepting you to solve it by now, but think about it.</p>
-<p>The intuitive way to solve it may like <a href=https://bits.stephan-brumme.com/lowestBitSet.html>Position of lowest bit set</a>:</p>
-<div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-c data-lang=c><span style=color:#2b91af>unsigned</span> <span style=color:#2b91af>int</span> lowest_bit_set_naive(<span style=color:#2b91af>unsigned</span> <span style=color:#2b91af>int</span> x)
-{
-    <span style=color:green>// x=0 is not properly handled by while-loop
-</span><span style=color:green></span>    <span style=color:#00f>if</span> (x == 0) <span style=color:#00f>return</span> 0;
-
-    <span style=color:#2b91af>unsigned</span> <span style=color:#2b91af>int</span> result = 0;
-    <span style=color:#00f>while</span> ((x &amp; 1) == 0) {
-        x &gt;&gt;= 1;
-        result++;
-    }
-
-    <span style=color:#00f>return</span> result;
-}
-</code></pre></div><p>Yes, it solved the question nicely, I don&rsquo;t want be captious, 0 and 1 have the same value returned :-(</p>
-<p> </p>
-<p><a href=https://bits.stephan-brumme.com/lowestBitSet.html>Position of lowest bit set</a> also given an opaque solution to this question.</p>
-<p>Much more like this(rearranged):</p>
-<div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-c data-lang=c><span style=color:#00f>const</span> <span style=color:#2b91af>unsigned</span> <span style=color:#2b91af>int</span> MultiplyDeBruijnBitPosition[32] = {
-    <span style=color:green>// precomputed lookup table
-</span><span style=color:green></span>    0,  1, 28,  2, 29, 14, 24,  3, 30, 22, 20, 15, 25, 17,  4,  8,
-    31, 27, 13, 23, 21, 19, 16,  7, 26, 12, 18,  6, 11,  5, 10,  9
-}
-
-<span style=color:#2b91af>unsigned</span> <span style=color:#2b91af>int</span> lowestBitSet(<span style=color:#2b91af>unsigned</span> <span style=color:#2b91af>int</span> x)
-{
-    <span style=color:green>// only lowest bit will remain 1, all others become 0
-</span><span style=color:green></span>    x &amp;= - (<span style=color:#2b91af>int</span>) x;
-    <span style=color:green>// DeBruijn constant
-</span><span style=color:green></span>    x *= 0x077cb531;
-    <span style=color:green>// the upper 5 bits are unique, skip the rest (32 - 5 = 27)
-</span><span style=color:green></span>    x &gt;&gt;= 27;
-    <span style=color:green>// convert to actual position
-</span><span style=color:green></span>    <span style=color:#00f>return</span> MultiplyDeBruijnBitPosition[x];
-}
-</code></pre></div><p> </p>
-<p>Even with comments, it&rsquo;s not easy to understand this for some people(like me) at the first glance.</p>
-<p>The most confusions come from:</p>
-<ul>
-<li>What&rsquo;s the De Bruijn constant?</li>
-<li>How the lookup table precomputed?</li>
-</ul>
-<p>Before answering those two questions, I need explain to you what&rsquo;s the idea behind this opaque solution:</p>
-<ul>
+</div></div><div class=matter>
+<h1 class=title>Lowest Bit Set</h1></div></div><div class=markdown>
+<p>How do you solve the question &ldquo;Determine position of lowest bit set&rdquo;?</p><p>I&rsquo;m not excepting you to solve it by now, but think about it.</p><p>The intuitive way to solve it may like <a href=https://bits.stephan-brumme.com/lowestBitSet.html>Position of lowest bit set</a>:</p><div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-c data-lang=c><span style=display:flex><span><span style=color:#2b91af>unsigned</span> <span style=color:#2b91af>int</span> lowest_bit_set_naive(<span style=color:#2b91af>unsigned</span> <span style=color:#2b91af>int</span> x)
+</span></span><span style=display:flex><span>{
+</span></span><span style=display:flex><span>    <span style=color:green>// x=0 is not properly handled by while-loop
+</span></span></span><span style=display:flex><span><span style=color:green></span>    <span style=color:#00f>if</span> (x == 0) <span style=color:#00f>return</span> 0;
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#2b91af>unsigned</span> <span style=color:#2b91af>int</span> result = 0;
+</span></span><span style=display:flex><span>    <span style=color:#00f>while</span> ((x &amp; 1) == 0) {
+</span></span><span style=display:flex><span>        x &gt;&gt;= 1;
+</span></span><span style=display:flex><span>        result++;
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#00f>return</span> result;
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><p>Yes, it solved the question nicely, I don&rsquo;t want be captious, 0 and 1 have the same value returned :-(</p><p> </p><p><a href=https://bits.stephan-brumme.com/lowestBitSet.html>Position of lowest bit set</a> also given an opaque solution to this question.</p><p>Much more like this(rearranged):</p><div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-c data-lang=c><span style=display:flex><span><span style=color:#00f>const</span> <span style=color:#2b91af>unsigned</span> <span style=color:#2b91af>int</span> MultiplyDeBruijnBitPosition[32] = {
+</span></span><span style=display:flex><span>    <span style=color:green>// precomputed lookup table
+</span></span></span><span style=display:flex><span><span style=color:green></span>    0,  1, 28,  2, 29, 14, 24,  3, 30, 22, 20, 15, 25, 17,  4,  8,
+</span></span><span style=display:flex><span>    31, 27, 13, 23, 21, 19, 16,  7, 26, 12, 18,  6, 11,  5, 10,  9
+</span></span><span style=display:flex><span>}
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#2b91af>unsigned</span> <span style=color:#2b91af>int</span> lowestBitSet(<span style=color:#2b91af>unsigned</span> <span style=color:#2b91af>int</span> x)
+</span></span><span style=display:flex><span>{
+</span></span><span style=display:flex><span>    <span style=color:green>// only lowest bit will remain 1, all others become 0
+</span></span></span><span style=display:flex><span><span style=color:green></span>    x &amp;= - (<span style=color:#2b91af>int</span>) x;
+</span></span><span style=display:flex><span>    <span style=color:green>// DeBruijn constant
+</span></span></span><span style=display:flex><span><span style=color:green></span>    x *= 0x077cb531;
+</span></span><span style=display:flex><span>    <span style=color:green>// the upper 5 bits are unique, skip the rest (32 - 5 = 27)
+</span></span></span><span style=display:flex><span><span style=color:green></span>    x &gt;&gt;= 27;
+</span></span><span style=display:flex><span>    <span style=color:green>// convert to actual position
+</span></span></span><span style=display:flex><span><span style=color:green></span>    <span style=color:#00f>return</span> MultiplyDeBruijnBitPosition[x];
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><p> </p><p>Even with comments, it&rsquo;s not easy to understand this for some people(like me) at the first glance.</p><p>The most confusions come from:</p><ul>
+<li>What&rsquo;s the De Bruijn constant?</li><li>How the lookup table precomputed?</li></ul><p>Before answering those two questions, I need explain to you what&rsquo;s the idea behind this opaque solution:</p><ul>
 <li>
-<p>It applied a mapping concept, which means, the bit set position is one-to-one.</p>
-</li>
+<p>It applied a mapping concept, which means, the bit set position is one-to-one.</p></li><li>
+<p>Generate a precomputed array to store the mapping result, which can lead us to real position.</p></li></ul><p>Though we now know that the magic number can generate an unique 5-bits number. But how we can generate it?</p><p> </p><p>My intuitive way is brute-force probing, which is easy and applicable.</p><div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-c data-lang=c><span style=display:flex><span><span style=color:#00f>#include</span> <span style=color:#00f>&lt;stdio.h&gt;</span><span style=color:#00f>
+</span></span></span><span style=display:flex><span><span style=color:#00f>#include</span> <span style=color:#00f>&lt;string.h&gt;</span><span style=color:#00f>
+</span></span></span><span style=display:flex><span><span style=color:#00f></span>
+</span></span><span style=display:flex><span><span style=color:#00f>#define LIM 32
+</span></span></span><span style=display:flex><span><span style=color:#00f>#define BIT(x) (1 &lt;&lt; (x))
+</span></span></span><span style=display:flex><span><span style=color:#00f></span>
+</span></span><span style=display:flex><span><span style=color:#00f>static</span> <span style=color:#2b91af>unsigned</span> <span style=color:#2b91af>int</span> map[] = {
+</span></span><span style=display:flex><span>    BIT(0),  BIT(1),  BIT(2),  BIT(3),
+</span></span><span style=display:flex><span>    BIT(4),  BIT(5),  BIT(6),  BIT(7),
+</span></span><span style=display:flex><span>    BIT(8),  BIT(9),  BIT(10), BIT(11),
+</span></span><span style=display:flex><span>    BIT(12), BIT(13), BIT(14), BIT(15),
+</span></span><span style=display:flex><span>    BIT(16), BIT(17), BIT(18), BIT(19),
+</span></span><span style=display:flex><span>    BIT(20), BIT(21), BIT(22), BIT(23),
+</span></span><span style=display:flex><span>    BIT(24), BIT(25), BIT(26), BIT(27),
+</span></span><span style=display:flex><span>    BIT(28), BIT(29), BIT(30), BIT(31),
+</span></span><span style=display:flex><span>};
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#2b91af>void</span> probing(<span style=color:#2b91af>void</span>)
+</span></span><span style=display:flex><span>{
+</span></span><span style=display:flex><span>    <span style=color:#2b91af>unsigned</span> <span style=color:#2b91af>int</span> i, j;
+</span></span><span style=display:flex><span>    <span style=color:#2b91af>unsigned</span> <span style=color:#2b91af>int</span> buff[LIM];
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#00f>for</span> (i = 0x1; i != 0; i++) {
+</span></span><span style=display:flex><span>        memset(buff, 0, <span style=color:#00f>sizeof</span>(buff));
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>        <span style=color:#00f>for</span> (j = 0; j &lt; LIM; j++) {
+</span></span><span style=display:flex><span>            <span style=color:green>/* each bit should mapped into unique slot */</span>
+</span></span><span style=display:flex><span>            <span style=color:#00f>if</span> (++buff[(map[j] * i) &gt;&gt; 27] != 1)
+</span></span><span style=display:flex><span>                <span style=color:#00f>break</span>;
+</span></span><span style=display:flex><span>        }
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>        <span style=color:#00f>if</span> (j == LIM)
+</span></span><span style=display:flex><span>            <span style=color:#00f>break</span>;
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#00f>if</span> (i == 0) {
+</span></span><span style=display:flex><span>        fprintf(stderr, <span style=color:#a31515>&#34;probe failed</span><span style=color:#a31515>\n</span><span style=color:#a31515>&#34;</span>);
+</span></span><span style=display:flex><span>        <span style=color:#00f>return</span>;
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:green>/* found, prepare and print the result */</span>
+</span></span><span style=display:flex><span>    printf(<span style=color:#a31515>&#34;%#010x:</span><span style=color:#a31515>\n</span><span style=color:#a31515>&#34;</span>, i);
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#00f>for</span> (j = 0; j &lt; LIM; j++) {
+</span></span><span style=display:flex><span>        <span style=color:green>/* mapping from bitmap into index */</span>
+</span></span><span style=display:flex><span>        buff[(map[j] * i) &gt;&gt; 27] = j;
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#00f>for</span> (j = 0; j &lt; LIM; j++) {
+</span></span><span style=display:flex><span>        printf(<span style=color:#a31515>&#34;%2u,&#34;</span>, buff[j]);
+</span></span><span style=display:flex><span>        putchar(j % 8 != 7 ? <span style=color:#a31515>&#39; &#39;</span> : <span style=color:#a31515>&#39;\n&#39;</span>);
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><p>If you invoke <code>probing()</code>, it should generate following output:</p><div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>0x04653adf:
+</span></span><span style=display:flex><span> 0,  1,  2,  6,  3, 11,  7, 16,
+</span></span><span style=display:flex><span> 4, 14, 12, 21,  8, 23, 17, 26,
+</span></span><span style=display:flex><span>31,  5, 10, 15, 13, 20, 22, 25,
+</span></span><span style=display:flex><span>30,  9, 19, 24, 29, 18, 28, 27,
+</span></span></code></pre></div><p>Of which <code>0x04653adf</code> is the minimal magic number, <a href=https://gist.github.com/leiless/6e1489558c815d2d085cbd40089a900f>there are plenty of those magic numbers</a>. <code>0x077cb531</code> is another case.</p><p>Based on this, we can make up our own version here:</p><div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-c data-lang=c><span style=display:flex><span><span style=color:#00f>static</span> <span style=color:#00f>const</span> <span style=color:#2b91af>int</span> debj32[] = {
+</span></span><span style=display:flex><span>     0,  1,  2,  6,  3, 11,  7, 16,
+</span></span><span style=display:flex><span>     4, 14, 12, 21,  8, 23, 17, 26,
+</span></span><span style=display:flex><span>    31,  5, 10, 15, 13, 20, 22, 25,
+</span></span><span style=display:flex><span>    30,  9, 19, 24, 29, 18, 28, 27,
+</span></span><span style=display:flex><span>};
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#2b91af>int</span> lsb32(<span style=color:#2b91af>unsigned</span> <span style=color:#2b91af>int</span> x)
+</span></span><span style=display:flex><span>{
+</span></span><span style=display:flex><span>    <span style=color:#00f>if</span> (x == 0)        <span style=color:green>/* zero with no bit set */</span>
+</span></span><span style=display:flex><span>        <span style=color:#00f>return</span> -1;
+</span></span><span style=display:flex><span>    x &amp;= -x;
+</span></span><span style=display:flex><span>    x *= 0x04653adf;    <span style=color:green>/* minimal magic number */</span>
+</span></span><span style=display:flex><span>    x &gt;&gt;= 27;
+</span></span><span style=display:flex><span>    <span style=color:#00f>return</span> debj32[x];
+</span></span><span style=display:flex><span>}
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#00f>inline</span> <span style=color:#2b91af>int</span> lsb32i(<span style=color:#2b91af>unsigned</span> <span style=color:#2b91af>int</span> x)
+</span></span><span style=display:flex><span>{
+</span></span><span style=display:flex><span>    <span style=color:#00f>return</span> x ? debj32[((x &amp; -x) * 0x04653adf) &gt;&gt; 27] : -1;
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><p> </p><p>The magic thing is that it already adopted in Haskell <a href=https://hackage.haskell.org/package/hashtables/src/cbits/sse-42.c>hashtables package</a>:</p><div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-c data-lang=c><span style=display:flex><span><span style=color:#00f>static</span> <span style=color:#2b91af>uint8_t</span> de_bruijn_table[] = {
+</span></span><span style=display:flex><span>    0,   1, 28,  2, 29, 14, 24,  3, 30, 22, 20, 15, 25, 17,  4,  8,
+</span></span><span style=display:flex><span>    31, 27, 13, 23, 21, 19, 16,  7, 26, 12, 18,  6, 11,  5, 10,  9
+</span></span><span style=display:flex><span>};
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#00f>static</span> <span style=color:#00f>inline</span> <span style=color:#2b91af>int32_t</span> mask(<span style=color:#2b91af>int32_t</span> a, <span style=color:#2b91af>int32_t</span> b) { <span style=color:#00f>return</span> -(a == b); }
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#00f>static</span> <span style=color:#00f>inline</span> <span style=color:#2b91af>int32_t</span> first_bit_set(<span style=color:#2b91af>int32_t</span> a) {
+</span></span><span style=display:flex><span>    <span style=color:#2b91af>int32_t</span> zero_case = mask(0, a);
+</span></span><span style=display:flex><span>    <span style=color:#2b91af>uint32_t</span> x = (<span style=color:#2b91af>uint32_t</span>) (a &amp; -a);
+</span></span><span style=display:flex><span>    x *= 0x077CB531;
+</span></span><span style=display:flex><span>    x &gt;&gt;= 27;
+</span></span><span style=display:flex><span>    <span style=color:#00f>return</span> zero_case | de_bruijn_table[x];
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><p>Also its Haskell <a href=https://hackage.haskell.org/package/bits/src/src/Data/Bits/Extras.hs>bits package</a>:</p><div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-haskell data-lang=haskell><span style=display:flex><span><span style=color:#00f>instance</span> <span style=color:#2b91af>Ranked</span> <span style=color:#2b91af>Word32</span> <span style=color:#00f>where</span>
+</span></span><span style=display:flex><span>  lsb n <span style=color:#00f>=</span> fromIntegral $ go (unsafeShiftR ((n .&amp;. (-n)) * 0x077CB531) 27) <span style=color:#00f>where</span>
+</span></span><span style=display:flex><span>    go <span style=color:#00f>::</span> <span style=color:#2b91af>Word32</span> <span style=color:#00f>-&gt;</span> <span style=color:#2b91af>Word8</span>
+</span></span><span style=display:flex><span>    go i <span style=color:#00f>=</span> inlinePerformIO $ peekElemOff debruijn_lsb32 (fromIntegral i)
+</span></span><span style=display:flex><span>  <span style=color:green>{-# INLINE lsb #-}</span>
+</span></span></code></pre></div><p>And there&rsquo;re <a href=https://hackage.haskell.org/package/bits/src/cbits/debruijn.c>some deBruijn tables</a> you can use instantly.
+Although the number they used(i.e. <code>0x077CB531</code>) is not optimal.</p><p> </p><p>Note that <code>lsb64()</code> is extremely horrible, the magic number can be very huge. In this case, it&rsquo;s <code>0x07edd5e59a4e28c2</code>, most of the time it leads <code>lsb64()</code> to do the tedious multiplication.</p><p>One possible optimization can be mapping from <code>lsb64()</code> to <code>lsb32()</code>.</p><p>When we get the lowest set bit(i.e. <code>x & -x</code>):</p><ul>
+<li>If <code>x</code> equals to zero, return -1 directly</li><li>Bit-and&rsquo;ing <code>x</code> with <code>0xffffffff</code>, if it&rsquo;s not zero, just return <code>lsb32()</code>.</li><li>Since lower 32-bit is zero, we just return <code>32 + lsb32(x >> 32)</code>.</li></ul><p>It may makes <a href=https://en.wikipedia.org/wiki/Arithmetic_logic_unit>ALU</a>&rsquo;s life easier.</p><p> </p><p>Also, there&rsquo;re several things you need to note about.</p><ul>
 <li>
-<p>Generate a precomputed array to store the mapping result, which can lead us to real position.</p>
-</li>
-</ul>
-<p>Though we now know that the magic number can generate an unique 5-bits number. But how we can generate it?</p>
-<p> </p>
-<p>My intuitive way is brute-force probing, which is easy and applicable.</p>
-<div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-c data-lang=c><span style=color:#00f>#include</span> <span style=color:#00f>&lt;stdio.h&gt;</span><span style=color:#00f>
-</span><span style=color:#00f>#include</span> <span style=color:#00f>&lt;string.h&gt;</span><span style=color:#00f>
-</span><span style=color:#00f></span>
-<span style=color:#00f>#define LIM 32
-</span><span style=color:#00f>#define BIT(x) (1 &lt;&lt; (x))
-</span><span style=color:#00f></span>
-<span style=color:#00f>static</span> <span style=color:#2b91af>unsigned</span> <span style=color:#2b91af>int</span> map[] = {
-    BIT(0),  BIT(1),  BIT(2),  BIT(3),
-    BIT(4),  BIT(5),  BIT(6),  BIT(7),
-    BIT(8),  BIT(9),  BIT(10), BIT(11),
-    BIT(12), BIT(13), BIT(14), BIT(15),
-    BIT(16), BIT(17), BIT(18), BIT(19),
-    BIT(20), BIT(21), BIT(22), BIT(23),
-    BIT(24), BIT(25), BIT(26), BIT(27),
-    BIT(28), BIT(29), BIT(30), BIT(31),
-};
-
-<span style=color:#2b91af>void</span> probing(<span style=color:#2b91af>void</span>)
-{
-    <span style=color:#2b91af>unsigned</span> <span style=color:#2b91af>int</span> i, j;
-    <span style=color:#2b91af>unsigned</span> <span style=color:#2b91af>int</span> buff[LIM];
-
-    <span style=color:#00f>for</span> (i = 0x1; i != 0; i++) {
-        memset(buff, 0, <span style=color:#00f>sizeof</span>(buff));
-
-        <span style=color:#00f>for</span> (j = 0; j &lt; LIM; j++) {
-            <span style=color:green>/* each bit should mapped into unique slot */</span>
-            <span style=color:#00f>if</span> (++buff[(map[j] * i) &gt;&gt; 27] != 1)
-                <span style=color:#00f>break</span>;
-        }
-
-        <span style=color:#00f>if</span> (j == LIM)
-            <span style=color:#00f>break</span>;
-    }
-
-    <span style=color:#00f>if</span> (i == 0) {
-        fprintf(stderr, <span style=color:#a31515>&#34;probe failed</span><span style=color:#a31515>\n</span><span style=color:#a31515>&#34;</span>);
-        <span style=color:#00f>return</span>;
-    }
-
-    <span style=color:green>/* found, prepare and print the result */</span>
-    printf(<span style=color:#a31515>&#34;%#010x:</span><span style=color:#a31515>\n</span><span style=color:#a31515>&#34;</span>, i);
-
-    <span style=color:#00f>for</span> (j = 0; j &lt; LIM; j++) {
-        <span style=color:green>/* mapping from bitmap into index */</span>
-        buff[(map[j] * i) &gt;&gt; 27] = j;
-    }
-
-    <span style=color:#00f>for</span> (j = 0; j &lt; LIM; j++) {
-        printf(<span style=color:#a31515>&#34;%2u,&#34;</span>, buff[j]);
-        putchar(j % 8 != 7 ? <span style=color:#a31515>&#39; &#39;</span> : <span style=color:#a31515>&#39;\n&#39;</span>);
-    }
-}
-</code></pre></div><p>If you invoke <code>probing()</code>, it should generate following output:</p>
-<div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>0x04653adf:
- 0,  1,  2,  6,  3, 11,  7, 16,
- 4, 14, 12, 21,  8, 23, 17, 26,
-31,  5, 10, 15, 13, 20, 22, 25,
-30,  9, 19, 24, 29, 18, 28, 27,
-</code></pre></div><p>Of which <code>0x04653adf</code> is the minimal magic number, <a href=https://gist.github.com/leiless/6e1489558c815d2d085cbd40089a900f>there are plenty of those magic numbers</a>. <code>0x077cb531</code> is another case.</p>
-<p>Based on this, we can make up our own version here:</p>
-<div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-c data-lang=c><span style=color:#00f>static</span> <span style=color:#00f>const</span> <span style=color:#2b91af>int</span> debj32[] = {
-     0,  1,  2,  6,  3, 11,  7, 16,
-     4, 14, 12, 21,  8, 23, 17, 26,
-    31,  5, 10, 15, 13, 20, 22, 25,
-    30,  9, 19, 24, 29, 18, 28, 27,
-};
-
-<span style=color:#2b91af>int</span> lsb32(<span style=color:#2b91af>unsigned</span> <span style=color:#2b91af>int</span> x)
-{
-    <span style=color:#00f>if</span> (x == 0)        <span style=color:green>/* zero with no bit set */</span>
-        <span style=color:#00f>return</span> -1;
-    x &amp;= -x;
-    x *= 0x04653adf;    <span style=color:green>/* minimal magic number */</span>
-    x &gt;&gt;= 27;
-    <span style=color:#00f>return</span> debj32[x];
-}
-
-<span style=color:#00f>inline</span> <span style=color:#2b91af>int</span> lsb32i(<span style=color:#2b91af>unsigned</span> <span style=color:#2b91af>int</span> x)
-{
-    <span style=color:#00f>return</span> x ? debj32[((x &amp; -x) * 0x04653adf) &gt;&gt; 27] : -1;
-}
-</code></pre></div><p> </p>
-<p>The magic thing is that it already adopted in Haskell <a href=https://hackage.haskell.org/package/hashtables/src/cbits/sse-42.c>hashtables package</a>:</p>
-<div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-c data-lang=c><span style=color:#00f>static</span> <span style=color:#2b91af>uint8_t</span> de_bruijn_table[] = {
-    0,   1, 28,  2, 29, 14, 24,  3, 30, 22, 20, 15, 25, 17,  4,  8,
-    31, 27, 13, 23, 21, 19, 16,  7, 26, 12, 18,  6, 11,  5, 10,  9
-};
-
-<span style=color:#00f>static</span> <span style=color:#00f>inline</span> <span style=color:#2b91af>int32_t</span> mask(<span style=color:#2b91af>int32_t</span> a, <span style=color:#2b91af>int32_t</span> b) { <span style=color:#00f>return</span> -(a == b); }
-
-<span style=color:#00f>static</span> <span style=color:#00f>inline</span> <span style=color:#2b91af>int32_t</span> first_bit_set(<span style=color:#2b91af>int32_t</span> a) {
-    <span style=color:#2b91af>int32_t</span> zero_case = mask(0, a);
-    <span style=color:#2b91af>uint32_t</span> x = (<span style=color:#2b91af>uint32_t</span>) (a &amp; -a);
-    x *= 0x077CB531;
-    x &gt;&gt;= 27;
-    <span style=color:#00f>return</span> zero_case | de_bruijn_table[x];
-}
-</code></pre></div><p>Also its Haskell <a href=https://hackage.haskell.org/package/bits/src/src/Data/Bits/Extras.hs>bits package</a>:</p>
-<div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-haskell data-lang=haskell><span style=color:#00f>instance</span> <span style=color:#2b91af>Ranked</span> <span style=color:#2b91af>Word32</span> <span style=color:#00f>where</span>
-  lsb n <span style=color:#00f>=</span> fromIntegral $ go (unsafeShiftR ((n .&amp;. (-n)) * 0x077CB531) 27) <span style=color:#00f>where</span>
-    go <span style=color:#00f>::</span> <span style=color:#2b91af>Word32</span> <span style=color:#00f>-&gt;</span> <span style=color:#2b91af>Word8</span>
-    go i <span style=color:#00f>=</span> inlinePerformIO $ peekElemOff debruijn_lsb32 (fromIntegral i)
-  <span style=color:green>{-# INLINE lsb #-}</span>
-</code></pre></div><p>And there&rsquo;re <a href=https://hackage.haskell.org/package/bits/src/cbits/debruijn.c>some deBruijn tables</a> you can use instantly.
-Although the number they used(i.e. <code>0x077CB531</code>) is not optimal.</p>
-<p> </p>
-<p>Note that <code>lsb64()</code> is extremely horrible, the magic number can be very huge. In this case, it&rsquo;s <code>0x07edd5e59a4e28c2</code>, most of the time it leads <code>lsb64()</code> to do the tedious multiplication.</p>
-<p>One possible optimization can be mapping from <code>lsb64()</code> to <code>lsb32()</code>.</p>
-<p>When we get the lowest set bit(i.e. <code>x & -x</code>):</p>
-<ul>
-<li>If <code>x</code> equals to zero, return -1 directly</li>
-<li>Bit-and&rsquo;ing <code>x</code> with <code>0xffffffff</code>, if it&rsquo;s not zero, just return <code>lsb32()</code>.</li>
-<li>Since lower 32-bit is zero, we just return <code>32 + lsb32(x >> 32)</code>.</li>
-</ul>
-<p>It may makes <a href=https://en.wikipedia.org/wiki/Arithmetic_logic_unit>ALU</a>&rsquo;s life easier.</p>
-<p> </p>
-<p>Also, there&rsquo;re several things you need to note about.</p>
-<ul>
-<li>
-<p>This solution isn&rsquo;t efficient than you might think. <a href=http://bits.stephan-brumme.com/lowestBitSet.html>Stephan Brumme</a> already done the practical analysis for you.</p>
-</li>
-<li>
-<p>It&rsquo;s only applicable for finite range of data(of which each value must be unique).</p>
-</li>
-<li>
-<p>Above case is perfect hashing(e.g. 32 possible results can be complete filled with 5 bits). If you want to mapping for, saying 10 known results, you must utilize 4 bits. Which left 6 unmapped slots(of those slots you can mark them up as invalid however)</p>
-</li>
-<li>
-<p>If you using GCC, you can use <a href=https://gcc.gnu.org/onlinedocs/gcc/Other-Builtins.html><code>__builtin_ffs()</code></a> function to replace <code>lsb32()</code></p>
-</li>
-</ul>
-<blockquote>
+<p>This solution isn&rsquo;t efficient than you might think. <a href=http://bits.stephan-brumme.com/lowestBitSet.html>Stephan Brumme</a> already done the practical analysis for you.</p></li><li>
+<p>It&rsquo;s only applicable for finite range of data(of which each value must be unique).</p></li><li>
+<p>Above case is perfect hashing(e.g. 32 possible results can be complete filled with 5 bits). If you want to mapping for, saying 10 known results, you must utilize 4 bits. Which left 6 unmapped slots(of those slots you can mark them up as invalid however)</p></li><li>
+<p>If you using GCC, you can use <a href=https://gcc.gnu.org/onlinedocs/gcc/Other-Builtins.html><code>__builtin_ffs()</code></a> function to replace <code>lsb32()</code></p></li></ul><blockquote>
 <p>Built-in Function: <code>int __builtin_ffs (int x)</code>:
-Returns one plus the index of the least significant 1-bit of <code>x</code>, or if <code>x</code> is zero, returns zero.</p>
-</blockquote>
-<ul>
-<li>The magic number <code>0x07edd5e59a4e28c2</code> for lsb64() clearly not the minimal one, the minimal is <code>0x0218a392cd3d5dbf</code>. But what I&rsquo;d like to tell you is that the brute-force algorithm isn&rsquo;t applicable to probe it. If you get interested in how to probe for it, <em>references</em> at bottom might help you.</li>
-</ul>
-<p> </p>
-<p>In case you might want to use 64-bit version of LSB, here is code snippet(though I think you can use <code>lsb32()</code> to implement <code>lsb64()</code>):</p>
-<div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-c data-lang=c><span style=color:#00f>static</span> <span style=color:#00f>const</span> <span style=color:#2b91af>int</span> debj64[] = {
-     0,  1,  2,  7,  3, 13,  8, 19,
-     4, 25, 14, 28,  9, 34, 20, 40,
-     5, 17, 26, 38, 15, 46, 29, 48,
-    10, 31, 35, 54, 21, 50, 41, 57,
-    63,  6, 12, 18, 24, 27, 33, 39,
-    16, 37, 45, 47, 30, 53, 49, 56,
-    62, 11, 23, 32, 36, 44, 52, 55,
-    61, 22, 43, 51, 60, 42, 59, 58,
-};
-
-<span style=color:green>/*
-</span><span style=color:green> * Assuming `unsigned long long&#39; sized 8 bytes
-</span><span style=color:green> */</span>
-<span style=color:#2b91af>int</span> lsb64(<span style=color:#2b91af>unsigned</span> <span style=color:#2b91af>long</span> <span style=color:#2b91af>long</span> x)
-{
-    <span style=color:#00f>if</span> (x == 0)
-        <span style=color:#00f>return</span> -1;
-    x &amp;= -x;
-    x *= 0x0218a392cd3d5dbf;
-    x &gt;&gt;= 58;
-    <span style=color:#00f>return</span> debj64[x];
-}
-
-<span style=color:#00f>inline</span> <span style=color:#2b91af>int</span> lsb64i(<span style=color:#2b91af>unsigned</span> <span style=color:#2b91af>long</span> <span style=color:#2b91af>long</span> x)
-{
-    <span style=color:#00f>return</span> x ? debj64[((x &amp; -x) * 0x0218a392cd3d5dbf) &gt;&gt; 58] : -1;
-}
-
-<span style=color:#00f>static</span> <span style=color:#00f>const</span> <span style=color:#2b91af>int</span> debj32[] = {
-     0,  1,  2,  6,  3, 11,  7, 16,
-     4, 14, 12, 21,  8, 23, 17, 26,
-    31,  5, 10, 15, 13, 20, 22, 25,
-    30,  9, 19, 24, 29, 18, 28, 27,
-};
-
-<span style=color:green>/*
-</span><span style=color:green> * This should be fast enough
-</span><span style=color:green> */</span>
-<span style=color:#00f>inline</span> <span style=color:#2b91af>int</span> lsb64q(<span style=color:#2b91af>unsigned</span> <span style=color:#2b91af>long</span> <span style=color:#2b91af>long</span> x)
-{
-    <span style=color:#00f>if</span> (x == 0) <span style=color:#00f>return</span> -1;
-    <span style=color:#2b91af>int</span> i = 0;
-    <span style=color:#00f>if</span> (x &gt;&gt; 32) i = 32, x &gt;&gt;= 32;
-    <span style=color:#00f>return</span> i | debj32[((<span style=color:#2b91af>unsigned</span> <span style=color:#2b91af>int</span>) ((x &amp; -x) * 0x04653adf)) &gt;&gt; 27];
-}
-</code></pre></div><p> </p>
-<p>Other magic numbers you may need</p>
-<div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-c data-lang=c><span style=color:#00f>#define OPAQUE8 0x17u
-</span><span style=color:#00f></span><span style=color:#00f>static</span> <span style=color:#00f>const</span> <span style=color:#2b91af>int</span> debj8[] = {
-     0,  1,  2,  4,  7,  3,  6,  5,
-};
-
-<span style=color:green>/*
-</span><span style=color:green> * The universal LSB, reduced panicky mul-op.
-</span><span style=color:green> */</span>
-<span style=color:#2b91af>int</span> lsb64u(<span style=color:#2b91af>uint64_t</span> x)
-{
-    <span style=color:#00f>if</span> (x == 0) <span style=color:#00f>return</span> -1;
-    <span style=color:#2b91af>int</span> pad = 0;
-
-    <span style=color:#00f>while</span> (!(x &amp; 0xffu))
-        pad += 8, x &gt;&gt;= 8;
-
-    <span style=color:#00f>return</span> pad | debj8[((<span style=color:#2b91af>unsigned</span> <span style=color:#2b91af>char</span>) ((x &amp; -x) * OPAQUE8)) &gt;&gt; 5];
-}
-
-<span style=color:green>/* Left for exercise */</span>
-<span style=color:#00f>#define OPAQUE16 0x09afu
-</span><span style=color:#00f></span><span style=color:#00f>static</span> <span style=color:#00f>const</span> <span style=color:#2b91af>int</span> debj16[] = {
-     0,  1,  2,  5,  3,  9,  6, 11,
-    15,  4,  8, 10, 14,  7, 13, 12,
-};
-</code></pre></div><p> </p>
-<p>As mentioned before, this method can be categorized into prefect hashing. In case you got interested,
+Returns one plus the index of the least significant 1-bit of <code>x</code>, or if <code>x</code> is zero, returns zero.</p></blockquote><ul>
+<li>The magic number <code>0x07edd5e59a4e28c2</code> for lsb64() clearly not the minimal one, the minimal is <code>0x0218a392cd3d5dbf</code>. But what I&rsquo;d like to tell you is that the brute-force algorithm isn&rsquo;t applicable to probe it. If you get interested in how to probe for it, <em>references</em> at bottom might help you.</li></ul><p> </p><p>In case you might want to use 64-bit version of LSB, here is code snippet(though I think you can use <code>lsb32()</code> to implement <code>lsb64()</code>):</p><div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-c data-lang=c><span style=display:flex><span><span style=color:#00f>static</span> <span style=color:#00f>const</span> <span style=color:#2b91af>int</span> debj64[] = {
+</span></span><span style=display:flex><span>     0,  1,  2,  7,  3, 13,  8, 19,
+</span></span><span style=display:flex><span>     4, 25, 14, 28,  9, 34, 20, 40,
+</span></span><span style=display:flex><span>     5, 17, 26, 38, 15, 46, 29, 48,
+</span></span><span style=display:flex><span>    10, 31, 35, 54, 21, 50, 41, 57,
+</span></span><span style=display:flex><span>    63,  6, 12, 18, 24, 27, 33, 39,
+</span></span><span style=display:flex><span>    16, 37, 45, 47, 30, 53, 49, 56,
+</span></span><span style=display:flex><span>    62, 11, 23, 32, 36, 44, 52, 55,
+</span></span><span style=display:flex><span>    61, 22, 43, 51, 60, 42, 59, 58,
+</span></span><span style=display:flex><span>};
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:green>/*
+</span></span></span><span style=display:flex><span><span style=color:green> * Assuming `unsigned long long&#39; sized 8 bytes
+</span></span></span><span style=display:flex><span><span style=color:green> */</span>
+</span></span><span style=display:flex><span><span style=color:#2b91af>int</span> lsb64(<span style=color:#2b91af>unsigned</span> <span style=color:#2b91af>long</span> <span style=color:#2b91af>long</span> x)
+</span></span><span style=display:flex><span>{
+</span></span><span style=display:flex><span>    <span style=color:#00f>if</span> (x == 0)
+</span></span><span style=display:flex><span>        <span style=color:#00f>return</span> -1;
+</span></span><span style=display:flex><span>    x &amp;= -x;
+</span></span><span style=display:flex><span>    x *= 0x0218a392cd3d5dbf;
+</span></span><span style=display:flex><span>    x &gt;&gt;= 58;
+</span></span><span style=display:flex><span>    <span style=color:#00f>return</span> debj64[x];
+</span></span><span style=display:flex><span>}
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#00f>inline</span> <span style=color:#2b91af>int</span> lsb64i(<span style=color:#2b91af>unsigned</span> <span style=color:#2b91af>long</span> <span style=color:#2b91af>long</span> x)
+</span></span><span style=display:flex><span>{
+</span></span><span style=display:flex><span>    <span style=color:#00f>return</span> x ? debj64[((x &amp; -x) * 0x0218a392cd3d5dbf) &gt;&gt; 58] : -1;
+</span></span><span style=display:flex><span>}
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#00f>static</span> <span style=color:#00f>const</span> <span style=color:#2b91af>int</span> debj32[] = {
+</span></span><span style=display:flex><span>     0,  1,  2,  6,  3, 11,  7, 16,
+</span></span><span style=display:flex><span>     4, 14, 12, 21,  8, 23, 17, 26,
+</span></span><span style=display:flex><span>    31,  5, 10, 15, 13, 20, 22, 25,
+</span></span><span style=display:flex><span>    30,  9, 19, 24, 29, 18, 28, 27,
+</span></span><span style=display:flex><span>};
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:green>/*
+</span></span></span><span style=display:flex><span><span style=color:green> * This should be fast enough
+</span></span></span><span style=display:flex><span><span style=color:green> */</span>
+</span></span><span style=display:flex><span><span style=color:#00f>inline</span> <span style=color:#2b91af>int</span> lsb64q(<span style=color:#2b91af>unsigned</span> <span style=color:#2b91af>long</span> <span style=color:#2b91af>long</span> x)
+</span></span><span style=display:flex><span>{
+</span></span><span style=display:flex><span>    <span style=color:#00f>if</span> (x == 0) <span style=color:#00f>return</span> -1;
+</span></span><span style=display:flex><span>    <span style=color:#2b91af>int</span> i = 0;
+</span></span><span style=display:flex><span>    <span style=color:#00f>if</span> (x &gt;&gt; 32) i = 32, x &gt;&gt;= 32;
+</span></span><span style=display:flex><span>    <span style=color:#00f>return</span> i | debj32[((<span style=color:#2b91af>unsigned</span> <span style=color:#2b91af>int</span>) ((x &amp; -x) * 0x04653adf)) &gt;&gt; 27];
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><p> </p><p>Other magic numbers you may need</p><div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-c data-lang=c><span style=display:flex><span><span style=color:#00f>#define OPAQUE8 0x17u
+</span></span></span><span style=display:flex><span><span style=color:#00f></span><span style=color:#00f>static</span> <span style=color:#00f>const</span> <span style=color:#2b91af>int</span> debj8[] = {
+</span></span><span style=display:flex><span>     0,  1,  2,  4,  7,  3,  6,  5,
+</span></span><span style=display:flex><span>};
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:green>/*
+</span></span></span><span style=display:flex><span><span style=color:green> * The universal LSB, reduced panicky mul-op.
+</span></span></span><span style=display:flex><span><span style=color:green> */</span>
+</span></span><span style=display:flex><span><span style=color:#2b91af>int</span> lsb64u(<span style=color:#2b91af>uint64_t</span> x)
+</span></span><span style=display:flex><span>{
+</span></span><span style=display:flex><span>    <span style=color:#00f>if</span> (x == 0) <span style=color:#00f>return</span> -1;
+</span></span><span style=display:flex><span>    <span style=color:#2b91af>int</span> pad = 0;
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#00f>while</span> (!(x &amp; 0xffu))
+</span></span><span style=display:flex><span>        pad += 8, x &gt;&gt;= 8;
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#00f>return</span> pad | debj8[((<span style=color:#2b91af>unsigned</span> <span style=color:#2b91af>char</span>) ((x &amp; -x) * OPAQUE8)) &gt;&gt; 5];
+</span></span><span style=display:flex><span>}
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:green>/* Left for exercise */</span>
+</span></span><span style=display:flex><span><span style=color:#00f>#define OPAQUE16 0x09afu
+</span></span></span><span style=display:flex><span><span style=color:#00f></span><span style=color:#00f>static</span> <span style=color:#00f>const</span> <span style=color:#2b91af>int</span> debj16[] = {
+</span></span><span style=display:flex><span>     0,  1,  2,  5,  3,  9,  6, 11,
+</span></span><span style=display:flex><span>    15,  4,  8, 10, 14,  7, 13, 12,
+</span></span><span style=display:flex><span>};
+</span></span></code></pre></div><p> </p><p>As mentioned before, this method can be categorized into prefect hashing. In case you got interested,
 GNU already provided a good tool <a href=https://www.gnu.org/software/gperf/><em>gperf</em></a>
-for generating perfect hashing function. Check that out!</p>
-<p>Phew! Writing as second language isn&rsquo;t easy for me, if you found anything wrong, please let me know :-P</p>
-<p> </p>
-<p><a href=../string-hash/>In an incoming article</a>, I will generalize this method for string hashing. which reduce time complexity to <em>O(n)</em> for small fixed-size string matching.</p>
-<p> </p>
-<h3 id=references>References</h3>
-<blockquote>
-<p><a href=https://en.wikipedia.org/wiki/Find_first_set>Find first set - Wikipedia</a></p>
-<p><a href=https://graphics.stanford.edu/~seander/bithacks.html>Bit Twiddling Hacks</a></p>
-<p><a href=http://www.matrix67.com/blog/archives/3985>神秘常量复出！用0x077CB531计算末尾0的个数</a></p>
-<p><a href=https://bits.stephan-brumme.com/lowestBitSet.html>Position of lowest bit set</a></p>
-<p><a href=https://www.chessprogramming.org/BitScan>BitScan - ChessProgramming Wiki</a></p>
-<p><a href=https://www.chessprogramming.org/Nicolaas_de_Bruijn>Nicolaas de Bruijn - ChessProgramming Wiki</a></p>
-<p><a href=https://www.chessprogramming.org/De_Bruijn_Sequence_Generator>De Bruijn Sequence Generator - ChessProgramming Wiki</a></p>
-<p><a href=https://hackage.haskell.org/package/bits/src/cbits/debruijn.c>Haskell de Bruijn LSB table</a></p>
-<p><a href=https://gist.github.com/leiless/2d2c625231512070e623cf143955051b>List of first 8192 64-bit De Bruijn constants for LSB(Lowest Set Bit) - gist</a></p>
-<p><a href=https://gist.github.com/leiless/6e1489558c815d2d085cbd40089a900f>List of first 4096 32-bit De Bruijn constants for LSB - gist</a></p>
-</blockquote>
-</div>
-<div class=tags>
-</div></div>
-<script src=https://utteranc.es/client.js repo=leiless/blog issue-term=pathname label=comment theme=github-light crossorigin=anonymous async></script>
-</div>
-<div class="footer wrapper">
+for generating perfect hashing function. Check that out!</p><p>Phew! Writing as second language isn&rsquo;t easy for me, if you found anything wrong, please let me know :-P</p><p> </p><p><a href=../string-hash/>In an incoming article</a>, I will generalize this method for string hashing. which reduce time complexity to <em>O(n)</em> for small fixed-size string matching.</p><p> </p><h3 id=references>References</h3><blockquote>
+<p><a href=https://en.wikipedia.org/wiki/Find_first_set>Find first set - Wikipedia</a></p><p><a href=https://graphics.stanford.edu/~seander/bithacks.html>Bit Twiddling Hacks</a></p><p><a href=http://www.matrix67.com/blog/archives/3985>神秘常量复出！用0x077CB531计算末尾0的个数</a></p><p><a href=https://bits.stephan-brumme.com/lowestBitSet.html>Position of lowest bit set</a></p><p><a href=https://www.chessprogramming.org/BitScan>BitScan - ChessProgramming Wiki</a></p><p><a href=https://www.chessprogramming.org/Nicolaas_de_Bruijn>Nicolaas de Bruijn - ChessProgramming Wiki</a></p><p><a href=https://www.chessprogramming.org/De_Bruijn_Sequence_Generator>De Bruijn Sequence Generator - ChessProgramming Wiki</a></p><p><a href=https://hackage.haskell.org/package/bits/src/cbits/debruijn.c>Haskell de Bruijn LSB table</a></p><p><a href=https://gist.github.com/leiless/2d2c625231512070e623cf143955051b>List of first 8192 64-bit De Bruijn constants for LSB(Lowest Set Bit) - gist</a></p><p><a href=https://gist.github.com/leiless/6e1489558c815d2d085cbd40089a900f>List of first 4096 32-bit De Bruijn constants for LSB - gist</a></p></blockquote></div><div class=tags>
+</div></div><script src=https://utteranc.es/client.js repo=leiless/blog issue-term=pathname label=comment theme=github-light crossorigin=anonymous async></script>
+</div><div class="footer wrapper">
 <nav class=nav>
-<div>2021 Released under <a href=https://creativecommons.org/licenses/by-nc-sa/4.0/>CC BY-NC-SA 4.0</a> license | <a href=https://github.com/knadh/hugo-ink>Ink</a> theme on <a href=https://gohugo.io>Hugo</a></div>
-</nav>
-</div>
-<script type=application/javascript>var doNotTrack=!1;doNotTrack||(window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)},ga.l=+new Date,ga('create','G-RMJ7KLHXH8','auto'),ga('send','pageview'))</script>
+<div>2022 Released under <a href=https://creativecommons.org/licenses/by-nc-sa/4.0/>CC BY-NC-SA 4.0</a> license | <a href=https://github.com/knadh/hugo-ink>Ink</a> theme on <a href=https://gohugo.io>Hugo</a></div></nav></div><script type=application/javascript>var doNotTrack=!1;doNotTrack||(window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)},ga.l=+new Date,ga("create","G-RMJ7KLHXH8","auto"),ga("send","pageview"))</script>
 <script async src=https://www.google-analytics.com/analytics.js></script>
 <script>feather.replace()</script>
-</body>
-</html>
+</body></html>

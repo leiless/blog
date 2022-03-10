@@ -15,7 +15,7 @@ Any step need root privilege, the sudo prefix will be added.
 Making an Alpine Linux image First thing you should do is to choose a Linux distribution, among all known Linux distros, Alpine Linux is a good choice, it&rsquo;s small and simple, so it gonna be our choice.
 The core idea is to making an UML(User-mode Linux) image.">
 <meta property="og:type" content="article">
-<meta property="og:url" content="https://leiless.me/posts/openvz-bbr/"><meta property="article:section" content="posts">
+<meta property="og:url" content="https://leiless.github.io/blog/posts/openvz-bbr/"><meta property="article:section" content="posts">
 <meta property="article:published_time" content="2017-07-25T00:00:00+00:00">
 <meta property="article:modified_time" content="2017-07-25T00:00:00+00:00">
 <meta name=twitter:card content="summary">
@@ -25,418 +25,310 @@ Any step need root privilege, the sudo prefix will be added.
 Making an Alpine Linux image First thing you should do is to choose a Linux distribution, among all known Linux distros, Alpine Linux is a good choice, it&rsquo;s small and simple, so it gonna be our choice.
 The core idea is to making an UML(User-mode Linux) image.">
 <link href="https://fonts.googleapis.com/css?family=Playfair+Display:700" rel=stylesheet type=text/css>
-<link rel=stylesheet type=text/css media=screen href=https://leiless.me/css/normalize.css>
-<link rel=stylesheet type=text/css media=screen href=https://leiless.me/css/main.css>
-<link id=dark-scheme rel=stylesheet type=text/css href=https://leiless.me/css/dark.css>
-<script src=https://leiless.me/js/feather.min.js></script>
-<script src=https://leiless.me/js/main.js></script>
-</head>
-<body>
+<link rel=stylesheet type=text/css media=screen href=https://leiless.github.io/blog/css/normalize.css>
+<link rel=stylesheet type=text/css media=screen href=https://leiless.github.io/blog/css/main.css>
+<link id=dark-scheme rel=stylesheet type=text/css href=https://leiless.github.io/blog/css/dark.css>
+<script src=https://leiless.github.io/blog/js/feather.min.js></script>
+<script src=https://leiless.github.io/blog/js/main.js></script>
+</head><body>
 <div class="container wrapper">
 <div class=header>
 <div class=avatar>
-<a href=https://leiless.me/>
-<img src=../../avatar.jpg alt=一个程序员的辩白>
+<a href=https://leiless.github.io/blog/>
+<img src=avatar.jpg alt=一个程序员的辩白>
 </a>
-</div>
-<h1 class=site-title><a href=https://leiless.me/>一个程序员的辩白</a></h1>
-<div class=site-description><nav class="nav social">
-<ul class=flat><li><a href=https://github.com/leiless title=GitHub><i data-feather=github></i></a></li><li><a href=https://twitter.com/fake_fishbone title=Twitter><i data-feather=twitter></i></a></li><li><a href=/index.xml title=RSS><i data-feather=rss></i></a></li><li><a href=# class=scheme-toggle id=scheme-toggle></a></li></ul>
-</nav>
-</div>
-<nav class=nav>
+</div><h1 class=site-title><a href=https://leiless.github.io/blog/>一个程序员的辩白</a></h1><div class=site-description><nav class="nav social">
+<ul class=flat><li><a href=https://github.com/leiless title=GitHub><i data-feather=github></i></a></li><li><a href=https://twitter.com/space_bohemian title=Twitter><i data-feather=twitter></i></a></li><li><a href=/index.xml title=RSS><i data-feather=rss></i></a></li><li><a href=# class=scheme-toggle id=scheme-toggle></a></li></ul></nav></div><nav class=nav>
 <ul class=flat>
-</ul>
-</nav>
-</div>
-<div class=post>
+</ul></nav></div><div class=post>
 <div class=post-header>
 <div class=meta>
 <div class=date>
 <span class=day>25</span>
 <span class=rest>Jul 2017</span>
-</div>
-</div>
-<div class=matter>
-<h1 class=title>Use BBR TCP congestion control in OpenVZ</h1>
-</div>
-</div>
-<div class=markdown>
-<h3 id=assumption>Assumption</h3>
-<p>I&rsquo;m assuming you&rsquo;re using Linux distribution, and in a KVM environment(Which the loop device will be used).</p>
-<p>Any step need root privilege, the <code>sudo</code> prefix will be added.</p>
-<h3 id=making-an-alpine-linux-image>Making an Alpine Linux image</h3>
-<p>First thing you should do is to choose a Linux distribution, among all known Linux <a href=https://distrowatch.com/>distros</a>, <a href=https://alpinelinux.org/>Alpine Linux</a> is a good choice, it&rsquo;s small and simple, so it gonna be our choice.</p>
-<p>The core idea is to making an UML(<a href=https://en.wikipedia.org/wiki/User-mode_Linux>User-mode Linux</a>) image.</p>
-<p>Before get started, we assuming current directory is <code>~/uml</code>, you may put all your UML-related stuff in here.</p>
-<p>Now making a empty image file, and mount to a folder:</p>
-<div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>ROOTFS=<span style=color:#a31515>&#34;alpine_rootfs.img&#34;</span>
-
-<span style=color:green># Block size 1M, block count 192.  thus the image sized 192M</span>
-dd <span style=color:#00f>if</span>=/dev/zero of=$ROOTFS bs=1M count=192
-
-<span style=color:green># File system label name</span>
-LBL_NAME=<span style=color:#a31515>&#34;ALPINE_ROOT&#34;</span>
-
-<span style=color:green># Using the file system of yours</span>
-mkfs.ext4 -L $LBL_NAME $ROOTFS
-
-mkdir alpine
-
-<span style=color:green># Mount image file via loop device into alpine/ folder</span>
-sudo mount -o loop $ROOTFS alpine/
-</code></pre></div><p>After that, <code>lsblk</code> and <code>mount</code> command will give you some clues:</p>
-<div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback># lsblk output
-NAME   MAJ:MIN RM   SIZE RO TYPE MOUNTPOINT
-loop0    7:0    0   192M  0 loop /home/x/uml/alpine
-
-# mount output
-/home/x/uml/alpine_uml.img on /home/x/uml/alpine type ext4 (rw,relatime,data=ordered)
-</code></pre></div><p> </p>
-<p>Choose your Alpine Linux version(currently it&rsquo;s <code>3.6</code>), and using <code>apk</code> tool to build the base system:</p>
-<div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=color:green># Or &#34;latest-stable&#34;</span>
-REL=<span style=color:#a31515>&#34;v3.6&#34;</span>
-
-<span style=color:green># Or using this to fetch latest version</span>
-<span style=color:green># curl -sL https://dl-cdn.alpinelinux.org/alpine/ | grep -Eo &#34;v[0-9]+\.[0-9]+&#34; | sort -V | tail -1</span>
-
-
-<span style=color:green># Mirror url</span>
-MIRROR=<span style=color:#a31515>&#34;https://dl-cdn.alpinelinux.org/alpine&#34;</span>
-
-<span style=color:green># Repository url</span>
-REPO=<span style=color:#a31515>&#34;</span>$MIRROR<span style=color:#a31515>/</span>$REL<span style=color:#a31515>/main&#34;</span>
-
-<span style=color:green># Get architecture of current machine</span>
-ARCH=<span style=color:#a31515>`</span>uname -m<span style=color:#a31515>`</span>
-
-<span style=color:green># Mount point of for $ROOTFS</span>
-MNTDIR=<span style=color:#a31515>&#34;alpine&#34;</span>
-
-<span style=color:green># Get apk tools version</span>
-APKV=<span style=color:#a31515>`</span>curl -s $REPO/$ARCH/APKINDEX.tar.gz | tar -Oxz | grep -a <span style=color:#a31515>&#39;^P:apk-tools-static$&#39;</span> -A1 | tail -1 | cut -d: -f2<span style=color:#a31515>`</span>
-
-<span style=color:green># Download apk tools and put into sbin/</span>
-curl -s $REPO/$ARCH/apk-tools-static-<span style=color:#a31515>${</span>APKV<span style=color:#a31515>}</span>.apk | tar -xz sbin/apk.static
-
-<span style=color:green># Install alpine-base into $MNTDIR</span>
-sudo sbin/apk.static --repository $REPO --update-cache --allow-untrusted --root $MNTDIR --initdb add alpine-base
-<span style=color:green># (Try again if any error)</span>
-
-<span style=color:green># A brief form</span>
-<span style=color:green># sudo sbin/apk.static -X $REPO -U --allow-untrusted -p $MNTDIR --initdb add alpine-base</span>
-
-<span style=color:green># Write repository url into apk mirrorlist</span>
-sudo sh -c <span style=color:#a31515>&#34;echo </span>$REPO<span style=color:#a31515> &gt; </span>$MNTDIR<span style=color:#a31515>/etc/apk/repositories&#34;</span>
-</code></pre></div><p>Then put partition table into $MNTDIR/etc/fstab:</p>
-<div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh>sudo sh -c <span style=color:#a31515>&#34;echo LABEL=</span>$LBL_NAME<span style=color:#a31515> / auto defaults 1 1 &gt;&gt; </span>$MNTDIR<span style=color:#a31515>/etc/fstab&#34;</span>
-</code></pre></div><p>The content of <code>$MNTDIR/etc/fstab</code> may like this:</p>
-<div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>#
-# /etc/fstab: static file system information
-#
-# &lt;file system&gt;   &lt;dir&gt; &lt;type&gt;    &lt;options&gt; &lt;dump&gt;    &lt;pass&gt;
-/dev/cdrom	/media/cdrom	iso9660	noauto,ro 0 0
-/dev/usbdisk	/media/usb	vfat	noauto,ro 0 0
-LABEL=ALPINE_ROOT / auto defaults 1 1
-</code></pre></div><p> </p>
-<p>If you have anything need to copy from host to UML, you can do at this stage, but make sure it&rsquo;s static built. Otherwise the dependent libraries can&rsquo;t be found.</p>
-<div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>mkdir $ROOTFS/etc/shadowsocks
-
-<span style=color:green># Replace SS_STATIC_PATH to your static shadowsocks path</span>
-cp $SS_STATIC_PATH/ss-* $ROOTFS/usr/local/bin
-
-<span style=color:green># Replace SS_CFG_PATH to yours</span>
-cp $SS_CFG_PATH/config.json $ROOTFS/etc/shadowsocks
-</code></pre></div><p> </p>
-<p>Also, you may want to change some system preferences, which be found at <code>$MNTDIR/etc/sysctl.conf</code></p>
-<p>For exmaple, a common used network optimization would be:</p>
-<div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback># max open files
-fs.file-max = 51200
-# max read buffer
-net.core.rmem_max = 67108864
-# max write buffer
-net.core.wmem_max = 67108864
-# default read buffer
-net.core.rmem_default = 65536
-# default write buffer
-net.core.wmem_default = 65536
-# max processor input queue
-net.core.netdev_max_backlog = 4096
-# max backlog
-net.core.somaxconn = 4096
-# resist SYN flood attacks
-net.ipv4.tcp_syncookies = 1
-# reuse timewait sockets when safe
-net.ipv4.tcp_tw_reuse = 1
-# turn off fast timewait sockets recycling
-net.ipv4.tcp_tw_recycle = 0
-# short FIN timeout
-net.ipv4.tcp_fin_timeout = 30
-# short keepalive time
-net.ipv4.tcp_keepalive_time = 1200
-# outbound port range
-net.ipv4.ip_local_port_range = 10000 65000
-# max SYN backlog
-net.ipv4.tcp_max_syn_backlog = 4096
-# max timewait sockets held by system simultaneously
-net.ipv4.tcp_max_tw_buckets = 5000
-# turn on TCP Fast Open on both client and server side
-net.ipv4.tcp_fastopen = 3
-# TCP receive buffer
-net.ipv4.tcp_rmem = 4096 87380 67108864
-# TCP write buffer
-net.ipv4.tcp_wmem = 4096 65536 67108864
-# turn on path MTU discovery
-net.ipv4.tcp_mtu_probing = 1
-# BBR
-net.core.default_qdisc = fq
-net.ipv4.tcp_congestion_control = bbr
-</code></pre></div><p> </p>
-<p>When all things done, remember umount the image:</p>
-<div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>sudo umount $MNTDIR
-</code></pre></div><p> </p>
-<h3 id=making-a-user-mode-linux-boot-imagevmlinux>Making a User-mode Linux boot image(vmlinux)</h3>
-<p>In this phase, we need to making to User-mode Linux image, you should choose the kernel at your needs, you can find the kernel source at <a href=https://www.kernel.org/>kernel.org</a>.</p>
-<p>I highly recommend you guys choose the stable/longterm version. now I assmunig the <code>4.12.3</code> is used, it&rsquo;s a stable version when I writing this article.</p>
-<p>Before that, you should install the build dependencies:</p>
-<div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=color:green># Change to your package manager</span>
-sudo pacman -S ncurses bc screen
-</code></pre></div><div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>wget --no-check-certificate https://cdn.kernel.org/pub/linux/kernel/v4.x/linux-4.12.3.tar.xz
-<span style=color:green># Extract to current directory(~/uml)</span>
-tar xvf linux-4.12.3.tar.xz
-cd linux-4.12.3
-<span style=color:green># Generate a default .config file</span>
-make defconfig ARCH=um
-<span style=color:green># Config through ncursor(CLI)</span>
-make menuconfig ARCH=um
-</code></pre></div><p>You can config by your own flavour(the <code>*</code> indicates checked), following is a example:</p>
-<div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>UML-specific options
-    ==&gt; [*] Force a static link
-Device Drivers
-    ==&gt; [*] Network device support
-        ==&gt; &lt;*&gt; Universal TUN/TAP device driver support
-[*] Networking support
-    ==&gt; Networking options
-        ==&gt; [*] IP: TCP syncookie support
-        ==&gt; [*] TCP: advanced congestion control
-            ==&gt; &lt;*&gt; BBR TCP
-            ==&gt; &lt;*&gt; Default TCP congestion control (BBR)
-        ==&gt; [*] QoS and/or fair queueing
-            ==&gt; &lt;*&gt; Quick Fair Queueing scheduler (QFQ)
-            ==&gt; &lt;*&gt; Controlled Delay AQM (CODEL)
-            ==&gt; &lt;*&gt; Fair Queue Controlled Delay AQM (FQ_CODEL)
-            ==&gt; &lt;*&gt; Fair Queue
-</code></pre></div><p>After that, you can build up the boot image and strip all symbols:</p>
-<div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=color:green># Compile UML in nproc jobs(it may takes you some time to finish this)</span>
-make -j<span style=color:#a31515>`</span>nproc<span style=color:#a31515>`</span> ARCH=um vmlinux
-
-VMLINUX=<span style=color:#a31515>&#34;vmlinux-4.12.3-`uname -m`&#34;</span>
-mv vmlinux $VMLINUX
-
-strip -s $VMLINUX
-
-<span style=color:green># Move $VMLINUX image into ~/uml</span>
-mv $VMLINUX ..
-</code></pre></div><p> </p>
-<h3 id=final-steup-in-host-machine>Final steup in host machine</h3>
-<p>Before you launch the UML, you should make a tunnel to allow internet connection between host and guest.</p>
-<p>The following script can done this for you(in host machine):</p>
-<p><code>tap.sh</code> (Need root privilege)</p>
-<div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=color:#00f>#!/bin/bash
-</span><span style=color:#00f></span><span style=color:green># [NOTE] Make sure the TUN/TAP is available</span>
-
-<span style=color:#00f>if</span> [ $EUID -ne 0 ]; <span style=color:#00f>then</span>
-    echo <span style=color:#a31515>&#34;[ERROR] Must run as root&#34;</span>
-    exit 1
-<span style=color:#00f>fi</span>
-
-<span style=color:green># If you want to delete it</span>
-<span style=color:green># ip tuntap del tap0 mode tap</span>
-
-<span style=color:green># The ethernet(prefer) or wireless will be chosen</span>
-NET=<span style=color:#a31515>`</span>ls /sys/class/net | grep [we] | head -1<span style=color:#a31515>`</span>
-
-<span style=color:green># Port reflection range</span>
-RNG=<span style=color:#a31515>&#34;8000:10000&#34;</span>
-
-<span style=color:green># Host tunnel address</span>
-SRC=<span style=color:#a31515>&#34;10.0.0.1&#34;</span>
-
-<span style=color:green># UML tunnel address</span>
-DST=<span style=color:#a31515>&#34;10.0.0.2&#34;</span>
-
-ip tuntap add tap0 mode tap
-ip addr add $SRC/24 dev tap0
-ip link set tap0 up
-iptables -P FORWARD ACCEPT
-iptables -t nat -A POSTROUTING -o $NET -j MASQUERADE
-iptables -t nat -A PREROUTING -i $NET -p tcp --dport $RNG -j DNAT --to-destination $DST
-iptables -t nat -A PREROUTING -i $NET -p udp --dport $RNG -j DNAT --to-destination $DST
-</code></pre></div><p>Note that the <code>$RNG</code> indicates how host ports can get transported into guest, you should not transport all ports into guest, that would be inefficient and affect load balance of guest.</p>
-<p> </p>
-<p>At the same time, you may need to pack all things up to transform them into a remote host using <code>scp</code>, you can do this:</p>
-<div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh>XZ_NAME=<span style=color:#a31515>&#34;alpine_uml.tar.xz&#34;</span>
-<span style=color:green># Using xz to pack things up</span>
-<span style=color:green># Make sure guest machine with xz or xz-utils installed</span>
-tar cvfJ $XZ_NAME $ROOTFS $VMLINUX tap.sh uml.sh
-scp -P&lt;port&gt; $XZ_NAME root@&lt;remote_ip&gt;:&lt;some_dir&gt;
-
-<span style=color:green># extract it in your remote machine(xz is needed)</span>
-<span style=color:green># tar xvf $XZ_NAME</span>
-</code></pre></div><p> </p>
-<h3 id=start-uml-in-user-space>Start UML in user space</h3>
-<p>You can run the following script to start your UML up:</p>
-<p><code>uml.sh</code> (Need root privilege)</p>
-<div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=color:#00f>#!/bin/bash
-</span><span style=color:#00f></span>
-<span style=color:#00f>if</span> [[ $EUID -ne 0 ]]; <span style=color:#00f>then</span>
-    echo <span style=color:#a31515>&#34;[ERROR] Must run as root&#34;</span>
-    exit 1
-<span style=color:#00f>fi</span>
-
-VMLINUX=<span style=color:#a31515>&#34;vmlinux-4.12.3-`uname -m`&#34;</span>
-ROOTFS=<span style=color:#a31515>&#34;alpine_rootfs.img&#34;</span>
-
-<span style=color:green># Yes, Alpine Linux can be run with memory 64mb</span>
-./$VMLINUX ubda=$ROOTFS rw eth0=tuntap,tap0 mem=64m
-
-<span style=color:green># If it prompts you:</span>
-<span style=color:green>#	...</span>
-<span style=color:green>#	Checking environment variables for a tempdir...none found</span>
-<span style=color:green>#	Checking if /dev/shm is on tmpfs...OK</span>
-<span style=color:green>#	Checking PROT_EXEC mmap in /dev/shm...Operation not permitted</span>
-<span style=color:green>#	/dev/shm must be not mounted noexec</span>
-<span style=color:green># You should:</span>
-<span style=color:green># export TMPDIR=/tmp</span>
-
-</code></pre></div><p>After the UML booted up, you could see the output:</p>
-<blockquote>
-<p>Virtual console 1 assigned device &lsquo;/dev/pts/2&rsquo;</p>
-<p>&mldr;</p>
-<p>Virtual console 6 assigned device &lsquo;/dev/pts/8&rsquo;</p>
-</blockquote>
-<p>You should use <code>screen</code> tool to connect the pseudo-tty:</p>
-<div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=color:green># If cannot find terminfo entry for &#39;xxx&#39;</span>
-<span style=color:green># export TERM=&#34;xterm-256color&#34;</span>
-
-<span style=color:green># The X is any available number of your pts</span>
-sudo screen /dev/pts/X
-
-<span style=color:green># NOTE:</span>
-<span style=color:green># Once screen starts up, the terminal turns blank</span>
-<span style=color:green># Now you should press [Enter]  then the login CLI shows up</span>
-<span style=color:green># And no password for root user</span>
-</code></pre></div><p>Useful <em>screen</em> shortcuts and commands you may need:</p>
-<blockquote>
-<p>Terminate current <code>screen</code>: Control-A + \</p>
-<p>Detach current <code>screen</code>: Control-A + D</p>
-<p>Restore detached <code>screen</code>: screen -r</p>
-</blockquote>
-<p>If you want to shutdown the UML, you can type <code>halt</code> or <code>poweroff</code> in Alpine Linux.</p>
-<p> </p>
-<p>Once logged in guest machine, you should run <strong>setup-alpine</strong> to auto-configure your machine.</p>
-<p>Remember to set your:</p>
-<blockquote>
-<p>IP Address for <code>eth0</code>: <code>10.0.0.2</code></p>
-<p>Netmask: <code>255.255.255.0</code></p>
-<p>Gateway: <code>10.0.0.1</code></p>
-<p>DNS nameserver(s): <code>8.8.8.8</code> <code>8.8.4.4</code></p>
-</blockquote>
-<p>Or configure manually, the first thing is to setup the network, generally there&rsquo;re three things you need to do:</p>
-<ul>
+</div></div><div class=matter>
+<h1 class=title>Use BBR TCP congestion control in OpenVZ</h1></div></div><div class=markdown>
+<h3 id=assumption>Assumption</h3><p>I&rsquo;m assuming you&rsquo;re using Linux distribution, and in a KVM environment(Which the loop device will be used).</p><p>Any step need root privilege, the <code>sudo</code> prefix will be added.</p><h3 id=making-an-alpine-linux-image>Making an Alpine Linux image</h3><p>First thing you should do is to choose a Linux distribution, among all known Linux <a href=https://distrowatch.com/>distros</a>, <a href=https://alpinelinux.org/>Alpine Linux</a> is a good choice, it&rsquo;s small and simple, so it gonna be our choice.</p><p>The core idea is to making an UML(<a href=https://en.wikipedia.org/wiki/User-mode_Linux>User-mode Linux</a>) image.</p><p>Before get started, we assuming current directory is <code>~/uml</code>, you may put all your UML-related stuff in here.</p><p>Now making a empty image file, and mount to a folder:</p><div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=display:flex><span>ROOTFS=<span style=color:#a31515>&#34;alpine_rootfs.img&#34;</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:green># Block size 1M, block count 192.  thus the image sized 192M</span>
+</span></span><span style=display:flex><span>dd <span style=color:#00f>if</span>=/dev/zero of=$ROOTFS bs=1M count=192
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:green># File system label name</span>
+</span></span><span style=display:flex><span>LBL_NAME=<span style=color:#a31515>&#34;ALPINE_ROOT&#34;</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:green># Using the file system of yours</span>
+</span></span><span style=display:flex><span>mkfs.ext4 -L $LBL_NAME $ROOTFS
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>mkdir alpine
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:green># Mount image file via loop device into alpine/ folder</span>
+</span></span><span style=display:flex><span>sudo mount -o loop $ROOTFS alpine/
+</span></span></code></pre></div><p>After that, <code>lsblk</code> and <code>mount</code> command will give you some clues:</p><div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span># lsblk output
+</span></span><span style=display:flex><span>NAME   MAJ:MIN RM   SIZE RO TYPE MOUNTPOINT
+</span></span><span style=display:flex><span>loop0    7:0    0   192M  0 loop /home/x/uml/alpine
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span># mount output
+</span></span><span style=display:flex><span>/home/x/uml/alpine_uml.img on /home/x/uml/alpine type ext4 (rw,relatime,data=ordered)
+</span></span></code></pre></div><p> </p><p>Choose your Alpine Linux version(currently it&rsquo;s <code>3.6</code>), and using <code>apk</code> tool to build the base system:</p><div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=display:flex><span><span style=color:green># Or &#34;latest-stable&#34;</span>
+</span></span><span style=display:flex><span>REL=<span style=color:#a31515>&#34;v3.6&#34;</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:green># Or using this to fetch latest version</span>
+</span></span><span style=display:flex><span><span style=color:green># curl -sL https://dl-cdn.alpinelinux.org/alpine/ | grep -Eo &#34;v[0-9]+\.[0-9]+&#34; | sort -V | tail -1</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:green># Mirror url</span>
+</span></span><span style=display:flex><span>MIRROR=<span style=color:#a31515>&#34;https://dl-cdn.alpinelinux.org/alpine&#34;</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:green># Repository url</span>
+</span></span><span style=display:flex><span>REPO=<span style=color:#a31515>&#34;</span>$MIRROR<span style=color:#a31515>/</span>$REL<span style=color:#a31515>/main&#34;</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:green># Get architecture of current machine</span>
+</span></span><span style=display:flex><span>ARCH=<span style=color:#a31515>`</span>uname -m<span style=color:#a31515>`</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:green># Mount point of for $ROOTFS</span>
+</span></span><span style=display:flex><span>MNTDIR=<span style=color:#a31515>&#34;alpine&#34;</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:green># Get apk tools version</span>
+</span></span><span style=display:flex><span>APKV=<span style=color:#a31515>`</span>curl -s $REPO/$ARCH/APKINDEX.tar.gz | tar -Oxz | grep -a <span style=color:#a31515>&#39;^P:apk-tools-static$&#39;</span> -A1 | tail -1 | cut -d: -f2<span style=color:#a31515>`</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:green># Download apk tools and put into sbin/</span>
+</span></span><span style=display:flex><span>curl -s $REPO/$ARCH/apk-tools-static-<span style=color:#a31515>${</span>APKV<span style=color:#a31515>}</span>.apk | tar -xz sbin/apk.static
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:green># Install alpine-base into $MNTDIR</span>
+</span></span><span style=display:flex><span>sudo sbin/apk.static --repository $REPO --update-cache --allow-untrusted --root $MNTDIR --initdb add alpine-base
+</span></span><span style=display:flex><span><span style=color:green># (Try again if any error)</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:green># A brief form</span>
+</span></span><span style=display:flex><span><span style=color:green># sudo sbin/apk.static -X $REPO -U --allow-untrusted -p $MNTDIR --initdb add alpine-base</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:green># Write repository url into apk mirrorlist</span>
+</span></span><span style=display:flex><span>sudo sh -c <span style=color:#a31515>&#34;echo </span>$REPO<span style=color:#a31515> &gt; </span>$MNTDIR<span style=color:#a31515>/etc/apk/repositories&#34;</span>
+</span></span></code></pre></div><p>Then put partition table into $MNTDIR/etc/fstab:</p><div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh><span style=display:flex><span>sudo sh -c <span style=color:#a31515>&#34;echo LABEL=</span>$LBL_NAME<span style=color:#a31515> / auto defaults 1 1 &gt;&gt; </span>$MNTDIR<span style=color:#a31515>/etc/fstab&#34;</span>
+</span></span></code></pre></div><p>The content of <code>$MNTDIR/etc/fstab</code> may like this:</p><div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>#
+</span></span><span style=display:flex><span># /etc/fstab: static file system information
+</span></span><span style=display:flex><span>#
+</span></span><span style=display:flex><span># &lt;file system&gt;   &lt;dir&gt; &lt;type&gt;    &lt;options&gt; &lt;dump&gt;    &lt;pass&gt;
+</span></span><span style=display:flex><span>/dev/cdrom	/media/cdrom	iso9660	noauto,ro 0 0
+</span></span><span style=display:flex><span>/dev/usbdisk	/media/usb	vfat	noauto,ro 0 0
+</span></span><span style=display:flex><span>LABEL=ALPINE_ROOT / auto defaults 1 1
+</span></span></code></pre></div><p> </p><p>If you have anything need to copy from host to UML, you can do at this stage, but make sure it&rsquo;s static built. Otherwise the dependent libraries can&rsquo;t be found.</p><div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=display:flex><span>mkdir $ROOTFS/etc/shadowsocks
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:green># Replace SS_STATIC_PATH to your static shadowsocks path</span>
+</span></span><span style=display:flex><span>cp $SS_STATIC_PATH/ss-* $ROOTFS/usr/local/bin
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:green># Replace SS_CFG_PATH to yours</span>
+</span></span><span style=display:flex><span>cp $SS_CFG_PATH/config.json $ROOTFS/etc/shadowsocks
+</span></span></code></pre></div><p> </p><p>Also, you may want to change some system preferences, which be found at <code>$MNTDIR/etc/sysctl.conf</code></p><p>For exmaple, a common used network optimization would be:</p><div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span># max open files
+</span></span><span style=display:flex><span>fs.file-max = 51200
+</span></span><span style=display:flex><span># max read buffer
+</span></span><span style=display:flex><span>net.core.rmem_max = 67108864
+</span></span><span style=display:flex><span># max write buffer
+</span></span><span style=display:flex><span>net.core.wmem_max = 67108864
+</span></span><span style=display:flex><span># default read buffer
+</span></span><span style=display:flex><span>net.core.rmem_default = 65536
+</span></span><span style=display:flex><span># default write buffer
+</span></span><span style=display:flex><span>net.core.wmem_default = 65536
+</span></span><span style=display:flex><span># max processor input queue
+</span></span><span style=display:flex><span>net.core.netdev_max_backlog = 4096
+</span></span><span style=display:flex><span># max backlog
+</span></span><span style=display:flex><span>net.core.somaxconn = 4096
+</span></span><span style=display:flex><span># resist SYN flood attacks
+</span></span><span style=display:flex><span>net.ipv4.tcp_syncookies = 1
+</span></span><span style=display:flex><span># reuse timewait sockets when safe
+</span></span><span style=display:flex><span>net.ipv4.tcp_tw_reuse = 1
+</span></span><span style=display:flex><span># turn off fast timewait sockets recycling
+</span></span><span style=display:flex><span>net.ipv4.tcp_tw_recycle = 0
+</span></span><span style=display:flex><span># short FIN timeout
+</span></span><span style=display:flex><span>net.ipv4.tcp_fin_timeout = 30
+</span></span><span style=display:flex><span># short keepalive time
+</span></span><span style=display:flex><span>net.ipv4.tcp_keepalive_time = 1200
+</span></span><span style=display:flex><span># outbound port range
+</span></span><span style=display:flex><span>net.ipv4.ip_local_port_range = 10000 65000
+</span></span><span style=display:flex><span># max SYN backlog
+</span></span><span style=display:flex><span>net.ipv4.tcp_max_syn_backlog = 4096
+</span></span><span style=display:flex><span># max timewait sockets held by system simultaneously
+</span></span><span style=display:flex><span>net.ipv4.tcp_max_tw_buckets = 5000
+</span></span><span style=display:flex><span># turn on TCP Fast Open on both client and server side
+</span></span><span style=display:flex><span>net.ipv4.tcp_fastopen = 3
+</span></span><span style=display:flex><span># TCP receive buffer
+</span></span><span style=display:flex><span>net.ipv4.tcp_rmem = 4096 87380 67108864
+</span></span><span style=display:flex><span># TCP write buffer
+</span></span><span style=display:flex><span>net.ipv4.tcp_wmem = 4096 65536 67108864
+</span></span><span style=display:flex><span># turn on path MTU discovery
+</span></span><span style=display:flex><span>net.ipv4.tcp_mtu_probing = 1
+</span></span><span style=display:flex><span># BBR
+</span></span><span style=display:flex><span>net.core.default_qdisc = fq
+</span></span><span style=display:flex><span>net.ipv4.tcp_congestion_control = bbr
+</span></span></code></pre></div><p> </p><p>When all things done, remember umount the image:</p><div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=display:flex><span>sudo umount $MNTDIR
+</span></span></code></pre></div><p> </p><h3 id=making-a-user-mode-linux-boot-imagevmlinux>Making a User-mode Linux boot image(vmlinux)</h3><p>In this phase, we need to making to User-mode Linux image, you should choose the kernel at your needs, you can find the kernel source at <a href=https://www.kernel.org/>kernel.org</a>.</p><p>I highly recommend you guys choose the stable/longterm version. now I assmunig the <code>4.12.3</code> is used, it&rsquo;s a stable version when I writing this article.</p><p>Before that, you should install the build dependencies:</p><div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=display:flex><span><span style=color:green># Change to your package manager</span>
+</span></span><span style=display:flex><span>sudo pacman -S ncurses bc screen
+</span></span></code></pre></div><div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=display:flex><span>wget --no-check-certificate https://cdn.kernel.org/pub/linux/kernel/v4.x/linux-4.12.3.tar.xz
+</span></span><span style=display:flex><span><span style=color:green># Extract to current directory(~/uml)</span>
+</span></span><span style=display:flex><span>tar xvf linux-4.12.3.tar.xz
+</span></span><span style=display:flex><span>cd linux-4.12.3
+</span></span><span style=display:flex><span><span style=color:green># Generate a default .config file</span>
+</span></span><span style=display:flex><span>make defconfig ARCH=um
+</span></span><span style=display:flex><span><span style=color:green># Config through ncursor(CLI)</span>
+</span></span><span style=display:flex><span>make menuconfig ARCH=um
+</span></span></code></pre></div><p>You can config by your own flavour(the <code>*</code> indicates checked), following is a example:</p><div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>UML-specific options
+</span></span><span style=display:flex><span>    ==&gt; [*] Force a static link
+</span></span><span style=display:flex><span>Device Drivers
+</span></span><span style=display:flex><span>    ==&gt; [*] Network device support
+</span></span><span style=display:flex><span>        ==&gt; &lt;*&gt; Universal TUN/TAP device driver support
+</span></span><span style=display:flex><span>[*] Networking support
+</span></span><span style=display:flex><span>    ==&gt; Networking options
+</span></span><span style=display:flex><span>        ==&gt; [*] IP: TCP syncookie support
+</span></span><span style=display:flex><span>        ==&gt; [*] TCP: advanced congestion control
+</span></span><span style=display:flex><span>            ==&gt; &lt;*&gt; BBR TCP
+</span></span><span style=display:flex><span>            ==&gt; &lt;*&gt; Default TCP congestion control (BBR)
+</span></span><span style=display:flex><span>        ==&gt; [*] QoS and/or fair queueing
+</span></span><span style=display:flex><span>            ==&gt; &lt;*&gt; Quick Fair Queueing scheduler (QFQ)
+</span></span><span style=display:flex><span>            ==&gt; &lt;*&gt; Controlled Delay AQM (CODEL)
+</span></span><span style=display:flex><span>            ==&gt; &lt;*&gt; Fair Queue Controlled Delay AQM (FQ_CODEL)
+</span></span><span style=display:flex><span>            ==&gt; &lt;*&gt; Fair Queue
+</span></span></code></pre></div><p>After that, you can build up the boot image and strip all symbols:</p><div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=display:flex><span><span style=color:green># Compile UML in nproc jobs(it may takes you some time to finish this)</span>
+</span></span><span style=display:flex><span>make -j<span style=color:#a31515>`</span>nproc<span style=color:#a31515>`</span> ARCH=um vmlinux
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>VMLINUX=<span style=color:#a31515>&#34;vmlinux-4.12.3-`uname -m`&#34;</span>
+</span></span><span style=display:flex><span>mv vmlinux $VMLINUX
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>strip -s $VMLINUX
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:green># Move $VMLINUX image into ~/uml</span>
+</span></span><span style=display:flex><span>mv $VMLINUX ..
+</span></span></code></pre></div><p> </p><h3 id=final-steup-in-host-machine>Final steup in host machine</h3><p>Before you launch the UML, you should make a tunnel to allow internet connection between host and guest.</p><p>The following script can done this for you(in host machine):</p><p><code>tap.sh</code> (Need root privilege)</p><div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=display:flex><span><span style=color:#00f>#!/bin/bash
+</span></span></span><span style=display:flex><span><span style=color:#00f></span><span style=color:green># [NOTE] Make sure the TUN/TAP is available</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#00f>if</span> [ $EUID -ne 0 ]; <span style=color:#00f>then</span>
+</span></span><span style=display:flex><span>    echo <span style=color:#a31515>&#34;[ERROR] Must run as root&#34;</span>
+</span></span><span style=display:flex><span>    exit 1
+</span></span><span style=display:flex><span><span style=color:#00f>fi</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:green># If you want to delete it</span>
+</span></span><span style=display:flex><span><span style=color:green># ip tuntap del tap0 mode tap</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:green># The ethernet(prefer) or wireless will be chosen</span>
+</span></span><span style=display:flex><span>NET=<span style=color:#a31515>`</span>ls /sys/class/net | grep [we] | head -1<span style=color:#a31515>`</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:green># Port reflection range</span>
+</span></span><span style=display:flex><span>RNG=<span style=color:#a31515>&#34;8000:10000&#34;</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:green># Host tunnel address</span>
+</span></span><span style=display:flex><span>SRC=<span style=color:#a31515>&#34;10.0.0.1&#34;</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:green># UML tunnel address</span>
+</span></span><span style=display:flex><span>DST=<span style=color:#a31515>&#34;10.0.0.2&#34;</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>ip tuntap add tap0 mode tap
+</span></span><span style=display:flex><span>ip addr add $SRC/24 dev tap0
+</span></span><span style=display:flex><span>ip link set tap0 up
+</span></span><span style=display:flex><span>iptables -P FORWARD ACCEPT
+</span></span><span style=display:flex><span>iptables -t nat -A POSTROUTING -o $NET -j MASQUERADE
+</span></span><span style=display:flex><span>iptables -t nat -A PREROUTING -i $NET -p tcp --dport $RNG -j DNAT --to-destination $DST
+</span></span><span style=display:flex><span>iptables -t nat -A PREROUTING -i $NET -p udp --dport $RNG -j DNAT --to-destination $DST
+</span></span></code></pre></div><p>Note that the <code>$RNG</code> indicates how host ports can get transported into guest, you should not transport all ports into guest, that would be inefficient and affect load balance of guest.</p><p> </p><p>At the same time, you may need to pack all things up to transform them into a remote host using <code>scp</code>, you can do this:</p><div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh><span style=display:flex><span>XZ_NAME=<span style=color:#a31515>&#34;alpine_uml.tar.xz&#34;</span>
+</span></span><span style=display:flex><span><span style=color:green># Using xz to pack things up</span>
+</span></span><span style=display:flex><span><span style=color:green># Make sure guest machine with xz or xz-utils installed</span>
+</span></span><span style=display:flex><span>tar cvfJ $XZ_NAME $ROOTFS $VMLINUX tap.sh uml.sh
+</span></span><span style=display:flex><span>scp -P&lt;port&gt; $XZ_NAME root@&lt;remote_ip&gt;:&lt;some_dir&gt;
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:green># extract it in your remote machine(xz is needed)</span>
+</span></span><span style=display:flex><span><span style=color:green># tar xvf $XZ_NAME</span>
+</span></span></code></pre></div><p> </p><h3 id=start-uml-in-user-space>Start UML in user space</h3><p>You can run the following script to start your UML up:</p><p><code>uml.sh</code> (Need root privilege)</p><div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=display:flex><span><span style=color:#00f>#!/bin/bash
+</span></span></span><span style=display:flex><span><span style=color:#00f></span>
+</span></span><span style=display:flex><span><span style=color:#00f>if</span> [[ $EUID -ne 0 ]]; <span style=color:#00f>then</span>
+</span></span><span style=display:flex><span>    echo <span style=color:#a31515>&#34;[ERROR] Must run as root&#34;</span>
+</span></span><span style=display:flex><span>    exit 1
+</span></span><span style=display:flex><span><span style=color:#00f>fi</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>VMLINUX=<span style=color:#a31515>&#34;vmlinux-4.12.3-`uname -m`&#34;</span>
+</span></span><span style=display:flex><span>ROOTFS=<span style=color:#a31515>&#34;alpine_rootfs.img&#34;</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:green># Yes, Alpine Linux can be run with memory 64mb</span>
+</span></span><span style=display:flex><span>./$VMLINUX ubda=$ROOTFS rw eth0=tuntap,tap0 mem=64m
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:green># If it prompts you:</span>
+</span></span><span style=display:flex><span><span style=color:green>#	...</span>
+</span></span><span style=display:flex><span><span style=color:green>#	Checking environment variables for a tempdir...none found</span>
+</span></span><span style=display:flex><span><span style=color:green>#	Checking if /dev/shm is on tmpfs...OK</span>
+</span></span><span style=display:flex><span><span style=color:green>#	Checking PROT_EXEC mmap in /dev/shm...Operation not permitted</span>
+</span></span><span style=display:flex><span><span style=color:green>#	/dev/shm must be not mounted noexec</span>
+</span></span><span style=display:flex><span><span style=color:green># You should:</span>
+</span></span><span style=display:flex><span><span style=color:green># export TMPDIR=/tmp</span>
+</span></span></code></pre></div><p>After the UML booted up, you could see the output:</p><blockquote>
+<p>Virtual console 1 assigned device &lsquo;/dev/pts/2&rsquo;</p><p>&mldr;</p><p>Virtual console 6 assigned device &lsquo;/dev/pts/8&rsquo;</p></blockquote><p>You should use <code>screen</code> tool to connect the pseudo-tty:</p><div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=display:flex><span><span style=color:green># If cannot find terminfo entry for &#39;xxx&#39;</span>
+</span></span><span style=display:flex><span><span style=color:green># export TERM=&#34;xterm-256color&#34;</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:green># The X is any available number of your pts</span>
+</span></span><span style=display:flex><span>sudo screen /dev/pts/X
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:green># NOTE:</span>
+</span></span><span style=display:flex><span><span style=color:green># Once screen starts up, the terminal turns blank</span>
+</span></span><span style=display:flex><span><span style=color:green># Now you should press [Enter]  then the login CLI shows up</span>
+</span></span><span style=display:flex><span><span style=color:green># And no password for root user</span>
+</span></span></code></pre></div><p>Useful <em>screen</em> shortcuts and commands you may need:</p><blockquote>
+<p>Terminate current <code>screen</code>: Control-A + \</p><p>Detach current <code>screen</code>: Control-A + D</p><p>Restore detached <code>screen</code>: screen -r</p></blockquote><p>If you want to shutdown the UML, you can type <code>halt</code> or <code>poweroff</code> in Alpine Linux.</p><p> </p><p>Once logged in guest machine, you should run <strong>setup-alpine</strong> to auto-configure your machine.</p><p>Remember to set your:</p><blockquote>
+<p>IP Address for <code>eth0</code>: <code>10.0.0.2</code></p><p>Netmask: <code>255.255.255.0</code></p><p>Gateway: <code>10.0.0.1</code></p><p>DNS nameserver(s): <code>8.8.8.8</code> <code>8.8.4.4</code></p></blockquote><p>Or configure manually, the first thing is to setup the network, generally there&rsquo;re three things you need to do:</p><ul>
 <li>
-<p>Turn your ethernet device state up</p>
-</li>
-<li>
-<p>Add <code>$DST</code> ip address to that ethernet device</p>
-</li>
-<li>
-<p>Make the <code>$SRC</code> as default router of that ethernet device</p>
-</li>
-</ul>
-<p>And write some DNS servers at <code>/etc/resolv.conf</code></p>
-<div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>nameserver 8.8.8.8
-nameserver 8.8.4.4
-</code></pre></div><p>If you with trouble with networking, you may need to restart it:</p>
-<div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh>/etc/init.d/networking restart
-</code></pre></div><p> </p>
-<p>One gracefully thing then is to make a swapfile:</p>
-<div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=color:green># Making a swapfile with 64M(Make sure your $ROOTFS have enough space)</span>
-dd <span style=color:#00f>if</span>=/dev/zero of=/swapfile bs=1M count=64
-chmod 600 /swapfile
-</code></pre></div><p>Yet, the following script can done all those things for you:</p>
-<p><code>/etc/local.d/local.start</code></p>
-<div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=color:#00f>#!/bin/bash
-</span><span style=color:#00f></span>
-<span style=color:green># swap on</span>
-/sbin/mkswap /swapfile
-/sbin/swapon /swapfile
-
-<span style=color:green># fix net(Choose one)</span>
-
-<span style=color:green>#   Auto-configured</span>
-/etc/init.d/networking restart
-
-<span style=color:green>#   Manually-configured</span>
-/sbin/ip link set eth0 up
-/sbin/ip addr add 10.0.0.2/24 dev eth0
-/sbin/ip route add default via 10.0.0.1 dev eth0
-</code></pre></div><div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=color:green># shadowsocks-libev</span>
-/usr/bin/nohup /usr/local/bin/ss-server -c /etc/shadowsocks-libev/config.json &amp;
-</code></pre></div><p>Make sure it havs eXecution privilege:</p>
-<div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=color:green># Add local service to runlevel(Done once)</span>
-rc-update add local default
-
-<span style=color:green># Files inside /etc/local.d is belongs to local services</span>
-chmod a+x /etc/local.d/local.start
-</code></pre></div><p>If you want to disable some unnecessary(NOT all) pseudo-ttys, you may wan to edit <code>/etc/inittab</code> to comment out <code>tty*::...</code></p>
-<p>Finally, <code>apk</code> is the default package manager of Alpine Linux, it&rsquo;s easy to install a tool:</p>
-<div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>apk add vim
-</code></pre></div><p>Hopefully, the <code>$ROOTFS</code> and the <code>$VMLINUX</code> are reusable in Linux systems, so you don&rsquo;t need to rebuild those image and kernel again.</p>
-<div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>Alpine UML built under Debian 8 x64(3.16.0-4-amd64)
-
-The rootfs.img sized 192M, with 64M swapfile inside
-
-The tap.sh is used to generate a tunnel adapter
-The uml.sh is used to launch the Alpine UML
-
-
-Inside Alpine UML  two major tools available:
-    1) vi
-    2) shadowsocks-libev
-
-Shadowsocks-libev binary files located at:
-    /usr/local/bin
-
-also its config file located at:
-    /etc/shadowsocks-libev/config.json
-
-The startup script located at:
-    /etc/local.d/local.start
-
-NOTE: This UML cannot be used in any form of production scenario
-</code></pre></div><h3 id=references>References</h3>
-<blockquote>
-<p><a href=https://wiki.alpinelinux.org/wiki/Main_Page>Alpine Linux Wiki</a></p>
-<p><a href=https://en.wikipedia.org/wiki/User-mode_Linux>User-mode Linux - Wikipedia</a></p>
-<p><a href=https://www.fanyueciyuan.info/jsxj/OpenVZ_BBR_UML_Alpine_Linux.html>OpenVZ下开启BBR拥塞控制</a></p>
-<p><a href=https://wiki.alpinelinux.org/wiki/Alpine_Linux_Init_System>Alpine Linux Init System - Alpine Linux</a></p>
-<p><a href=https://wiki.archlinux.org/index.php/User-mode_Linux>User-mode Linux - ArchWiki</a></p>
-<p><a href=http://user-mode-linux.sourceforge.net/old/UserModeLinux-HOWTO.html>User Mode Linux HOWTO</a></p>
-<p><a href=http://baturin.org/docs/iproute2/>iproute2 cheat sheet</a></p>
-</blockquote>
-</div>
-<div class=tags>
-</div></div>
-<script src=https://utteranc.es/client.js repo=leiless/blog issue-term=pathname label=comment theme=github-light crossorigin=anonymous async></script>
-</div>
-<div class="footer wrapper">
+<p>Turn your ethernet device state up</p></li><li>
+<p>Add <code>$DST</code> ip address to that ethernet device</p></li><li>
+<p>Make the <code>$SRC</code> as default router of that ethernet device</p></li></ul><p>And write some DNS servers at <code>/etc/resolv.conf</code></p><div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>nameserver 8.8.8.8
+</span></span><span style=display:flex><span>nameserver 8.8.4.4
+</span></span></code></pre></div><p>If you with trouble with networking, you may need to restart it:</p><div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-sh data-lang=sh><span style=display:flex><span>/etc/init.d/networking restart
+</span></span></code></pre></div><p> </p><p>One gracefully thing then is to make a swapfile:</p><div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=display:flex><span><span style=color:green># Making a swapfile with 64M(Make sure your $ROOTFS have enough space)</span>
+</span></span><span style=display:flex><span>dd <span style=color:#00f>if</span>=/dev/zero of=/swapfile bs=1M count=64
+</span></span><span style=display:flex><span>chmod 600 /swapfile
+</span></span></code></pre></div><p>Yet, the following script can done all those things for you:</p><p><code>/etc/local.d/local.start</code></p><div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=display:flex><span><span style=color:#00f>#!/bin/bash
+</span></span></span><span style=display:flex><span><span style=color:#00f></span>
+</span></span><span style=display:flex><span><span style=color:green># swap on</span>
+</span></span><span style=display:flex><span>/sbin/mkswap /swapfile
+</span></span><span style=display:flex><span>/sbin/swapon /swapfile
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:green># fix net(Choose one)</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:green>#   Auto-configured</span>
+</span></span><span style=display:flex><span>/etc/init.d/networking restart
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:green>#   Manually-configured</span>
+</span></span><span style=display:flex><span>/sbin/ip link set eth0 up
+</span></span><span style=display:flex><span>/sbin/ip addr add 10.0.0.2/24 dev eth0
+</span></span><span style=display:flex><span>/sbin/ip route add default via 10.0.0.1 dev eth0
+</span></span></code></pre></div><div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=display:flex><span><span style=color:green># shadowsocks-libev</span>
+</span></span><span style=display:flex><span>/usr/bin/nohup /usr/local/bin/ss-server -c /etc/shadowsocks-libev/config.json &amp;
+</span></span></code></pre></div><p>Make sure it havs eXecution privilege:</p><div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=display:flex><span><span style=color:green># Add local service to runlevel(Done once)</span>
+</span></span><span style=display:flex><span>rc-update add local default
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:green># Files inside /etc/local.d is belongs to local services</span>
+</span></span><span style=display:flex><span>chmod a+x /etc/local.d/local.start
+</span></span></code></pre></div><p>If you want to disable some unnecessary(NOT all) pseudo-ttys, you may wan to edit <code>/etc/inittab</code> to comment out <code>tty*::...</code></p><p>Finally, <code>apk</code> is the default package manager of Alpine Linux, it&rsquo;s easy to install a tool:</p><div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=display:flex><span>apk add vim
+</span></span></code></pre></div><p>Hopefully, the <code>$ROOTFS</code> and the <code>$VMLINUX</code> are reusable in Linux systems, so you don&rsquo;t need to rebuild those image and kernel again.</p><div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>Alpine UML built under Debian 8 x64(3.16.0-4-amd64)
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>The rootfs.img sized 192M, with 64M swapfile inside
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>The tap.sh is used to generate a tunnel adapter
+</span></span><span style=display:flex><span>The uml.sh is used to launch the Alpine UML
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>Inside Alpine UML  two major tools available:
+</span></span><span style=display:flex><span>    1) vi
+</span></span><span style=display:flex><span>    2) shadowsocks-libev
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>Shadowsocks-libev binary files located at:
+</span></span><span style=display:flex><span>    /usr/local/bin
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>also its config file located at:
+</span></span><span style=display:flex><span>    /etc/shadowsocks-libev/config.json
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>The startup script located at:
+</span></span><span style=display:flex><span>    /etc/local.d/local.start
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>NOTE: This UML cannot be used in any form of production scenario
+</span></span></code></pre></div><h3 id=references>References</h3><blockquote>
+<p><a href=https://wiki.alpinelinux.org/wiki/Main_Page>Alpine Linux Wiki</a></p><p><a href=https://en.wikipedia.org/wiki/User-mode_Linux>User-mode Linux - Wikipedia</a></p><p><a href=https://www.fanyueciyuan.info/jsxj/OpenVZ_BBR_UML_Alpine_Linux.html>OpenVZ下开启BBR拥塞控制</a></p><p><a href=https://wiki.alpinelinux.org/wiki/Alpine_Linux_Init_System>Alpine Linux Init System - Alpine Linux</a></p><p><a href=https://wiki.archlinux.org/index.php/User-mode_Linux>User-mode Linux - ArchWiki</a></p><p><a href=http://user-mode-linux.sourceforge.net/old/UserModeLinux-HOWTO.html>User Mode Linux HOWTO</a></p><p><a href=http://baturin.org/docs/iproute2/>iproute2 cheat sheet</a></p></blockquote></div><div class=tags>
+</div></div><script src=https://utteranc.es/client.js repo=leiless/blog issue-term=pathname label=comment theme=github-light crossorigin=anonymous async></script>
+</div><div class="footer wrapper">
 <nav class=nav>
-<div>2021 Released under <a href=https://creativecommons.org/licenses/by-nc-sa/4.0/>CC BY-NC-SA 4.0</a> license | <a href=https://github.com/knadh/hugo-ink>Ink</a> theme on <a href=https://gohugo.io>Hugo</a></div>
-</nav>
-</div>
-<script type=application/javascript>var doNotTrack=!1;doNotTrack||(window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)},ga.l=+new Date,ga('create','G-RMJ7KLHXH8','auto'),ga('send','pageview'))</script>
+<div>2022 Released under <a href=https://creativecommons.org/licenses/by-nc-sa/4.0/>CC BY-NC-SA 4.0</a> license | <a href=https://github.com/knadh/hugo-ink>Ink</a> theme on <a href=https://gohugo.io>Hugo</a></div></nav></div><script type=application/javascript>var doNotTrack=!1;doNotTrack||(window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)},ga.l=+new Date,ga("create","G-RMJ7KLHXH8","auto"),ga("send","pageview"))</script>
 <script async src=https://www.google-analytics.com/analytics.js></script>
 <script>feather.replace()</script>
-</body>
-</html>
+</body></html>

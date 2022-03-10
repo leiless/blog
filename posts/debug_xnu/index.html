@@ -17,7 +17,7 @@ So I decided to wrapup a post to summarize how to setup a debug environment for 
 Confess This article partly taken from Damien DeVille&rsquo;s Kernel debugging with LLDB and VMware Fusion
 The very first thing when you want to debug XNU kernel is to setup a proper debugging environment, that is easy even it&rsquo;s your first time get to know about them.">
 <meta property="og:type" content="article">
-<meta property="og:url" content="https://leiless.me/posts/debug_xnu/"><meta property="article:section" content="posts">
+<meta property="og:url" content="https://leiless.github.io/blog/posts/debug_xnu/"><meta property="article:section" content="posts">
 <meta property="article:published_time" content="2017-09-12T00:00:00+00:00">
 <meta property="article:modified_time" content="2017-09-12T00:00:00+00:00">
 <meta name=twitter:card content="summary">
@@ -28,533 +28,362 @@ So I decided to wrapup a post to summarize how to setup a debug environment for 
 Confess This article partly taken from Damien DeVille&rsquo;s Kernel debugging with LLDB and VMware Fusion
 The very first thing when you want to debug XNU kernel is to setup a proper debugging environment, that is easy even it&rsquo;s your first time get to know about them.">
 <link href="https://fonts.googleapis.com/css?family=Playfair+Display:700" rel=stylesheet type=text/css>
-<link rel=stylesheet type=text/css media=screen href=https://leiless.me/css/normalize.css>
-<link rel=stylesheet type=text/css media=screen href=https://leiless.me/css/main.css>
-<link id=dark-scheme rel=stylesheet type=text/css href=https://leiless.me/css/dark.css>
-<script src=https://leiless.me/js/feather.min.js></script>
-<script src=https://leiless.me/js/main.js></script>
-</head>
-<body>
+<link rel=stylesheet type=text/css media=screen href=https://leiless.github.io/blog/css/normalize.css>
+<link rel=stylesheet type=text/css media=screen href=https://leiless.github.io/blog/css/main.css>
+<link id=dark-scheme rel=stylesheet type=text/css href=https://leiless.github.io/blog/css/dark.css>
+<script src=https://leiless.github.io/blog/js/feather.min.js></script>
+<script src=https://leiless.github.io/blog/js/main.js></script>
+</head><body>
 <div class="container wrapper">
 <div class=header>
 <div class=avatar>
-<a href=https://leiless.me/>
-<img src=../../avatar.jpg alt=一个程序员的辩白>
+<a href=https://leiless.github.io/blog/>
+<img src=avatar.jpg alt=一个程序员的辩白>
 </a>
-</div>
-<h1 class=site-title><a href=https://leiless.me/>一个程序员的辩白</a></h1>
-<div class=site-description><nav class="nav social">
-<ul class=flat><li><a href=https://github.com/leiless title=GitHub><i data-feather=github></i></a></li><li><a href=https://twitter.com/fake_fishbone title=Twitter><i data-feather=twitter></i></a></li><li><a href=/index.xml title=RSS><i data-feather=rss></i></a></li><li><a href=# class=scheme-toggle id=scheme-toggle></a></li></ul>
-</nav>
-</div>
-<nav class=nav>
+</div><h1 class=site-title><a href=https://leiless.github.io/blog/>一个程序员的辩白</a></h1><div class=site-description><nav class="nav social">
+<ul class=flat><li><a href=https://github.com/leiless title=GitHub><i data-feather=github></i></a></li><li><a href=https://twitter.com/space_bohemian title=Twitter><i data-feather=twitter></i></a></li><li><a href=/index.xml title=RSS><i data-feather=rss></i></a></li><li><a href=# class=scheme-toggle id=scheme-toggle></a></li></ul></nav></div><nav class=nav>
 <ul class=flat>
-</ul>
-</nav>
-</div>
-<div class=post>
+</ul></nav></div><div class=post>
 <div class=post-header>
 <div class=meta>
 <div class=date>
 <span class=day>12</span>
 <span class=rest>Sep 2017</span>
-</div>
-</div>
-<div class=matter>
-<h1 class=title>XNU kernel debugging via VMWare Fusion</h1>
-</div>
-</div>
-<div class=markdown>
-<h2 id=prelude>Prelude</h2>
-<p>Being able to debugging the XNU kernel is one of basic skill of my work.</p>
-<p>It&rsquo;s not daunting, but a boring job anyway.</p>
-<p>So I decided to wrapup a post to summarize how to setup a debug environment for XNU kernel. Hopefully, it should be a canonical way to do that.</p>
-<h2 id=confess>Confess</h2>
-<p>This article partly taken from Damien DeVille&rsquo;s <a href=http://ddeville.me/2015/08/kernel-debugging-with-lldb-and-vmware-fusion>Kernel debugging with LLDB and VMware Fusion</a></p>
-<p>The very first thing when you want to debug XNU kernel is to setup a proper debugging environment, that is easy even it&rsquo;s your first time get to know about them. Just be patient :-)</p>
-<p>Typically, the kernel debugging is two-boxes, which means that you need two machines to complete the debugging. In such case, one can done this by install a virtual machine as a guest to communicate with host(physical machine).</p>
-<p>The basic assumption is that your currently system is OS X.</p>
-<p>In the following sections, I&rsquo;ll taking Sierra 10.12.6(16G29) as an example.</p>
-<hr>
-<h2 id=host-machine>Host machine</h2>
-<h3 id=install-xcode-and-kernel-debug-kitkdk>Install XCode and Kernel Debug Kit(KDK)</h3>
-<p>The XCode can be install via App store(optional), and the KDK can be downloaded from <a href=https://developer.apple.com/download/more/>Downloads for Apple Developers</a>.</p>
-<p>Note that the kernel debug kit should follow virtual machine build version(via <a href=x-man-page://sw_vers>sw_vers(1)</a>), not your host machine build version, they should be installed in host and virtual machine.</p>
-<p>You can install multiple KDKs in host if you own multiple OS virtual machines.</p>
-<p>see: <code>/Library/Developer/KDKs/KDK_A.B.C_D.kdk/ReadMe.html</code></p>
-<p>(KDK for 16G29 is KDK_10.12.6_16G29.kdk)</p>
-<h3 id=install-macos-in-vmware-fusion>Install macOS in VMWare Fusion</h3>
-<p>There&rsquo;re plenty of virtual machine softwares you can use, like Virtualbox, VMware Fusion, Parallels Desktop, etc,. I&rsquo;ll taking VMWare Fusion as our solution.</p>
-<p>After you installed the software mentioned above, you should install OS X in your VMs. Basically, you need a iso image to install OS X from scratch.</p>
-<p>NOTE: macOS can also be installed from recovery partition in Fusion.</p>
-<p>Fortunately, those already some scripts done this job for your:</p>
-<p><a href=https://gist.github.com/julianxhokaxhiu/6ed6853f3223d0dd5fdffc4799b3a877>Simple bash script to create a Bootable ISO from macOS Sierra Install Image from Mac App Store</a></p>
-<p><a href=https://gist.github.com/agentsim/00cc38c693e7d0e1b36a2080870d955b>Create bootable ISO from HighSierra Installer</a></p>
-<p>Also, <a href=https://gist.github.com/leiless/131e01a981c81906dd7e77be7a31413c>here</a> a refined script based on above solution.</p>
-<p>Before you run the script, you should download the macOS(<a href=https://itunes.apple.com/us/app/macos-sierra/id1127487414>Sierra</a>, for example) install application. App Store will automatically place it into /Applications/.</p>
-<h3 id=update-host-firmware-nvram-boot-args>Update host firmware NVRAM <em>boot-args</em></h3>
-<div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell>$ sudo nvram boot-args=<span style=color:#a31515>&#34;debug=0x140 kext-dev-mode=1 -v&#34;</span>
-</code></pre></div><p>The <em>boot-args</em> also needed to update in VM, I&rsquo;ll explain them in the following sections.</p>
-<hr>
-<h2 id=virtual-machine>Virtual machine</h2>
-<h3 id=install-vmware-tools-and-kdk>Install VMWare tools and KDK</h3>
-<p>When you installed macOS in VM, you should also install VMWare tools(VMWare Fusion menu -> Virtual Machine -> Install VMWare Tools) to allow Fusion-specific features to work.</p>
-<p>Kernel Debug Kit must follow output of <a href=x-man-page://sw_vers>sw_vers(1)</a></p>
-<p>You may copy development/debug kernels from KDK</p>
-<blockquote>
-<p><code>/Library/Developer/KDKs/KDK_A.B.C_D.kdk/System/Library/Kernels</code></p>
-</blockquote>
-<p>into</p>
-<blockquote>
-<p><code>/System/Library/Kernels</code></p>
-</blockquote>
-<p> </p>
-<p>16G29, for example:</p>
-<div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell>$ sudo cp /Library/Developer/KDKs/KDK_10.12.6_16G29.kdk/System/Library/Kernels/kernel.development /System/Library/Kernels
-</code></pre></div><h3 id=update-vm-firmware-nvram-boot-args>Update VM firmware NVRAM <em>boot-args</em></h3>
-<p>The NVRAM(non-volatile random-access memory) is a firmware used to store persistent information even when power is off, in our case, it can be used to store bootstrap arguments which system will read it when booting.</p>
-<p>This memory region can be manipulated via <a href=x-man-page://nvram>nvram(8)</a>, you should read the man page for its usage since it changes vary from different system versions.</p>
-<p>A typical <em>boot-args</em> for kernel debugging can be:</p>
-<div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell>$ sudo nvram boot-args=<span style=color:#a31515>&#34;debug=0x144 kext-dev-mode=1 kcsuffix=development pmuflags=1 -v&#34;</span>
-</code></pre></div><ul>
+</div></div><div class=matter>
+<h1 class=title>XNU kernel debugging via VMWare Fusion</h1></div></div><div class=markdown>
+<h2 id=prelude>Prelude</h2><p>Being able to debugging the XNU kernel is one of basic skill of my work.</p><p>It&rsquo;s not daunting, but a boring job anyway.</p><p>So I decided to wrapup a post to summarize how to setup a debug environment for XNU kernel. Hopefully, it should be a canonical way to do that.</p><h2 id=confess>Confess</h2><p>This article partly taken from Damien DeVille&rsquo;s <a href=http://ddeville.me/2015/08/kernel-debugging-with-lldb-and-vmware-fusion>Kernel debugging with LLDB and VMware Fusion</a></p><p>The very first thing when you want to debug XNU kernel is to setup a proper debugging environment, that is easy even it&rsquo;s your first time get to know about them. Just be patient :-)</p><p>Typically, the kernel debugging is two-boxes, which means that you need two machines to complete the debugging. In such case, one can done this by install a virtual machine as a guest to communicate with host(physical machine).</p><p>The basic assumption is that your currently system is OS X.</p><p>In the following sections, I&rsquo;ll taking Sierra 10.12.6(16G29) as an example.</p><hr>
+<h2 id=host-machine>Host machine</h2><h3 id=install-xcode-and-kernel-debug-kitkdk>Install XCode and Kernel Debug Kit(KDK)</h3><p>The XCode can be install via App store(optional), and the KDK can be downloaded from <a href=https://developer.apple.com/download/more/>Downloads for Apple Developers</a>.</p><p>Note that the kernel debug kit should follow virtual machine build version(via <a href=x-man-page://sw_vers>sw_vers(1)</a>), not your host machine build version, they should be installed in host and virtual machine.</p><p>You can install multiple KDKs in host if you own multiple OS virtual machines.</p><p>see: <code>/Library/Developer/KDKs/KDK_A.B.C_D.kdk/ReadMe.html</code></p><p>(KDK for 16G29 is KDK_10.12.6_16G29.kdk)</p><h3 id=install-macos-in-vmware-fusion>Install macOS in VMWare Fusion</h3><p>There&rsquo;re plenty of virtual machine softwares you can use, like Virtualbox, VMware Fusion, Parallels Desktop, etc,. I&rsquo;ll taking VMWare Fusion as our solution.</p><p>After you installed the software mentioned above, you should install OS X in your VMs. Basically, you need a iso image to install OS X from scratch.</p><p>NOTE: macOS can also be installed from recovery partition in Fusion.</p><p>Fortunately, those already some scripts done this job for your:</p><p><a href=https://gist.github.com/julianxhokaxhiu/6ed6853f3223d0dd5fdffc4799b3a877>Simple bash script to create a Bootable ISO from macOS Sierra Install Image from Mac App Store</a></p><p><a href=https://gist.github.com/agentsim/00cc38c693e7d0e1b36a2080870d955b>Create bootable ISO from HighSierra Installer</a></p><p>Also, <a href=https://gist.github.com/leiless/131e01a981c81906dd7e77be7a31413c>here</a> a refined script based on above solution.</p><p>Before you run the script, you should download the macOS(<a href=https://itunes.apple.com/us/app/macos-sierra/id1127487414>Sierra</a>, for example) install application. App Store will automatically place it into /Applications/.</p><h3 id=update-host-firmware-nvram-boot-args>Update host firmware NVRAM <em>boot-args</em></h3><div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell><span style=display:flex><span>$ sudo nvram boot-args=<span style=color:#a31515>&#34;debug=0x140 kext-dev-mode=1 -v&#34;</span>
+</span></span></code></pre></div><p>The <em>boot-args</em> also needed to update in VM, I&rsquo;ll explain them in the following sections.</p><hr>
+<h2 id=virtual-machine>Virtual machine</h2><h3 id=install-vmware-tools-and-kdk>Install VMWare tools and KDK</h3><p>When you installed macOS in VM, you should also install VMWare tools(VMWare Fusion menu -> Virtual Machine -> Install VMWare Tools) to allow Fusion-specific features to work.</p><p>Kernel Debug Kit must follow output of <a href=x-man-page://sw_vers>sw_vers(1)</a></p><p>You may copy development/debug kernels from KDK</p><blockquote>
+<p><code>/Library/Developer/KDKs/KDK_A.B.C_D.kdk/System/Library/Kernels</code></p></blockquote><p>into</p><blockquote>
+<p><code>/System/Library/Kernels</code></p></blockquote><p> </p><p>16G29, for example:</p><div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell><span style=display:flex><span>$ sudo cp /Library/Developer/KDKs/KDK_10.12.6_16G29.kdk/System/Library/Kernels/kernel.development /System/Library/Kernels
+</span></span></code></pre></div><h3 id=update-vm-firmware-nvram-boot-args>Update VM firmware NVRAM <em>boot-args</em></h3><p>The NVRAM(non-volatile random-access memory) is a firmware used to store persistent information even when power is off, in our case, it can be used to store bootstrap arguments which system will read it when booting.</p><p>This memory region can be manipulated via <a href=x-man-page://nvram>nvram(8)</a>, you should read the man page for its usage since it changes vary from different system versions.</p><p>A typical <em>boot-args</em> for kernel debugging can be:</p><div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell><span style=display:flex><span>$ sudo nvram boot-args=<span style=color:#a31515>&#34;debug=0x144 kext-dev-mode=1 kcsuffix=development pmuflags=1 -v&#34;</span>
+</span></span></code></pre></div><ul>
 <li>
-<p><em><strong>debug = 0x144</strong></em>, this <a href=https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/build/build.html#//apple_ref/doc/uid/TP30000905-CH221-BABDGEGF>debugging flags</a> is a combination of (DB_NMI | DB_ARP | DB_LOG_PI_SCRN), which ensure the vm can be connected via a remote debugger.</p>
-<p>DB_NMI(0x4), Which drop into debugger on NMI (Command–Power, Command-Option-Control-Shift-Escape, or interrupt switch).</p>
-<p>You usually don&rsquo;t need to provide DB_NMI in host machine&rsquo;s boot-args, occasionally, if you do that, you need to remapping the Command-Option-Control-Shift-Escape key combination into another one, otherwise the host will trap if you press the combination key.</p>
-<p>DB_ARP(0x40), Which allow debugger to ARP and route.</p>
-<p>DB_LOG_PI_SCRN(0x100), Which disable graphical panic dialog.</p>
-<p>NOTE: If you mean to be debugging the kernel at boot-time, yuo should specify DB_HALT(0x1), it halts the machine in boot-time and wait for debugger to attach.</p>
-</li>
+<p><em><strong>debug = 0x144</strong></em>, this <a href=https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/build/build.html#//apple_ref/doc/uid/TP30000905-CH221-BABDGEGF>debugging flags</a> is a combination of (DB_NMI | DB_ARP | DB_LOG_PI_SCRN), which ensure the vm can be connected via a remote debugger.</p><p>DB_NMI(0x4), Which drop into debugger on NMI (Command–Power, Command-Option-Control-Shift-Escape, or interrupt switch).</p><p>You usually don&rsquo;t need to provide DB_NMI in host machine&rsquo;s boot-args, occasionally, if you do that, you need to remapping the Command-Option-Control-Shift-Escape key combination into another one, otherwise the host will trap if you press the combination key.</p><p>DB_ARP(0x40), Which allow debugger to ARP and route.</p><p>DB_LOG_PI_SCRN(0x100), Which disable graphical panic dialog.</p><p>NOTE: If you mean to be debugging the kernel at boot-time, yuo should specify DB_HALT(0x1), it halts the machine in boot-time and wait for debugger to attach.</p></li><li>
+<p><em><strong>kext-dev-mode=1</strong></em>, allow us to load unsigned(without Developer ID certificate) kernel extensions.</p><p>if you&rsquo;re not intended to debugging kernel extension, this argument is optional.</p><p><a href=https://developer.apple.com/library/archive/documentation/Security/Conceptual/System_Integrity_Protection_Guide/KernelExtensions/KernelExtensions.html>NOTE</a>: Since macOS El Capitan(10.11), the kext-dev-mode boot-arg is obsolete, so this flag mainly used for forward-compatible.</p><p>Newer systems should use <a href=x-man-page://csrutil>csrutil(8)</a> to archieve the same functionality. more see <a href=https://developer.apple.com/library/archive/documentation/Security/Conceptual/System_Integrity_Protection_Guide/ConfiguringSystemIntegrityProtection/ConfiguringSystemIntegrityProtection.html>Configuring System Integrity Protection</a></p><p>For older systems, you should first disable system security policies so you can alter the nvram.</p></li><li>
+<p><em><strong>kcsuffix=development</strong></em>, allow us to boot system with development kernel(which previously copied into /System/Library/Kernels from KDK). Another one is <em><strong>kcsuffix=debug</strong></em>. if you&rsquo;re not intended to debugging kernel itself, this argument is optional.</p></li></ul><p>[190214] NOTE: when you changed <code>boot-args</code>&rsquo;s <code>kcsuffix</code> argument, please remember to clean up prelinked kernel images(compressed kernel cache) at <code>/System/Library/PrelinkedKernels</code></p><ul>
 <li>
-<p><em><strong>kext-dev-mode=1</strong></em>, allow us to load unsigned(without Developer ID certificate) kernel extensions.</p>
-<p>if you&rsquo;re not intended to debugging kernel extension, this argument is optional.</p>
-<p><a href=https://developer.apple.com/library/archive/documentation/Security/Conceptual/System_Integrity_Protection_Guide/KernelExtensions/KernelExtensions.html>NOTE</a>: Since macOS El Capitan(10.11), the kext-dev-mode boot-arg is obsolete, so this flag mainly used for forward-compatible.</p>
-<p>Newer systems should use <a href=x-man-page://csrutil>csrutil(8)</a> to archieve the same functionality. more see <a href=https://developer.apple.com/library/archive/documentation/Security/Conceptual/System_Integrity_Protection_Guide/ConfiguringSystemIntegrityProtection/ConfiguringSystemIntegrityProtection.html>Configuring System Integrity Protection</a></p>
-<p>For older systems, you should first disable system security policies so you can alter the nvram.</p>
-</li>
+<p><em><strong>pmuflags=1</strong></em>, disable the watchdog timers, this used to <a href=https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/build/build.html#//apple_ref/doc/uid/TP30000905-CH221-SW2>avoid watchdog timer problems</a>.</p></li><li>
+<p><em><strong>-v</strong></em>, enable the kernel verbose mode that will be useful when debugging.</p></li></ul><p><a href=https://superuser.com/questions/255176/is-there-a-list-of-available-boot-args-for-darwin-os-x>Is there a list of available boot-args for darwin / OS X</a> describes elaborate boot arguments.</p><h3 id=invalidate-the-kext-cache>Invalidate the kext cache</h3><p>If you specified <em><strong>kcsuffix</strong></em> boot arguments, you should invalidate the kext cache files. You can achieve via <a href=x-man-page://kextcache>kextcache(8)</a>:</p><div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell><span style=display:flex><span><span style=color:green># / means the root of the current volume, you can specify another volume if needed</span>
+</span></span><span style=display:flex><span>$ sudo kextcache -invalidate /
+</span></span></code></pre></div><h3 id=retrieve-vm-network-info>Retrieve VM network info</h3><p>In order to connect the debugger to the VM, you need to know network information about the VM, typically, via <a href=x-man-page://ifconfig>ifconfig(8)</a></p><div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell><span style=display:flex><span>$ ifconfig
+</span></span><span style=display:flex><span>...
+</span></span><span style=display:flex><span>en0: flags=8863&lt;UP,BROADCAST,SMART,RUNNING,SIMPLEX,MULTICAST&gt; mtu 1500
+</span></span><span style=display:flex><span>	options=b&lt;RXCSUM,TXCSUM,VLAN_HWTAGGING&gt;
+</span></span><span style=display:flex><span>	ether 00:0c:29:af:fa:a0 
+</span></span><span style=display:flex><span>	inet6 fe80::808:99a1:9108:fb70%en0 prefixlen 64 secured scopeid 0x4 
+</span></span><span style=display:flex><span>	inet 172.16.41.129 netmask 0xffffff00 broadcast 172.16.41.255
+</span></span><span style=display:flex><span>	nd6 options=201&lt;PERFORMNUD,DAD&gt;
+</span></span><span style=display:flex><span>	media: autoselect (1000baseT &lt;full-duplex&gt;)
+</span></span><span style=display:flex><span>	status: active
+</span></span><span style=display:flex><span>...
+</span></span></code></pre></div><p>so later you can <em>kdp-remote</em>(lldb) or <em>target remote-kdp</em>(gdb) the VM in host machine.</p><h2 id=in-practice>In practice</h2><p>In order to test our debugging setup, I&rsquo;ll illustrate two examples to show how to debug the kernel.</p><p>In both cases, I&rsquo;ll use <a href=x-man-page://lldb>lldb(1)</a> as our remote debugger.</p><h3 id=example-1---debugging-the-kernel>Example 1 - debugging the kernel</h3><p>Let&rsquo;s say we want to debug the <a href=http://xr.anadoxin.org/source/xref/macos-10.12.6-sierra/xnu-3789.70.16/bsd/sys/vnode_internal.h#466><em>vn_getxattr</em></a> function in kernel, scrutinize its call stack and its arguments.</p><div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-c data-lang=c><span style=display:flex><span><span style=color:green>/**
+</span></span></span><span style=display:flex><span><span style=color:green> * Retrieve the data of an extended attribute.
+</span></span></span><span style=display:flex><span><span style=color:green> * see: xnu/bsd/sys/vnode_internal.h
+</span></span></span><span style=display:flex><span><span style=color:green> */</span>
+</span></span><span style=display:flex><span><span style=color:#2b91af>int</span> vn_getxattr(vnode_t vp, <span style=color:#00f>const</span> <span style=color:#2b91af>char</span> *name, uio_t uio, size_t size, <span style=color:#2b91af>int</span> options, vfs_context_t context);
+</span></span></code></pre></div><p>In this case, we OR&rsquo;ed <em>boot-args</em> with <code>DB_HALT(0x1)</code> for VM:</p><div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell><span style=display:flex><span>$ sudo nvram boot-args=<span style=color:#a31515>&#34;debug=0x145 kext-dev-mode=1 kcsuffix=development pmuflags=1 -v&#34;</span>
+</span></span></code></pre></div><p>So the VM kernel can be interrupted for debugger to attach at boot-time.</p><p>When you reboot, the kernel will interrupt automatically, the console will output like:</p><div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>...
+</span></span><span style=display:flex><span>Darwin Bootstrapper Version 4.0.0: Sun May  7 19:34:52 PDT 2017; root:libxpc_executables-972.70.1~4/launchd/RELEASE_X86_64
+</span></span><span style=display:flex><span>boot-args = debug=0x145 kext-dev-mode=1 kcsuffix=development pmuflags=1 -v
+</span></span><span style=display:flex><span>...
+</span></span><span style=display:flex><span>IOKernelDebugger: registering debugger
+</span></span><span style=display:flex><span>ethernet MAC address: 00:0c:29:af:fa:a0
+</span></span><span style=display:flex><span>ip address: 172.16.41.129
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>Waiting for remote debugger connection.
+</span></span></code></pre></div><p>Connect to the VM for debugging</p><div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell><span style=display:flex><span>$ lldb /Library/Developer/KDKs/KDK_10.12.6_16G29.kdk/System/Library/Kernels/kernel.development
+</span></span><span style=display:flex><span>...
+</span></span><span style=display:flex><span>Current executable set to <span style=color:#a31515>&#39;/Library/Developer/KDKs/KDK_10.12.6_16G29.kdk/System/Library/Kernels/kernel.development&#39;</span> (x86_64).
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:green># Run all discovered debug scripts in this session</span>
+</span></span><span style=display:flex><span>(lldb) settings set target.load-script-from-symbol-file true
+</span></span><span style=display:flex><span>...
+</span></span><span style=display:flex><span>xnu debug macros loaded successfully. Run showlldbtypesummaries to enable type summaries.
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:green># Connect to the VM</span>
+</span></span><span style=display:flex><span>(lldb) kdp-remote 172.16.41.129
+</span></span><span style=display:flex><span>Version: Darwin Kernel Version 16.7.0: Thu Jun 15 17:36:27 PDT 2017; root:xnu-3789.70.16~2/DEVELOPMENT_X86_64; UUID=B8B972B8-220D-3E56-92F8-ADB8CF777CE2; stext=0xffffff8016c00000
+</span></span><span style=display:flex><span>Kernel UUID: B8B972B8-220D-3E56-92F8-ADB8CF777CE2
+</span></span><span style=display:flex><span>...
+</span></span><span style=display:flex><span>kernel.development was compiled with optimization - stepping may behave oddly; variables may not be available.
+</span></span><span style=display:flex><span>Process 1 stopped
+</span></span><span style=display:flex><span>* thread <span style=color:green>#2, name = &#39;0xffffff8021bc1b00&#39;, queue = &#39;0x0&#39;, stop reason = signal SIGSTOP</span>
+</span></span><span style=display:flex><span>    frame <span style=color:green>#0: 0xffffff8016dfec24 kernel.development`kdp_register_send_receive(send=(IONetworkingFamily`IOKernelDebugger::kdpTransmitDispatcher(void*, unsigned int) at IOKernelDebugger.cpp:369), receive=(IONetworkingFamily`IOKernelDebugger::kdpReceiveDispatcher(void*, unsigned int*, unsigned int) at IOKernelDebugger.cpp:353)) at kdp_udp.c:478 [opt]</span>
+</span></span><span style=display:flex><span>Target 0: (kernel.development) stopped.
+</span></span></code></pre></div><p>At this point, we are stopped in the debugger and the VM kernel is waiting for us to continue.</p><div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell><span style=display:flex><span>(lldb) breakpoint set --name vn_getxattr
+</span></span><span style=display:flex><span>Breakpoint 1: where = kernel.development<span style=color:#a31515>`</span>vn_getxattr + 51 at vfs_xattr.c:122, address = 0xffffff80170c7453
+</span></span></code></pre></div><p>After we set breakpoint, we can <em>continue</em> the interrupted process.</p><div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell><span style=display:flex><span>(lldb) <span style=color:#00f>continue</span>
+</span></span><span style=display:flex><span>Process 1 resuming
+</span></span></code></pre></div><p>The kernel thus continue to run until it hits set breakpoint(very likely hit at boot-time, since XNU itself use xattr heavily), in this case, e.g. <em>vn_getxattr</em>.</p><div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>Process 1 stopped
+</span></span><span style=display:flex><span>* thread #5, name = &#39;0xffffff8021a432c0&#39;, queue = &#39;0x0&#39;, stop reason = breakpoint 1.1
+</span></span><span style=display:flex><span>    frame #0: 0xffffff80170c7453 kernel.development`vn_getxattr(vp=0xffffff8021fca078, name=&#34;com.apple.decmpfs&#34;, uio=0x0000000000000000, size=0xffffff80ae99b868, options=8, context=0xffffff8021a6d320) at vfs_xattr.c:122 [opt]
+</span></span><span style=display:flex><span>Target 0: (kernel.development) stopped.
+</span></span></code></pre></div><p>Back in the lldb we can print information about the current stack trace and arguments:</p><div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>(lldb) thread backtrace
+</span></span><span style=display:flex><span>* thread #5, name = &#39;0xffffff8021a432c0&#39;, queue = &#39;0x0&#39;, stop reason = breakpoint 1.1
+</span></span><span style=display:flex><span>  * frame #0: 0xffffff80170c7453 kernel.development`vn_getxattr(vp=0xffffff8021fca078, name=&#34;com.apple.decmpfs&#34;, uio=0x0000000000000000, size=0xffffff80ae99b868, options=8, context=0xffffff8021a6d320) at vfs_xattr.c:122 [opt]
+</span></span><span style=display:flex><span>    frame #1: 0xffffff80170e6a3f kernel.development`decmpfs_fetch_compressed_header(vp=0xffffff8021fca078, cp=0xffffff8021f16540, hdrOut=0xffffff80ae99b920, returnInvalid=1) at decmpfs.c:513 [opt]
+</span></span><span style=display:flex><span>    frame #2: 0xffffff80170e7a4b kernel.development`decmpfs_file_is_compressed(vp=&lt;unavailable&gt;, cp=0xffffff8021f16540) at decmpfs.c:754 [opt]
+</span></span><span style=display:flex><span>    frame #3: 0xffffff7f986d5852
+</span></span><span style=display:flex><span>    frame #4: 0xffffff7f986ccba7
+</span></span><span style=display:flex><span>    frame #5: 0xffffff80170d12d8 kernel.development`vnode_getattr [inlined] VNOP_GETATTR(vp=0x0000000000000000, vap=0xffffff8021fca078, ctx=0x0000000000000000) at kpi_vfs.c:3287 [opt]
+</span></span><span style=display:flex><span>    frame #6: 0xffffff80170d12a8 kernel.development`vnode_getattr(vp=0x0000000000000000, vap=0xffffff8021fca078, ctx=0x0000000000000000) at kpi_vfs.c:2352 [opt]
+</span></span><span style=display:flex><span>    frame #7: 0xffffff80172f710f kernel.development`exec_activate_image [inlined] exec_check_permissions(imgp=0xffffff8021c16000) at kern_exec.c:4307 [opt]
+</span></span><span style=display:flex><span>    frame #8: 0xffffff80172f7069 kernel.development`exec_activate_image(imgp=&lt;unavailable&gt;) at kern_exec.c:1388 [opt]
+</span></span><span style=display:flex><span>    frame #9: 0xffffff80172f6858 kernel.development`posix_spawn(ap=&lt;unavailable&gt;, uap=&lt;unavailable&gt;, retval=0xffffff8021a8de78) at kern_exec.c:2714 [opt]
+</span></span><span style=display:flex><span>    frame #10: 0xffffff80173e0c5b kernel.development`unix_syscall64(state=&lt;unavailable&gt;) at systemcalls.c:376 [opt]
+</span></span><span style=display:flex><span>    frame #11: 0xffffff8016dd9d96 kernel.development`hndl_unix_scall64 + 22
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>(lldb) p *((vnode_t) $rdi)  # Examine first argument of vn_getxattr
+</span></span><span style=display:flex><span>(vnode) $24 = {
+</span></span><span style=display:flex><span>  v_lock = {
+</span></span><span style=display:flex><span>    opaque = ([0] = 0, [1] = 18446744069414584320)
+</span></span><span style=display:flex><span>  }
+</span></span><span style=display:flex><span>...
+</span></span><span style=display:flex><span>  v_label = 0x0000000000000000
+</span></span><span style=display:flex><span>  v_resolve = 0x0000000000000000
+</span></span><span style=display:flex><span>}
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>$ (lldb) p ((vnode_t) $rdi)-&gt;v_name
+</span></span><span style=display:flex><span>(const char *) $26 = 0xffffff8022000710 &#34;dirhelper&#34;
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>(lldb) p (const char *) $rsi  # Second argument
+</span></span><span style=display:flex><span>(const char *) $31 = 0xffffff801757b283 &#34;com.apple.decmpfs&#34;
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span># (Other arguments omitted)
+</span></span></code></pre></div><p>You can almost do everything you want!</p><hr>
+<p>Quoted from Damien DeVille&rsquo;s:</p><blockquote>
+<p>It’s important to note that once the kernel has launched and the debugger continued, the kernel cannot be halted again from the debugger. In fact, if you try you will get an error message:</p></blockquote><div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>(lldb) process interrupt
+</span></span><span style=display:flex><span>error: Failed to halt process: Halt timed out. State = running
+</span></span></code></pre></div><blockquote>
+<p>For this reason, you should make sure that all your breakpoints are registered in the debugger before running continue for the kernel to complete its boot.</p></blockquote><p> </p><p>Yet if you continue execution of the kernel, you can interrupt the kernel manually via <em>Command-Option-Control-Shift-Escape</em> key.</p><p>The screen will output like:</p><div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>Debugger called: &lt;HID: USB Programmer Key&gt;
+</span></span><span style=display:flex><span>ethernet MAC address: 00:0c:29:af:fa:a0
+</span></span><span style=display:flex><span>ip address: 172.16.41.129
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>Waiting for remote debugger connection.
+</span></span></code></pre></div><p>Once you connected the VM kernel, the kernel likely stopped at <a href=http://xr.anadoxin.org/source/xref/macos-10.12.6-sierra/xnu-3789.70.16/osfmk/kern/locks.c#1495><em>hw_atomic_sub</em></a>, it called within <a href=http://xr.anadoxin.org/source/xref/macos-10.12.6-sierra/xnu-3789.70.16/osfmk/i386/AT386/model_dep.c#1016><em>Debugger</em></a>.</p><div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>Version: Darwin Kernel Version 16.7.0: Thu Jun 15 17:36:27 PDT 2017; root:xnu-3789.70.16~2/DEVELOPMENT_X86_64; UUID=B8B972B8-220D-3E56-92F8-ADB8CF777CE2; stext=0xffffff801d600000
+</span></span><span style=display:flex><span>Kernel UUID: B8B972B8-220D-3E56-92F8-ADB8CF777CE2
+</span></span><span style=display:flex><span>...
+</span></span><span style=display:flex><span>kernel.development was compiled with optimization - stepping may behave oddly; variables may not be available.
+</span></span><span style=display:flex><span>Process 1 stopped
+</span></span><span style=display:flex><span>* thread #2, name = &#39;0xffffff802880c770&#39;, queue = &#39;0x0&#39;, stop reason = signal SIGSTOP
+</span></span><span style=display:flex><span>    frame #0: 0xffffff801d98957e kernel.development`Debugger [inlined] hw_atomic_sub(delt=1) at locks.c:1514 [opt]
+</span></span><span style=display:flex><span>Target 0: (kernel.development) stopped.
+</span></span></code></pre></div><p>At this stage, you can follow the steps mentioned above to debugging the kernel.</p><hr>
+<h3 id=example-2a---debugging-a-kernel-extensionkext-for-short>Example 2a - debugging a kernel extension(kext for short)</h3><p>In order to debug a kext, we use the similar arrangement mentioned above.</p><div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell><span style=display:flex><span><span style=color:green># Update boot-args</span>
+</span></span><span style=display:flex><span>$ sudo nvram boot-args=<span style=color:#a31515>&#34;debug=0x144 kext-dev-mode=1 kcsuffix=development pmuflags=1 -v&#34;</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:green># Invalidate kext cache</span>
+</span></span><span style=display:flex><span>$ sudo kextcache -invalidate /
+</span></span></code></pre></div><p>Say, we have a kext named <em>kext-panic</em>.</p><div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-c data-lang=c><span style=display:flex><span><span style=color:#00f>#include</span> <span style=color:#00f>&lt;mach/mach_types.h&gt;</span><span style=color:#00f>
+</span></span></span><span style=display:flex><span><span style=color:#00f>#include</span> <span style=color:#00f>&lt;sys/systm.h&gt;</span><span style=color:#00f>
+</span></span></span><span style=display:flex><span><span style=color:#00f></span>
+</span></span><span style=display:flex><span><span style=color:#00f>#define KEXT_NAME &#34;kext-panic&#34;
+</span></span></span><span style=display:flex><span><span style=color:#00f>#define LOG(fmt, ...) printf(KEXT_NAME &#34;: &#34; fmt &#34;\n&#34;, ##__VA_ARGS__)
+</span></span></span><span style=display:flex><span><span style=color:#00f></span>
+</span></span><span style=display:flex><span>kern_return_t kext_panic_start(kmod_info_t *ki, <span style=color:#2b91af>void</span> *d)
+</span></span><span style=display:flex><span>{
+</span></span><span style=display:flex><span>    LOG(<span style=color:#a31515>&#34;loaded  id: %#x addr: %#lx&#34;</span>, ki-&gt;id, ki-&gt;address);
+</span></span><span style=display:flex><span>    <span style=color:#00f>return</span> KERN_SUCCESS;
+</span></span><span style=display:flex><span>}
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>kern_return_t kext_panic_stop(kmod_info_t *ki, <span style=color:#2b91af>void</span> *d)
+</span></span><span style=display:flex><span>{
+</span></span><span style=display:flex><span>    LOG(<span style=color:#a31515>&#34;unloaded  id: %#x addr: %#lx&#34;</span>, ki-&gt;id, ki-&gt;address);
+</span></span><span style=display:flex><span>    <span style=color:#2b91af>char</span> *p = (<span style=color:#2b91af>char</span> *) 0xdeadbeef;
+</span></span><span style=display:flex><span>    *p = <span style=color:#a31515>&#39;\0&#39;</span>;      <span style=color:green>/* Should panic */</span>
+</span></span><span style=display:flex><span>    <span style=color:#00f>return</span> KERN_SUCCESS;
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><p>Before you compile above code, you should set <em>Debug Information Format</em> with <em>DWARF with dSYM File</em> for your current build schema.</p><blockquote>
+<p><a href=http://ddeville.me/2015/08/kernel-debugging-with-lldb-and-vmware-fusion>[ref]:</a> It can be located anywhere that is indexed by Spotlight. When encountering an unknown symbol (for example a function in your kext), LLDB will look for a <em><strong>.dSYM</strong></em> file that matches this symbol’s Mach-O binary UUID. If the <em><strong>.dSYM</strong></em> file is on your host machine and was indexed by Spotlight then LLDB will symbolicate things nicely.</p></blockquote><p>Also you may turn off code-level optimization, so stepping won&rsquo;t weird.</p><p>In VM, copy the kext compiled from host.</p><div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell><span style=display:flex><span>$ cp -r $SOMEWHERE/kext-panic.kext /var/tmp
+</span></span><span style=display:flex><span><span style=color:green># You have to chown the kext so you can load them</span>
+</span></span><span style=display:flex><span>$ sudo chown -R root:wheel /var/tmp/kext-panic.kext
+</span></span></code></pre></div><p>Load the kext:</p><div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell><span style=display:flex><span>$ sudo kextload /var/tmp/kext-panic.kext
+</span></span></code></pre></div><p>The kernel message will output like:</p><div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell><span style=display:flex><span>$ sudo dmesg | grep kext-panic
+</span></span><span style=display:flex><span>kext-panic: loaded  id: 0x6e addr: 0xffffff7f8766b000
+</span></span></code></pre></div><p>When we unload the kext, the kernel should panic:</p><div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>panic(cpu 1 caller 0xffffff8005583bd3): Kernel trap at 0xffffff7f8766bf34, type 14=page fault, registers:
+</span></span><span style=display:flex><span>CR0: 0x0000000080010033, CR2: 0x00000000deadbeef, CR3: 0x0000000085c1c080, CR4: 0x00000000003606e0
+</span></span><span style=display:flex><span>RAX: 0x0000000000000000, RBX: 0xffffff800fc54640, RCX: 0x00000000deadbeef, RDX: 0x00000000deadbeef
+</span></span><span style=display:flex><span>RSP: 0xffffff809c823ba0, RBP: 0xffffff809c823bc0, RSI: 0x0000000000000000, RDI: 0xffffff807658c000
+</span></span><span style=display:flex><span>R8:  0x00000011af78a0ae, R9:  0x0000000000000000, R10: 0x00000000002b0007, R11: 0x0000000002000001
+</span></span><span style=display:flex><span>R12: 0xffffff800eee1fc0, R13: 0xffffff800fc54640, R14: 0x0000000000000000, R15: 0xffffff7f8766bf8e
+</span></span><span style=display:flex><span>RFL: 0x0000000000010246, RIP: 0xffffff7f8766bf34, CS:  0x0000000000000008, SS:  0x0000000000000010
+</span></span><span style=display:flex><span>Fault CR2: 0x00000000deadbeef, Error code: 0x0000000000000002, Fault CPU: 0x1 VMM, PL: 0, VF: 1
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>Backtrace (CPU 1), Frame : Return Address
+</span></span><span style=display:flex><span>0xffffff809c823400 : 0xffffff8005430c64 
+</span></span><span style=display:flex><span>0xffffff809c8238a0 : 0xffffff8005583bd3 
+</span></span><span style=display:flex><span>0xffffff809c823a90 : 0xffffff80053d9593 
+</span></span><span style=display:flex><span>0xffffff809c823ab0 : 0xffffff7f8766bf34 
+</span></span><span style=display:flex><span>0xffffff809c823bc0 : 0xffffff80059ffedf 
+</span></span><span style=display:flex><span>0xffffff809c823bf0 : 0xffffff80059fd7da 
+</span></span><span style=display:flex><span>0xffffff809c823c30 : 0xffffff8005a06bfe 
+</span></span><span style=display:flex><span>0xffffff809c823c70 : 0xffffff8005a0c7e4 
+</span></span><span style=display:flex><span>0xffffff809c823cf0 : 0xffffff8005a1bcfc 
+</span></span><span style=display:flex><span>0xffffff809c823d70 : 0xffffff800548bd15 
+</span></span><span style=display:flex><span>0xffffff809c823dc0 : 0xffffff80054361cc 
+</span></span><span style=display:flex><span>0xffffff809c823e20 : 0xffffff800540d19c 
+</span></span><span style=display:flex><span>0xffffff809c823e70 : 0xffffff8005426057 
+</span></span><span style=display:flex><span>0xffffff809c823f00 : 0xffffff800556db7d 
+</span></span><span style=display:flex><span>0xffffff809c823fb0 : 0xffffff80053d9db6 
+</span></span><span style=display:flex><span>      Kernel Extensions in backtrace:
+</span></span><span style=display:flex><span>         cn.junkman.kext.kext-panic(1.0)[43915CCB-4282-3481-B711-9DC4A74ED9D7]@0xffffff7f8766b000-&gt;0xffffff7f8766cfff
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>BSD process name corresponding to current thread: kextunload
+</span></span><span style=display:flex><span>Boot args: debug=0x144 kext-dev-mode=1 kcsuffix=development pmuflags=1 -v
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>Mac OS version:
+</span></span><span style=display:flex><span>16G29
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>Kernel version:
+</span></span><span style=display:flex><span>Darwin Kernel Version 16.7.0: Thu Jun 15 17:36:27 PDT 2017; root:xnu-3789.70.16~2/DEVELOPMENT_X86_64
+</span></span><span style=display:flex><span>Kernel UUID: B8B972B8-220D-3E56-92F8-ADB8CF777CE2
+</span></span><span style=display:flex><span>Kernel slide:     0x0000000005000000
+</span></span><span style=display:flex><span>Kernel text base: 0xffffff8005200000
+</span></span><span style=display:flex><span>__HIB  text base: 0xffffff8005100000
+</span></span><span style=display:flex><span>System model name: VMware7,1 (Mac-E43C1C25D4880AD6)
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>System uptime in nanoseconds: 310848796046
+</span></span><span style=display:flex><span>ethernet MAC address: 00:0c:29:af:fa:a0
+</span></span><span style=display:flex><span>ip address: 172.16.41.129
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>Waiting for remote debugger connection.
+</span></span></code></pre></div><p>Using lldb to remote-debug the problematic kext:</p><div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>$ lldb /Library/Developer/KDKs/KDK_10.12.6_16G29.kdk/System/Library/Kernels/kernel.development
+</span></span><span style=display:flex><span>...
+</span></span><span style=display:flex><span>(lldb) settings set target.load-script-from-symbol-file true
+</span></span><span style=display:flex><span>...
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>(lldb) kdp-remote 172.16.41.129
+</span></span><span style=display:flex><span>...
+</span></span><span style=display:flex><span>Process 1 stopped
+</span></span><span style=display:flex><span>* thread #2, name = &#39;0xffffff80148b0ee0&#39;, queue = &#39;0x0&#39;, stop reason = signal SIGSTOP
+</span></span><span style=display:flex><span>    frame #0: 0xffffff7f8766bf34 kext-panic`kext_panic_stop(ki=0xffffff7f8766c000, d=0x0000000000000000) at kext_panic.c:17
+</span></span><span style=display:flex><span>   14  	{
+</span></span><span style=display:flex><span>   15  	    LOG(&#34;unloaded  id: %#x addr: %#lx&#34;, ki-&gt;id, ki-&gt;address);
+</span></span><span style=display:flex><span>   16  	    char *p = (char *) 0xdeadbeef;
+</span></span><span style=display:flex><span>-&gt; 17  	    *p = &#39;\0&#39;;      /* Should panic */
+</span></span><span style=display:flex><span>   18  	    return KERN_SUCCESS;
+</span></span><span style=display:flex><span>   19  	}
+</span></span><span style=display:flex><span>Target 0: (kernel.development) stopped.
+</span></span></code></pre></div><p>The kext <em><strong>.dSYM</strong></em> file loaded successfully, we can easily debugging our kext.</p><div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>(lldb) thread backtrace
+</span></span><span style=display:flex><span>* thread #2, name = &#39;0xffffff80148b0ee0&#39;, queue = &#39;0x0&#39;, stop reason = signal SIGSTOP
+</span></span><span style=display:flex><span>  * frame #0: 0xffffff7f8766bf34 kext-panic`kext_panic_stop(ki=0xffffff7f8766c000, d=0x0000000000000000) at kext_panic.c:17
+</span></span><span style=display:flex><span>    frame #1: 0xffffff80059ffedf kernel.development`OSKext::stop(this=0xffffff800fc54640) at OSKext.cpp:6368 [opt]
+</span></span><span style=display:flex><span>    frame #2: 0xffffff80059fd7da kernel.development`OSKext::unload(this=0xffffff800fc54640) at OSKext.cpp:6470 [opt]
+</span></span><span style=display:flex><span>    frame #3: 0xffffff8005a06bfe kernel.development`OSKext::removeKext(aKext=&lt;unavailable&gt;, terminateServicesAndRemovePersonalitiesFlag=true) at OSKext.cpp:3540 [opt]
+</span></span><span style=display:flex><span>    frame #4: 0xffffff8005a0c7e4 kernel.development`OSKext::handleRequest(hostPriv=0x0000000000000000, clientLogFilter=&lt;unavailable&gt;, requestBuffer=&#34;؅?\x80???, requestLength=&lt;unavailable&gt;, responseOut=&lt;unavailable&gt;, responseLengthOut=&lt;unavailable&gt;, logInfoOut=&lt;unavailable&gt;, logInfoLengthOut=&lt;unavailable&gt;) at OSKext.cpp:8025 [opt]
+</span></span><span style=display:flex><span>    frame #5: 0xffffff8005a1bcfc kernel.development`::kext_request(hostPriv=&lt;unavailable&gt;, clientLogSpec=&lt;unavailable&gt;, requestIn=&lt;unavailable&gt;, requestLengthIn=&lt;unavailable&gt;, responseOut=0xffffff8016b8a888, responseLengthOut=0xffffff8016b8a8b0, logDataOut=&lt;unavailable&gt;, logDataLengthOut=&lt;unavailable&gt;, op_result=&lt;unavailable&gt;) at OSKextLib.cpp:291 [opt]
+</span></span><span style=display:flex><span>    frame #6: 0xffffff800548bd15 kernel.development`_Xkext_request(InHeadP=&lt;unavailable&gt;, OutHeadP=0xffffff8016b8a864) at host_priv_server.c:2997 [opt]
+</span></span><span style=display:flex><span>    frame #7: 0xffffff80054361cc kernel.development`ipc_kobject_server(request=&lt;unavailable&gt;, option=&lt;unavailable&gt;) at ipc_kobject.c:352 [opt]
+</span></span><span style=display:flex><span>    frame #8: 0xffffff800540d19c kernel.development`ipc_kmsg_send(kmsg=&lt;unavailable&gt;, option=&lt;unavailable&gt;, send_timeout=&lt;unavailable&gt;) at ipc_kmsg.c:1828 [opt]
+</span></span><span style=display:flex><span>    frame #9: 0xffffff8005426057 kernel.development`mach_msg_overwrite_trap(args=&lt;unavailable&gt;) at mach_msg.c:556 [opt]
+</span></span><span style=display:flex><span>    frame #10: 0xffffff800556db7d kernel.development`mach_call_munger64(state=0xffffff80176eb020) at bsd_i386.c:556 [opt]
+</span></span><span style=display:flex><span>    frame #11: 0xffffff80053d9db6 kernel.development`hndl_mach_scall64 + 22
+</span></span><span style=display:flex><span>    
+</span></span><span style=display:flex><span>(lldb) register read
+</span></span><span style=display:flex><span>General Purpose Registers:
+</span></span><span style=display:flex><span>       rax = 0x0000000000000000
+</span></span><span style=display:flex><span>       rbx = 0xffffff800fc54640
+</span></span><span style=display:flex><span>       rcx = 0x00000000deadbeef
+</span></span><span style=display:flex><span>       rdx = 0x00000000deadbeef
+</span></span><span style=display:flex><span>       rdi = 0xffffff807658c000
+</span></span><span style=display:flex><span>       rsi = 0x0000000000000000
+</span></span><span style=display:flex><span>       rbp = 0xffffff809c823bc0
+</span></span><span style=display:flex><span>       rsp = 0xffffff809c823ba0
+</span></span><span style=display:flex><span>        r8 = 0x00000011af78a0ae
+</span></span><span style=display:flex><span>        r9 = 0x0000000000000000
+</span></span><span style=display:flex><span>       r10 = 0x00000000002b0007
+</span></span><span style=display:flex><span>       r11 = 0x0000000002000001
+</span></span><span style=display:flex><span>       r12 = 0xffffff800eee1fc0
+</span></span><span style=display:flex><span>       r13 = 0xffffff800fc54640
+</span></span><span style=display:flex><span>       r14 = 0x0000000000000000
+</span></span><span style=display:flex><span>       r15 = 0xffffff7f8766bf8e  kext-panic`_stop
+</span></span><span style=display:flex><span>       rip = 0xffffff7f8766bf34  kext-panic`kext_panic_stop + 68 at kext_panic.c:17
+</span></span><span style=display:flex><span>    rflags = 0x0000000000010246
+</span></span><span style=display:flex><span>        cs = 0x0000000000000008
+</span></span><span style=display:flex><span>        fs = 0x0000000000000000
+</span></span><span style=display:flex><span>        gs = 0x00000000dead0000
+</span></span></code></pre></div><hr>
+<h3 id=example-2b---debuggingtrace-kext-at-load-stage>Example 2b - Debugging(trace) kext at load stage</h3><p>What if you want to debugging the kext from the very first stage? In a source trace level.</p><p>In order to achieve this, we have two steps:</p><div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span># Step 1 - Specify DB_HALT(0x1) in boot-args and clean cache
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>$ sudo nvram boot-args=&#34;debug=0x145 kext-dev-mode=1 kcsuffix=development pmuflags=1 -v&#34;
+</span></span><span style=display:flex><span>$ sudo kextcache -invalidate /
+</span></span></code></pre></div><p>We also need launchctl plist file <em>cn.junkman.kext.kext-panic.daemon.plist</em>, which load kext at boot-time.</p><div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-xml data-lang=xml><span style=display:flex><span><span style=color:#00f>&lt;?xml version=&#34;1.0&#34; encoding=&#34;UTF-8&#34;?&gt;</span>
+</span></span><span style=display:flex><span><span style=color:#00f>&lt;!DOCTYPE plist PUBLIC &#34;-//Apple//DTD PLIST 1.0//EN&#34;
+</span></span></span><span style=display:flex><span><span style=color:#00f>        &#34;http://www.apple.com/DTDs/PropertyList-1.0.dtd&#34;&gt;</span>
+</span></span><span style=display:flex><span>&lt;plist version=<span style=color:#a31515>&#34;1.0&#34;</span>&gt;
+</span></span><span style=display:flex><span>&lt;dict&gt;
+</span></span><span style=display:flex><span>    &lt;key&gt;Label&lt;/key&gt;
+</span></span><span style=display:flex><span>    &lt;string&gt;cn.junkman.kext.kext-panic.daemon&lt;/string&gt;
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    &lt;key&gt;ProgramArguments&lt;/key&gt;
+</span></span><span style=display:flex><span>    &lt;array&gt;
+</span></span><span style=display:flex><span>        &lt;string&gt;/sbin/kextload&lt;/string&gt;
+</span></span><span style=display:flex><span>        &lt;string&gt;/var/tmp/kext-panic.kext&lt;/string&gt;
+</span></span><span style=display:flex><span>    &lt;/array&gt;
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    &lt;key&gt;RunAtLoad&lt;/key&gt;
+</span></span><span style=display:flex><span>    &lt;true/&gt;
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    &lt;key&gt;KeepAlive&lt;/key&gt;
+</span></span><span style=display:flex><span>    &lt;false/&gt;
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    &lt;key&gt;LaunchOnlyOnce&lt;/key&gt;
+</span></span><span style=display:flex><span>    &lt;true/&gt;
+</span></span><span style=display:flex><span>&lt;/dict&gt;
+</span></span><span style=display:flex><span>&lt;/plist&gt;
+</span></span></code></pre></div><p>It&rsquo;s a bare-bone launchd-plist file, for advanced topic, see <a href=http://www.launchd.info>A launchd Tutorial</a>.</p><div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell><span style=display:flex><span><span style=color:green># Step 2 - Copy launchd xml-script to specific location</span>
+</span></span><span style=display:flex><span><span style=color:green>#          launchd will load them when booting</span>
+</span></span><span style=display:flex><span>$ sudo cp $SOMEWHERE/cn.junkman.kext.kext-panic.daemon.plist /Library/LaunchDaemons
+</span></span></code></pre></div><p>When booting, the console will halt automatically:</p><div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>...
+</span></span><span style=display:flex><span>IOKernelDebugger: registering debugger
+</span></span><span style=display:flex><span>ethernet MAC address: 00:0c:29:af:fa:a0
+</span></span><span style=display:flex><span>ip address: 172.16.41.129
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>Waiting for remote debugger connection.
+</span></span></code></pre></div><div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback><span style=display:flex><span>$ lldb /Library/Developer/KDKs/KDK_10.12.6_16G29.kdk/System/Library/Kernels/kernel.development
+</span></span><span style=display:flex><span>...
+</span></span><span style=display:flex><span>(lldb) settings set target.load-script-from-symbol-file true
+</span></span><span style=display:flex><span>...
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>(lldb) kdp-remote 172.16.41.129
+</span></span><span style=display:flex><span>...
+</span></span><span style=display:flex><span>Process 1 stopped
+</span></span><span style=display:flex><span>* thread #2, name = &#39;0xffffff802594aa30&#39;, queue = &#39;0x0&#39;, stop reason = signal SIGSTOP
+</span></span><span style=display:flex><span>    frame #0: 0xffffff801a9fec24 kernel.development`kdp_register_send_receive(send=(IONetworkingFamily`IOKernelDebugger::kdpTransmitDispatcher(void*, unsigned int) at IOKernelDebugger.cpp:369), receive=(IONetworkingFamily`IOKernelDebugger::kdpReceiveDispatcher(void*, unsigned int*, unsigned int) at IOKernelDebugger.cpp:353)) at kdp_udp.c:478 [opt]
+</span></span><span style=display:flex><span>Target 0: (kernel.development) stopped.
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>(lldb) breakpoint set --name kext_panic_start
+</span></span><span style=display:flex><span>Breakpoint 1: no locations (pending).
+</span></span><span style=display:flex><span>WARNING:  Unable to resolve breakpoint to any actual locations.
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>(lldb) continue
+</span></span><span style=display:flex><span>...
+</span></span><span style=display:flex><span>1 location added to breakpoint 1
+</span></span><span style=display:flex><span>Process 1 stopped
+</span></span><span style=display:flex><span>* thread #16, name = &#39;0xffffff8026104580&#39;, queue = &#39;0x0&#39;, stop reason = breakpoint 3.1
+</span></span><span style=display:flex><span>    frame #0: 0xffffff7f9cd24ed7 kext-panic`kext_panic_start(ki=0xffffff7f9cd25000, d=0x0000000000000000) at kext_panic.c:9
+</span></span><span style=display:flex><span>   6   	
+</span></span><span style=display:flex><span>   7   	kern_return_t kext_panic_start(kmod_info_t *ki, void *d)
+</span></span><span style=display:flex><span>   8   	{
+</span></span><span style=display:flex><span>-&gt; 9   	    LOG(&#34;loaded  id: %#x addr: %#lx&#34;, ki-&gt;id, ki-&gt;address);
+</span></span><span style=display:flex><span>   10  	    return KERN_SUCCESS;
+</span></span><span style=display:flex><span>   11  	}
+</span></span><span style=display:flex><span>   12  	
+</span></span><span style=display:flex><span>Target 0: (kernel.development) stopped.
+</span></span></code></pre></div><p>Thus we successfully attached to our kext, feel free to scrutinize the kext. :-)</p><p>NOTE: when we set breakpoint for our kext, it prompts it&rsquo;s pending, since lldb not yet read <em>kext-panic</em> <em><strong>.dSYM</strong></em> file, so it&rsquo;s not visible to lldb at the very first stage.</p><p> </p><p>You may use <code>kexutil(8)</code> -i, -interactive option to pause each specified kext and wait for user input to start the kext.</p><blockquote>
+<p>This allows for debugger setup when the kext needs to be debugged during its earliest stages of running.</p></blockquote><p>So you can attach to the debugger and start kext debugging at booting stage.</p><h2 id=summary>Summary</h2><p>This article describes HOWTO debugging the XNU kernel elaborately, it still missing some advanced topics about kernel debugging. Yet, it&rsquo;s enough for a programmer to get started with.</p><p>I illustrated two examples to show HOWTO debug the kernel and kext respectively, still dark corners frustrate you, so I collected some tips which may helpful.</p><h2 id=gotchas>Gotchas</h2><ul>
 <li>
-<p><em><strong>kcsuffix=development</strong></em>, allow us to boot system with development kernel(which previously copied into /System/Library/Kernels from KDK). Another one is <em><strong>kcsuffix=debug</strong></em>. if you&rsquo;re not intended to debugging kernel itself, this argument is optional.</p>
-</li>
-</ul>
-<p>[190214] NOTE: when you changed <code>boot-args</code>&rsquo;s <code>kcsuffix</code> argument, please remember to clean up prelinked kernel images(compressed kernel cache) at <code>/System/Library/PrelinkedKernels</code></p>
-<ul>
-<li>
-<p><em><strong>pmuflags=1</strong></em>, disable the watchdog timers, this used to <a href=https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/build/build.html#//apple_ref/doc/uid/TP30000905-CH221-SW2>avoid watchdog timer problems</a>.</p>
-</li>
-<li>
-<p><em><strong>-v</strong></em>, enable the kernel verbose mode that will be useful when debugging.</p>
-</li>
-</ul>
-<p><a href=https://superuser.com/questions/255176/is-there-a-list-of-available-boot-args-for-darwin-os-x>Is there a list of available boot-args for darwin / OS X</a> describes elaborate boot arguments.</p>
-<h3 id=invalidate-the-kext-cache>Invalidate the kext cache</h3>
-<p>If you specified <em><strong>kcsuffix</strong></em> boot arguments, you should invalidate the kext cache files. You can achieve via <a href=x-man-page://kextcache>kextcache(8)</a>:</p>
-<div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell><span style=color:green># / means the root of the current volume, you can specify another volume if needed</span>
-$ sudo kextcache -invalidate /
-</code></pre></div><h3 id=retrieve-vm-network-info>Retrieve VM network info</h3>
-<p>In order to connect the debugger to the VM, you need to know network information about the VM, typically, via <a href=x-man-page://ifconfig>ifconfig(8)</a></p>
-<div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell>$ ifconfig
-...
-en0: flags=8863&lt;UP,BROADCAST,SMART,RUNNING,SIMPLEX,MULTICAST&gt; mtu 1500
-	options=b&lt;RXCSUM,TXCSUM,VLAN_HWTAGGING&gt;
-	ether 00:0c:29:af:fa:a0 
-	inet6 fe80::808:99a1:9108:fb70%en0 prefixlen 64 secured scopeid 0x4 
-	inet 172.16.41.129 netmask 0xffffff00 broadcast 172.16.41.255
-	nd6 options=201&lt;PERFORMNUD,DAD&gt;
-	media: autoselect (1000baseT &lt;full-duplex&gt;)
-	status: active
-...
-</code></pre></div><p>so later you can <em>kdp-remote</em>(lldb) or <em>target remote-kdp</em>(gdb) the VM in host machine.</p>
-<h2 id=in-practice>In practice</h2>
-<p>In order to test our debugging setup, I&rsquo;ll illustrate two examples to show how to debug the kernel.</p>
-<p>In both cases, I&rsquo;ll use <a href=x-man-page://lldb>lldb(1)</a> as our remote debugger.</p>
-<h3 id=example-1---debugging-the-kernel>Example 1 - debugging the kernel</h3>
-<p>Let&rsquo;s say we want to debug the <a href=http://xr.anadoxin.org/source/xref/macos-10.12.6-sierra/xnu-3789.70.16/bsd/sys/vnode_internal.h#466><em>vn_getxattr</em></a> function in kernel, scrutinize its call stack and its arguments.</p>
-<div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-c data-lang=c><span style=color:green>/**
-</span><span style=color:green> * Retrieve the data of an extended attribute.
-</span><span style=color:green> * see: xnu/bsd/sys/vnode_internal.h
-</span><span style=color:green> */</span>
-<span style=color:#2b91af>int</span> vn_getxattr(vnode_t vp, <span style=color:#00f>const</span> <span style=color:#2b91af>char</span> *name, uio_t uio, size_t size, <span style=color:#2b91af>int</span> options, vfs_context_t context);
-</code></pre></div><p>In this case, we OR&rsquo;ed <em>boot-args</em> with <code>DB_HALT(0x1)</code> for VM:</p>
-<div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell>$ sudo nvram boot-args=<span style=color:#a31515>&#34;debug=0x145 kext-dev-mode=1 kcsuffix=development pmuflags=1 -v&#34;</span>
-</code></pre></div><p>So the VM kernel can be interrupted for debugger to attach at boot-time.</p>
-<p>When you reboot, the kernel will interrupt automatically, the console will output like:</p>
-<div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>...
-Darwin Bootstrapper Version 4.0.0: Sun May  7 19:34:52 PDT 2017; root:libxpc_executables-972.70.1~4/launchd/RELEASE_X86_64
-boot-args = debug=0x145 kext-dev-mode=1 kcsuffix=development pmuflags=1 -v
-...
-IOKernelDebugger: registering debugger
-ethernet MAC address: 00:0c:29:af:fa:a0
-ip address: 172.16.41.129
-
-Waiting for remote debugger connection.
-</code></pre></div><p>Connect to the VM for debugging</p>
-<div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell>$ lldb /Library/Developer/KDKs/KDK_10.12.6_16G29.kdk/System/Library/Kernels/kernel.development
-...
-Current executable set to <span style=color:#a31515>&#39;/Library/Developer/KDKs/KDK_10.12.6_16G29.kdk/System/Library/Kernels/kernel.development&#39;</span> (x86_64).
-
-<span style=color:green># Run all discovered debug scripts in this session</span>
-(lldb) settings set target.load-script-from-symbol-file true
-...
-xnu debug macros loaded successfully. Run showlldbtypesummaries to enable type summaries.
-
-<span style=color:green># Connect to the VM</span>
-(lldb) kdp-remote 172.16.41.129
-Version: Darwin Kernel Version 16.7.0: Thu Jun 15 17:36:27 PDT 2017; root:xnu-3789.70.16~2/DEVELOPMENT_X86_64; UUID=B8B972B8-220D-3E56-92F8-ADB8CF777CE2; stext=0xffffff8016c00000
-Kernel UUID: B8B972B8-220D-3E56-92F8-ADB8CF777CE2
-...
-kernel.development was compiled with optimization - stepping may behave oddly; variables may not be available.
-Process 1 stopped
-* thread <span style=color:green>#2, name = &#39;0xffffff8021bc1b00&#39;, queue = &#39;0x0&#39;, stop reason = signal SIGSTOP</span>
-    frame <span style=color:green>#0: 0xffffff8016dfec24 kernel.development`kdp_register_send_receive(send=(IONetworkingFamily`IOKernelDebugger::kdpTransmitDispatcher(void*, unsigned int) at IOKernelDebugger.cpp:369), receive=(IONetworkingFamily`IOKernelDebugger::kdpReceiveDispatcher(void*, unsigned int*, unsigned int) at IOKernelDebugger.cpp:353)) at kdp_udp.c:478 [opt]</span>
-Target 0: (kernel.development) stopped.
-</code></pre></div><p>At this point, we are stopped in the debugger and the VM kernel is waiting for us to continue.</p>
-<div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell>(lldb) breakpoint set --name vn_getxattr
-Breakpoint 1: where = kernel.development<span style=color:#a31515>`</span>vn_getxattr + 51 at vfs_xattr.c:122, address = 0xffffff80170c7453
-</code></pre></div><p>After we set breakpoint, we can <em>continue</em> the interrupted process.</p>
-<div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell>(lldb) <span style=color:#00f>continue</span>
-Process 1 resuming
-</code></pre></div><p>The kernel thus continue to run until it hits set breakpoint(very likely hit at boot-time, since XNU itself use xattr heavily), in this case, e.g. <em>vn_getxattr</em>.</p>
-<div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>Process 1 stopped
-* thread #5, name = &#39;0xffffff8021a432c0&#39;, queue = &#39;0x0&#39;, stop reason = breakpoint 1.1
-    frame #0: 0xffffff80170c7453 kernel.development`vn_getxattr(vp=0xffffff8021fca078, name=&#34;com.apple.decmpfs&#34;, uio=0x0000000000000000, size=0xffffff80ae99b868, options=8, context=0xffffff8021a6d320) at vfs_xattr.c:122 [opt]
-Target 0: (kernel.development) stopped.
-</code></pre></div><p>Back in the lldb we can print information about the current stack trace and arguments:</p>
-<div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>(lldb) thread backtrace
-* thread #5, name = &#39;0xffffff8021a432c0&#39;, queue = &#39;0x0&#39;, stop reason = breakpoint 1.1
-  * frame #0: 0xffffff80170c7453 kernel.development`vn_getxattr(vp=0xffffff8021fca078, name=&#34;com.apple.decmpfs&#34;, uio=0x0000000000000000, size=0xffffff80ae99b868, options=8, context=0xffffff8021a6d320) at vfs_xattr.c:122 [opt]
-    frame #1: 0xffffff80170e6a3f kernel.development`decmpfs_fetch_compressed_header(vp=0xffffff8021fca078, cp=0xffffff8021f16540, hdrOut=0xffffff80ae99b920, returnInvalid=1) at decmpfs.c:513 [opt]
-    frame #2: 0xffffff80170e7a4b kernel.development`decmpfs_file_is_compressed(vp=&lt;unavailable&gt;, cp=0xffffff8021f16540) at decmpfs.c:754 [opt]
-    frame #3: 0xffffff7f986d5852
-    frame #4: 0xffffff7f986ccba7
-    frame #5: 0xffffff80170d12d8 kernel.development`vnode_getattr [inlined] VNOP_GETATTR(vp=0x0000000000000000, vap=0xffffff8021fca078, ctx=0x0000000000000000) at kpi_vfs.c:3287 [opt]
-    frame #6: 0xffffff80170d12a8 kernel.development`vnode_getattr(vp=0x0000000000000000, vap=0xffffff8021fca078, ctx=0x0000000000000000) at kpi_vfs.c:2352 [opt]
-    frame #7: 0xffffff80172f710f kernel.development`exec_activate_image [inlined] exec_check_permissions(imgp=0xffffff8021c16000) at kern_exec.c:4307 [opt]
-    frame #8: 0xffffff80172f7069 kernel.development`exec_activate_image(imgp=&lt;unavailable&gt;) at kern_exec.c:1388 [opt]
-    frame #9: 0xffffff80172f6858 kernel.development`posix_spawn(ap=&lt;unavailable&gt;, uap=&lt;unavailable&gt;, retval=0xffffff8021a8de78) at kern_exec.c:2714 [opt]
-    frame #10: 0xffffff80173e0c5b kernel.development`unix_syscall64(state=&lt;unavailable&gt;) at systemcalls.c:376 [opt]
-    frame #11: 0xffffff8016dd9d96 kernel.development`hndl_unix_scall64 + 22
-
-(lldb) p *((vnode_t) $rdi)  # Examine first argument of vn_getxattr
-(vnode) $24 = {
-  v_lock = {
-    opaque = ([0] = 0, [1] = 18446744069414584320)
-  }
-...
-  v_label = 0x0000000000000000
-  v_resolve = 0x0000000000000000
-}
-
-$ (lldb) p ((vnode_t) $rdi)-&gt;v_name
-(const char *) $26 = 0xffffff8022000710 &#34;dirhelper&#34;
-
-(lldb) p (const char *) $rsi  # Second argument
-(const char *) $31 = 0xffffff801757b283 &#34;com.apple.decmpfs&#34;
-
-# (Other arguments omitted)
-</code></pre></div><p>You can almost do everything you want!</p>
-<hr>
-<p>Quoted from Damien DeVille&rsquo;s:</p>
-<blockquote>
-<p>It’s important to note that once the kernel has launched and the debugger continued, the kernel cannot be halted again from the debugger. In fact, if you try you will get an error message:</p>
-</blockquote>
-<div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>(lldb) process interrupt
-error: Failed to halt process: Halt timed out. State = running
-</code></pre></div><blockquote>
-<p>For this reason, you should make sure that all your breakpoints are registered in the debugger before running continue for the kernel to complete its boot.</p>
-</blockquote>
-<p> </p>
-<p>Yet if you continue execution of the kernel, you can interrupt the kernel manually via <em>Command-Option-Control-Shift-Escape</em> key.</p>
-<p>The screen will output like:</p>
-<div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>Debugger called: &lt;HID: USB Programmer Key&gt;
-ethernet MAC address: 00:0c:29:af:fa:a0
-ip address: 172.16.41.129
-
-Waiting for remote debugger connection.
-</code></pre></div><p>Once you connected the VM kernel, the kernel likely stopped at <a href=http://xr.anadoxin.org/source/xref/macos-10.12.6-sierra/xnu-3789.70.16/osfmk/kern/locks.c#1495><em>hw_atomic_sub</em></a>, it called within <a href=http://xr.anadoxin.org/source/xref/macos-10.12.6-sierra/xnu-3789.70.16/osfmk/i386/AT386/model_dep.c#1016><em>Debugger</em></a>.</p>
-<div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>Version: Darwin Kernel Version 16.7.0: Thu Jun 15 17:36:27 PDT 2017; root:xnu-3789.70.16~2/DEVELOPMENT_X86_64; UUID=B8B972B8-220D-3E56-92F8-ADB8CF777CE2; stext=0xffffff801d600000
-Kernel UUID: B8B972B8-220D-3E56-92F8-ADB8CF777CE2
-...
-kernel.development was compiled with optimization - stepping may behave oddly; variables may not be available.
-Process 1 stopped
-* thread #2, name = &#39;0xffffff802880c770&#39;, queue = &#39;0x0&#39;, stop reason = signal SIGSTOP
-    frame #0: 0xffffff801d98957e kernel.development`Debugger [inlined] hw_atomic_sub(delt=1) at locks.c:1514 [opt]
-Target 0: (kernel.development) stopped.
-</code></pre></div><p>At this stage, you can follow the steps mentioned above to debugging the kernel.</p>
-<hr>
-<h3 id=example-2a---debugging-a-kernel-extensionkext-for-short>Example 2a - debugging a kernel extension(kext for short)</h3>
-<p>In order to debug a kext, we use the similar arrangement mentioned above.</p>
-<div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell><span style=color:green># Update boot-args</span>
-$ sudo nvram boot-args=<span style=color:#a31515>&#34;debug=0x144 kext-dev-mode=1 kcsuffix=development pmuflags=1 -v&#34;</span>
-
-<span style=color:green># Invalidate kext cache</span>
-$ sudo kextcache -invalidate /
-</code></pre></div><p>Say, we have a kext named <em>kext-panic</em>.</p>
-<div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-c data-lang=c><span style=color:#00f>#include</span> <span style=color:#00f>&lt;mach/mach_types.h&gt;</span><span style=color:#00f>
-</span><span style=color:#00f>#include</span> <span style=color:#00f>&lt;sys/systm.h&gt;</span><span style=color:#00f>
-</span><span style=color:#00f></span>
-<span style=color:#00f>#define KEXT_NAME &#34;kext-panic&#34;
-</span><span style=color:#00f>#define LOG(fmt, ...) printf(KEXT_NAME &#34;: &#34; fmt &#34;\n&#34;, ##__VA_ARGS__)
-</span><span style=color:#00f></span>
-kern_return_t kext_panic_start(kmod_info_t *ki, <span style=color:#2b91af>void</span> *d)
-{
-    LOG(<span style=color:#a31515>&#34;loaded  id: %#x addr: %#lx&#34;</span>, ki-&gt;id, ki-&gt;address);
-    <span style=color:#00f>return</span> KERN_SUCCESS;
-}
-
-kern_return_t kext_panic_stop(kmod_info_t *ki, <span style=color:#2b91af>void</span> *d)
-{
-    LOG(<span style=color:#a31515>&#34;unloaded  id: %#x addr: %#lx&#34;</span>, ki-&gt;id, ki-&gt;address);
-    <span style=color:#2b91af>char</span> *p = (<span style=color:#2b91af>char</span> *) 0xdeadbeef;
-    *p = <span style=color:#a31515>&#39;\0&#39;</span>;      <span style=color:green>/* Should panic */</span>
-    <span style=color:#00f>return</span> KERN_SUCCESS;
-}
-</code></pre></div><p>Before you compile above code, you should set <em>Debug Information Format</em> with <em>DWARF with dSYM File</em> for your current build schema.</p>
-<blockquote>
-<p><a href=http://ddeville.me/2015/08/kernel-debugging-with-lldb-and-vmware-fusion>[ref]:</a> It can be located anywhere that is indexed by Spotlight. When encountering an unknown symbol (for example a function in your kext), LLDB will look for a <em><strong>.dSYM</strong></em> file that matches this symbol’s Mach-O binary UUID. If the <em><strong>.dSYM</strong></em> file is on your host machine and was indexed by Spotlight then LLDB will symbolicate things nicely.</p>
-</blockquote>
-<p>Also you may turn off code-level optimization, so stepping won&rsquo;t weird.</p>
-<p>In VM, copy the kext compiled from host.</p>
-<div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell>$ cp -r $SOMEWHERE/kext-panic.kext /var/tmp
-<span style=color:green># You have to chown the kext so you can load them</span>
-$ sudo chown -R root:wheel /var/tmp/kext-panic.kext
-</code></pre></div><p>Load the kext:</p>
-<div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell>$ sudo kextload /var/tmp/kext-panic.kext
-</code></pre></div><p>The kernel message will output like:</p>
-<div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell>$ sudo dmesg | grep kext-panic
-kext-panic: loaded  id: 0x6e addr: 0xffffff7f8766b000
-</code></pre></div><p>When we unload the kext, the kernel should panic:</p>
-<div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>panic(cpu 1 caller 0xffffff8005583bd3): Kernel trap at 0xffffff7f8766bf34, type 14=page fault, registers:
-CR0: 0x0000000080010033, CR2: 0x00000000deadbeef, CR3: 0x0000000085c1c080, CR4: 0x00000000003606e0
-RAX: 0x0000000000000000, RBX: 0xffffff800fc54640, RCX: 0x00000000deadbeef, RDX: 0x00000000deadbeef
-RSP: 0xffffff809c823ba0, RBP: 0xffffff809c823bc0, RSI: 0x0000000000000000, RDI: 0xffffff807658c000
-R8:  0x00000011af78a0ae, R9:  0x0000000000000000, R10: 0x00000000002b0007, R11: 0x0000000002000001
-R12: 0xffffff800eee1fc0, R13: 0xffffff800fc54640, R14: 0x0000000000000000, R15: 0xffffff7f8766bf8e
-RFL: 0x0000000000010246, RIP: 0xffffff7f8766bf34, CS:  0x0000000000000008, SS:  0x0000000000000010
-Fault CR2: 0x00000000deadbeef, Error code: 0x0000000000000002, Fault CPU: 0x1 VMM, PL: 0, VF: 1
-
-Backtrace (CPU 1), Frame : Return Address
-0xffffff809c823400 : 0xffffff8005430c64 
-0xffffff809c8238a0 : 0xffffff8005583bd3 
-0xffffff809c823a90 : 0xffffff80053d9593 
-0xffffff809c823ab0 : 0xffffff7f8766bf34 
-0xffffff809c823bc0 : 0xffffff80059ffedf 
-0xffffff809c823bf0 : 0xffffff80059fd7da 
-0xffffff809c823c30 : 0xffffff8005a06bfe 
-0xffffff809c823c70 : 0xffffff8005a0c7e4 
-0xffffff809c823cf0 : 0xffffff8005a1bcfc 
-0xffffff809c823d70 : 0xffffff800548bd15 
-0xffffff809c823dc0 : 0xffffff80054361cc 
-0xffffff809c823e20 : 0xffffff800540d19c 
-0xffffff809c823e70 : 0xffffff8005426057 
-0xffffff809c823f00 : 0xffffff800556db7d 
-0xffffff809c823fb0 : 0xffffff80053d9db6 
-      Kernel Extensions in backtrace:
-         cn.junkman.kext.kext-panic(1.0)[43915CCB-4282-3481-B711-9DC4A74ED9D7]@0xffffff7f8766b000-&gt;0xffffff7f8766cfff
-
-BSD process name corresponding to current thread: kextunload
-Boot args: debug=0x144 kext-dev-mode=1 kcsuffix=development pmuflags=1 -v
-
-Mac OS version:
-16G29
-
-Kernel version:
-Darwin Kernel Version 16.7.0: Thu Jun 15 17:36:27 PDT 2017; root:xnu-3789.70.16~2/DEVELOPMENT_X86_64
-Kernel UUID: B8B972B8-220D-3E56-92F8-ADB8CF777CE2
-Kernel slide:     0x0000000005000000
-Kernel text base: 0xffffff8005200000
-__HIB  text base: 0xffffff8005100000
-System model name: VMware7,1 (Mac-E43C1C25D4880AD6)
-
-System uptime in nanoseconds: 310848796046
-ethernet MAC address: 00:0c:29:af:fa:a0
-ip address: 172.16.41.129
-
-Waiting for remote debugger connection.
-</code></pre></div><p>Using lldb to remote-debug the problematic kext:</p>
-<div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>$ lldb /Library/Developer/KDKs/KDK_10.12.6_16G29.kdk/System/Library/Kernels/kernel.development
-...
-(lldb) settings set target.load-script-from-symbol-file true
-...
-
-(lldb) kdp-remote 172.16.41.129
-...
-Process 1 stopped
-* thread #2, name = &#39;0xffffff80148b0ee0&#39;, queue = &#39;0x0&#39;, stop reason = signal SIGSTOP
-    frame #0: 0xffffff7f8766bf34 kext-panic`kext_panic_stop(ki=0xffffff7f8766c000, d=0x0000000000000000) at kext_panic.c:17
-   14  	{
-   15  	    LOG(&#34;unloaded  id: %#x addr: %#lx&#34;, ki-&gt;id, ki-&gt;address);
-   16  	    char *p = (char *) 0xdeadbeef;
--&gt; 17  	    *p = &#39;\0&#39;;      /* Should panic */
-   18  	    return KERN_SUCCESS;
-   19  	}
-Target 0: (kernel.development) stopped.
-</code></pre></div><p>The kext <em><strong>.dSYM</strong></em> file loaded successfully, we can easily debugging our kext.</p>
-<div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>(lldb) thread backtrace
-* thread #2, name = &#39;0xffffff80148b0ee0&#39;, queue = &#39;0x0&#39;, stop reason = signal SIGSTOP
-  * frame #0: 0xffffff7f8766bf34 kext-panic`kext_panic_stop(ki=0xffffff7f8766c000, d=0x0000000000000000) at kext_panic.c:17
-    frame #1: 0xffffff80059ffedf kernel.development`OSKext::stop(this=0xffffff800fc54640) at OSKext.cpp:6368 [opt]
-    frame #2: 0xffffff80059fd7da kernel.development`OSKext::unload(this=0xffffff800fc54640) at OSKext.cpp:6470 [opt]
-    frame #3: 0xffffff8005a06bfe kernel.development`OSKext::removeKext(aKext=&lt;unavailable&gt;, terminateServicesAndRemovePersonalitiesFlag=true) at OSKext.cpp:3540 [opt]
-    frame #4: 0xffffff8005a0c7e4 kernel.development`OSKext::handleRequest(hostPriv=0x0000000000000000, clientLogFilter=&lt;unavailable&gt;, requestBuffer=&#34;؅?\x80???, requestLength=&lt;unavailable&gt;, responseOut=&lt;unavailable&gt;, responseLengthOut=&lt;unavailable&gt;, logInfoOut=&lt;unavailable&gt;, logInfoLengthOut=&lt;unavailable&gt;) at OSKext.cpp:8025 [opt]
-    frame #5: 0xffffff8005a1bcfc kernel.development`::kext_request(hostPriv=&lt;unavailable&gt;, clientLogSpec=&lt;unavailable&gt;, requestIn=&lt;unavailable&gt;, requestLengthIn=&lt;unavailable&gt;, responseOut=0xffffff8016b8a888, responseLengthOut=0xffffff8016b8a8b0, logDataOut=&lt;unavailable&gt;, logDataLengthOut=&lt;unavailable&gt;, op_result=&lt;unavailable&gt;) at OSKextLib.cpp:291 [opt]
-    frame #6: 0xffffff800548bd15 kernel.development`_Xkext_request(InHeadP=&lt;unavailable&gt;, OutHeadP=0xffffff8016b8a864) at host_priv_server.c:2997 [opt]
-    frame #7: 0xffffff80054361cc kernel.development`ipc_kobject_server(request=&lt;unavailable&gt;, option=&lt;unavailable&gt;) at ipc_kobject.c:352 [opt]
-    frame #8: 0xffffff800540d19c kernel.development`ipc_kmsg_send(kmsg=&lt;unavailable&gt;, option=&lt;unavailable&gt;, send_timeout=&lt;unavailable&gt;) at ipc_kmsg.c:1828 [opt]
-    frame #9: 0xffffff8005426057 kernel.development`mach_msg_overwrite_trap(args=&lt;unavailable&gt;) at mach_msg.c:556 [opt]
-    frame #10: 0xffffff800556db7d kernel.development`mach_call_munger64(state=0xffffff80176eb020) at bsd_i386.c:556 [opt]
-    frame #11: 0xffffff80053d9db6 kernel.development`hndl_mach_scall64 + 22
-    
-(lldb) register read
-General Purpose Registers:
-       rax = 0x0000000000000000
-       rbx = 0xffffff800fc54640
-       rcx = 0x00000000deadbeef
-       rdx = 0x00000000deadbeef
-       rdi = 0xffffff807658c000
-       rsi = 0x0000000000000000
-       rbp = 0xffffff809c823bc0
-       rsp = 0xffffff809c823ba0
-        r8 = 0x00000011af78a0ae
-        r9 = 0x0000000000000000
-       r10 = 0x00000000002b0007
-       r11 = 0x0000000002000001
-       r12 = 0xffffff800eee1fc0
-       r13 = 0xffffff800fc54640
-       r14 = 0x0000000000000000
-       r15 = 0xffffff7f8766bf8e  kext-panic`_stop
-       rip = 0xffffff7f8766bf34  kext-panic`kext_panic_stop + 68 at kext_panic.c:17
-    rflags = 0x0000000000010246
-        cs = 0x0000000000000008
-        fs = 0x0000000000000000
-        gs = 0x00000000dead0000
-</code></pre></div><hr>
-<h3 id=example-2b---debuggingtrace-kext-at-load-stage>Example 2b - Debugging(trace) kext at load stage</h3>
-<p>What if you want to debugging the kext from the very first stage? In a source trace level.</p>
-<p>In order to achieve this, we have two steps:</p>
-<div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback># Step 1 - Specify DB_HALT(0x1) in boot-args and clean cache
-
-$ sudo nvram boot-args=&#34;debug=0x145 kext-dev-mode=1 kcsuffix=development pmuflags=1 -v&#34;
-$ sudo kextcache -invalidate /
-</code></pre></div><p>We also need launchctl plist file <em>cn.junkman.kext.kext-panic.daemon.plist</em>, which load kext at boot-time.</p>
-<div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-xml data-lang=xml><span style=color:#00f>&lt;?xml version=&#34;1.0&#34; encoding=&#34;UTF-8&#34;?&gt;</span>
-<span style=color:#00f>&lt;!DOCTYPE plist PUBLIC &#34;-//Apple//DTD PLIST 1.0//EN&#34;
-</span><span style=color:#00f>        &#34;http://www.apple.com/DTDs/PropertyList-1.0.dtd&#34;&gt;</span>
-&lt;plist version=<span style=color:#a31515>&#34;1.0&#34;</span>&gt;
-&lt;dict&gt;
-    &lt;key&gt;Label&lt;/key&gt;
-    &lt;string&gt;cn.junkman.kext.kext-panic.daemon&lt;/string&gt;
-
-    &lt;key&gt;ProgramArguments&lt;/key&gt;
-    &lt;array&gt;
-        &lt;string&gt;/sbin/kextload&lt;/string&gt;
-        &lt;string&gt;/var/tmp/kext-panic.kext&lt;/string&gt;
-    &lt;/array&gt;
-
-    &lt;key&gt;RunAtLoad&lt;/key&gt;
-    &lt;true/&gt;
-
-    &lt;key&gt;KeepAlive&lt;/key&gt;
-    &lt;false/&gt;
-
-    &lt;key&gt;LaunchOnlyOnce&lt;/key&gt;
-    &lt;true/&gt;
-&lt;/dict&gt;
-&lt;/plist&gt;
-</code></pre></div><p>It&rsquo;s a bare-bone launchd-plist file, for advanced topic, see <a href=http://www.launchd.info>A launchd Tutorial</a>.</p>
-<div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-shell data-lang=shell><span style=color:green># Step 2 - Copy launchd xml-script to specific location</span>
-<span style=color:green>#          launchd will load them when booting</span>
-$ sudo cp $SOMEWHERE/cn.junkman.kext.kext-panic.daemon.plist /Library/LaunchDaemons
-</code></pre></div><p>When booting, the console will halt automatically:</p>
-<div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>...
-IOKernelDebugger: registering debugger
-ethernet MAC address: 00:0c:29:af:fa:a0
-ip address: 172.16.41.129
-
-Waiting for remote debugger connection.
-</code></pre></div><div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>$ lldb /Library/Developer/KDKs/KDK_10.12.6_16G29.kdk/System/Library/Kernels/kernel.development
-...
-(lldb) settings set target.load-script-from-symbol-file true
-...
-
-(lldb) kdp-remote 172.16.41.129
-...
-Process 1 stopped
-* thread #2, name = &#39;0xffffff802594aa30&#39;, queue = &#39;0x0&#39;, stop reason = signal SIGSTOP
-    frame #0: 0xffffff801a9fec24 kernel.development`kdp_register_send_receive(send=(IONetworkingFamily`IOKernelDebugger::kdpTransmitDispatcher(void*, unsigned int) at IOKernelDebugger.cpp:369), receive=(IONetworkingFamily`IOKernelDebugger::kdpReceiveDispatcher(void*, unsigned int*, unsigned int) at IOKernelDebugger.cpp:353)) at kdp_udp.c:478 [opt]
-Target 0: (kernel.development) stopped.
-
-(lldb) breakpoint set --name kext_panic_start
-Breakpoint 1: no locations (pending).
-WARNING:  Unable to resolve breakpoint to any actual locations.
-
-(lldb) continue
-...
-1 location added to breakpoint 1
-Process 1 stopped
-* thread #16, name = &#39;0xffffff8026104580&#39;, queue = &#39;0x0&#39;, stop reason = breakpoint 3.1
-    frame #0: 0xffffff7f9cd24ed7 kext-panic`kext_panic_start(ki=0xffffff7f9cd25000, d=0x0000000000000000) at kext_panic.c:9
-   6   	
-   7   	kern_return_t kext_panic_start(kmod_info_t *ki, void *d)
-   8   	{
--&gt; 9   	    LOG(&#34;loaded  id: %#x addr: %#lx&#34;, ki-&gt;id, ki-&gt;address);
-   10  	    return KERN_SUCCESS;
-   11  	}
-   12  	
-Target 0: (kernel.development) stopped.
-</code></pre></div><p>Thus we successfully attached to our kext, feel free to scrutinize the kext. :-)</p>
-<p>NOTE: when we set breakpoint for our kext, it prompts it&rsquo;s pending, since lldb not yet read <em>kext-panic</em> <em><strong>.dSYM</strong></em> file, so it&rsquo;s not visible to lldb at the very first stage.</p>
-<p> </p>
-<p>You may use <code>kexutil(8)</code> -i, -interactive option to pause each specified kext and wait for user input to start the kext.</p>
-<blockquote>
-<p>This allows for debugger setup when the kext needs to be debugged during its earliest stages of running.</p>
-</blockquote>
-<p>So you can attach to the debugger and start kext debugging at booting stage.</p>
-<h2 id=summary>Summary</h2>
-<p>This article describes HOWTO debugging the XNU kernel elaborately, it still missing some advanced topics about kernel debugging. Yet, it&rsquo;s enough for a programmer to get started with.</p>
-<p>I illustrated two examples to show HOWTO debug the kernel and kext respectively, still dark corners frustrate you, so I collected some tips which may helpful.</p>
-<h2 id=gotchas>Gotchas</h2>
-<ul>
-<li>
-<p>The panic report(kernel dump) located at <em>/Library/Logs/DiagnosticReports</em>, you can use <em>Console.app</em> to view the <em>System Reports</em>.</p>
-</li>
-<li>
-<p>XNU kernel <a href=http://xr.anadoxin.org/source/xref/macos-10.12.6-sierra/xnu-3789.70.16/osfmk/kern/printf.c#836>printf()</a> implmentation sucks, it don&rsquo;t recognize some rarely used <a href=http://www.cplusplus.com/reference/cstdio/printf/>sub-specifiers</a> like %h, %i, %j, %t, etc., use unrecognized spcifier may cause kernel panic.</p>
-</li>
-</ul>
-<blockquote>
-<p>Update: newer kernel seems fixed this bug, yet it discards unsupported specifiers.</p>
-</blockquote>
-<ul>
-<li>When possible, avoid using <a href=http://xr.anadoxin.org/source/xref/macos-10.12.6-sierra/xnu-3789.70.16/bsd/kern/kern_malloc.c#565><em>_MALLOC</em></a> or <a href=http://xr.anadoxin.org/source/xref/macos-10.12.6-sierra/xnu-3789.70.16/bsd/kern/kern_malloc.c#616><em>_FREE</em></a>. if you don&rsquo;t free the memory allocated by <em>_MALLOC</em>, it certainly memory leaked, it won&rsquo;t kernel panic even when you unload the kext.</li>
-</ul>
-<p>The same frustration applys to <a href=http://xr.anadoxin.org/source/xref/macos-10.12.6-sierra/xnu-3789.70.16/osfmk/kern/kalloc.c#843>OSMalloc</a>, I discussed this issue elaborately in a solo article.</p>
-<h2 id=references>References</h2>
-<blockquote>
-<p><a href=https://developer.apple.com/library/archive/navigation/>Apple Documentation Archive</a></p>
-<p><a href=https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/About/About.html>Kernel Programming Guide</a></p>
-<p><a href=https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KEXTConcept/KEXTConceptIntro/introduction.html>Kernel Extension Programming Topics</a></p>
-<p><a href=https://klue.github.io/blog/2017/04/macos_kernel_debugging_vbox/>Debugging macOS Kernel using VirtualBox</a></p>
-<p><a href=https://ddeville.me/2015/08/kernel-debugging-with-lldb-and-vmware-fusion/>Kernel debugging with LLDB and VMware Fusion</a></p>
-<p><a href=https://developer.apple.com/library/content/documentation/Darwin/Conceptual/KernelProgramming/build/build.html>Building and Debugging Kernels</a></p>
-<p><a href=https://www.lightbulbone.com/posts/2016/10/intro-to-macos-kernel-debugging/>Introduction to macOS Kernel Debugging</a></p>
-<p><a href=https://gist.github.com/steakknife/07df81ffe382d5f257d7>Two-box osx kernel development</a></p>
-<p><a href=https://developer.apple.com/library/archive/technotes/tn2063/_index.html>Technical Note TN2063 - Understanding and Debugging Kernel Panics</a></p>
-<p><a href=https://cs.brown.edu/courses/cs033/docs/guides/x64_cheatsheet.pdf>x64 Cheat Sheet - 4.4 Stack Organization and Function Calls</a></p>
-<p><a href=https://objective-see.com/blog.html>Objective-See&rsquo;s Blog</a></p>
-<p><a href=https://gist.github.com/leiless/ac41463ae5a0fc68a927674109694ed2>fusion_retrial.sh</a></p>
-</blockquote>
-</div>
-<div class=tags>
-</div></div>
-<script src=https://utteranc.es/client.js repo=leiless/blog issue-term=pathname label=comment theme=github-light crossorigin=anonymous async></script>
-</div>
-<div class="footer wrapper">
+<p>The panic report(kernel dump) located at <em>/Library/Logs/DiagnosticReports</em>, you can use <em>Console.app</em> to view the <em>System Reports</em>.</p></li><li>
+<p>XNU kernel <a href=http://xr.anadoxin.org/source/xref/macos-10.12.6-sierra/xnu-3789.70.16/osfmk/kern/printf.c#836>printf()</a> implmentation sucks, it don&rsquo;t recognize some rarely used <a href=http://www.cplusplus.com/reference/cstdio/printf/>sub-specifiers</a> like %h, %i, %j, %t, etc., use unrecognized spcifier may cause kernel panic.</p></li></ul><blockquote>
+<p>Update: newer kernel seems fixed this bug, yet it discards unsupported specifiers.</p></blockquote><ul>
+<li>When possible, avoid using <a href=http://xr.anadoxin.org/source/xref/macos-10.12.6-sierra/xnu-3789.70.16/bsd/kern/kern_malloc.c#565><em>_MALLOC</em></a> or <a href=http://xr.anadoxin.org/source/xref/macos-10.12.6-sierra/xnu-3789.70.16/bsd/kern/kern_malloc.c#616><em>_FREE</em></a>. if you don&rsquo;t free the memory allocated by <em>_MALLOC</em>, it certainly memory leaked, it won&rsquo;t kernel panic even when you unload the kext.</li></ul><p>The same frustration applys to <a href=http://xr.anadoxin.org/source/xref/macos-10.12.6-sierra/xnu-3789.70.16/osfmk/kern/kalloc.c#843>OSMalloc</a>, I discussed this issue elaborately in a solo article.</p><h2 id=references>References</h2><blockquote>
+<p><a href=https://developer.apple.com/library/archive/navigation/>Apple Documentation Archive</a></p><p><a href=https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KernelProgramming/About/About.html>Kernel Programming Guide</a></p><p><a href=https://developer.apple.com/library/archive/documentation/Darwin/Conceptual/KEXTConcept/KEXTConceptIntro/introduction.html>Kernel Extension Programming Topics</a></p><p><a href=https://klue.github.io/blog/2017/04/macos_kernel_debugging_vbox/>Debugging macOS Kernel using VirtualBox</a></p><p><a href=https://ddeville.me/2015/08/kernel-debugging-with-lldb-and-vmware-fusion/>Kernel debugging with LLDB and VMware Fusion</a></p><p><a href=https://developer.apple.com/library/content/documentation/Darwin/Conceptual/KernelProgramming/build/build.html>Building and Debugging Kernels</a></p><p><a href=https://www.lightbulbone.com/posts/2016/10/intro-to-macos-kernel-debugging/>Introduction to macOS Kernel Debugging</a></p><p><a href=https://gist.github.com/steakknife/07df81ffe382d5f257d7>Two-box osx kernel development</a></p><p><a href=https://developer.apple.com/library/archive/technotes/tn2063/_index.html>Technical Note TN2063 - Understanding and Debugging Kernel Panics</a></p><p><a href=https://cs.brown.edu/courses/cs033/docs/guides/x64_cheatsheet.pdf>x64 Cheat Sheet - 4.4 Stack Organization and Function Calls</a></p><p><a href=https://objective-see.com/blog.html>Objective-See&rsquo;s Blog</a></p><p><a href=https://gist.github.com/leiless/ac41463ae5a0fc68a927674109694ed2>fusion_retrial.sh</a></p></blockquote></div><div class=tags>
+</div></div><script src=https://utteranc.es/client.js repo=leiless/blog issue-term=pathname label=comment theme=github-light crossorigin=anonymous async></script>
+</div><div class="footer wrapper">
 <nav class=nav>
-<div>2021 Released under <a href=https://creativecommons.org/licenses/by-nc-sa/4.0/>CC BY-NC-SA 4.0</a> license | <a href=https://github.com/knadh/hugo-ink>Ink</a> theme on <a href=https://gohugo.io>Hugo</a></div>
-</nav>
-</div>
-<script type=application/javascript>var doNotTrack=!1;doNotTrack||(window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)},ga.l=+new Date,ga('create','G-RMJ7KLHXH8','auto'),ga('send','pageview'))</script>
+<div>2022 Released under <a href=https://creativecommons.org/licenses/by-nc-sa/4.0/>CC BY-NC-SA 4.0</a> license | <a href=https://github.com/knadh/hugo-ink>Ink</a> theme on <a href=https://gohugo.io>Hugo</a></div></nav></div><script type=application/javascript>var doNotTrack=!1;doNotTrack||(window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)},ga.l=+new Date,ga("create","G-RMJ7KLHXH8","auto"),ga("send","pageview"))</script>
 <script async src=https://www.google-analytics.com/analytics.js></script>
 <script>feather.replace()</script>
-</body>
-</html>
+</body></html>
