@@ -358,8 +358,7 @@ When possible, avoid using _MALLOC or _FREE. if you don&rsquo;t free the memory 
 </span></span><span style=display:flex><span>   76  	    return KERN_SUCCESS;
 </span></span><span style=display:flex><span>   77  	}
 </span></span></code></pre></div><p>We use the similar technique(e.g. refcnt) as in <em>OSMalloc</em>, yet we balanced simplicity and safety. Put <em>kern_memck</em> as last statement when unloading kext can prevent you from memory leakage.</p><p>You certainly mustn&rsquo;t mix <em>libkext_malloc</em> family with any other <em>malloc</em>s, it&rsquo;ll debalance <em>libkext_malloc</em> refcnt, and eventually panic when you call <em>libkext_memck</em>.</p></div><div class=tags>
-</div></div><script src=https://utteranc.es/client.js repo=leiless/blog issue-term=pathname label=comment theme=github-light crossorigin=anonymous async></script>
-</div><div class="footer wrapper">
+</div></div></div><div class="footer wrapper">
 <nav class=nav>
 <div>2022 Released under <a href=https://creativecommons.org/licenses/by-nc-sa/4.0/>CC BY-NC-SA 4.0</a> license | <a href=https://github.com/knadh/hugo-ink>Ink</a> theme on <a href=https://gohugo.io>Hugo</a></div></nav></div><script type=application/javascript>var doNotTrack=!1;doNotTrack||(window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)},ga.l=+new Date,ga("create","G-RMJ7KLHXH8","auto"),ga("send","pageview"))</script>
 <script async src=https://www.google-analytics.com/analytics.js></script>
